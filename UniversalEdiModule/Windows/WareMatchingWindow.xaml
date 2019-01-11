@@ -1,0 +1,22 @@
+﻿<Window x:Class="UniversalEdiModule.Windows.WareMatchingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UniversalEdiModule"
+        mc:Ignorable="d"
+        Title="WareMatchingWindow" Height="450" Width="800">
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="45*"/>
+            <ColumnDefinition Width="695*"/>
+            <ColumnDefinition Width="52*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="305*"/>
+            <RowDefinition Height="84*"/>
+        </Grid.RowDefinitions>
+        <DataGrid Name="PositionsTbl" Grid.Column="1" Grid.Row="1"/>
+    </Grid>
+</Window>

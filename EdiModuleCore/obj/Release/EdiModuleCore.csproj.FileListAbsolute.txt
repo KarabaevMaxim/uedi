@@ -1,0 +1,11 @@
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Release\EdiModuleCore.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Release\EdiModuleCore.pdb
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Release\Bridge1C.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Release\Newtonsoft.Json.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Release\Bridge1C.pdb
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Release\Newtonsoft.Json.xml
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Release\EdiModuleCore.csprojAssemblyReference.cache
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Release\EdiModuleCore.csproj.CoreCompileInputs.cache
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Release\EdiModuleCore.csproj.CopyComplete
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Release\EdiModuleCore.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Release\EdiModuleCore.pdb

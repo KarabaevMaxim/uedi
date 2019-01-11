@@ -1,0 +1,8 @@
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\bin\Release\Bridge1C.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\bin\Release\Bridge1C.pdb
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Release\Bridge1C.csprojAssemblyReference.cache
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Release\Interop.V83.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Release\Bridge1C.csproj.ResolveComReference.cache
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Release\Bridge1C.csproj.CoreCompileInputs.cache
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Release\Bridge1C.dll
+C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Release\Bridge1C.pdb
