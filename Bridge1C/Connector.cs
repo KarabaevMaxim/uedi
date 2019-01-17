@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bridge1C
+﻿namespace Bridge1C
 {
-    using V83;
+	using V83;
 
     public class Connector
     {

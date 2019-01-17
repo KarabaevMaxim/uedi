@@ -41,15 +41,15 @@
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if(this.ParentWindow == null || Waybill == null)
+            if(this.ParentWindow == null || this.Waybill == null)
                 throw new NotInitializedException("Родительское окно или накладная не инициализированы.");
 
             this.UpdateTablePart();
             this.WaybillNumberLbl.Text = this.Waybill.Number;
             this.WaybillDateLbl.Text = this.Waybill.Date.ToString("dd.MM.yyyy");
-            this.SupplierNameLbl.Text = this.Waybill.Supplier.Name;
-            this.OrganizationLbl.Text = this.Waybill.Organization.Name;
-            this.TradeObjectLbl.Text = this.Waybill.Warehouse.Name;
+            this.SupplierNameLbl.Text = this.Waybill.Supplier?.Name;
+            this.OrganizationLbl.Text = this.Waybill.Organization?.Name;
+            this.TradeObjectLbl.Text = this.Waybill.Warehouse?.Name;
         }
 
         public void UpdateTablePart()

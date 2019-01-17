@@ -1,2 +1,4 @@
 EdiModule/obj/
 UnitTests/bin/
+packages/
+.vs/

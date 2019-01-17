@@ -52,7 +52,7 @@
         /// </summary>
         public static void DownloadWaybills()
         {
-            string[] fileNames = FileService.GetFileList(SettingsManager.Settings.StartWaybillFolder);
+            string[] fileNames = FileService.GetFileList(SessionManager.Sessions[0].WorkFolder);
 
             foreach (var item in fileNames)
                 DocumentManager.DownloadWaybill(FileService.ReadTextFile(item), item);
@@ -171,7 +171,7 @@
         /// <returns>true, если успешно, иначе false.</returns>
         public static void ProcessWaybill(Waybill waybill)
         {
-            if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SettingsManager.Settings.DestinationWaybillFolder)))
+            if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
                 throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
 
             if (!CoreInit.ModuleRepository.RemoveUnprocessedWaybill(waybill))

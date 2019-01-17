@@ -30,8 +30,8 @@ namespace EdiModule.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.DestinationWaybillFolderPathTxt.Text = SettingsManager.Settings.DestinationWaybillFolder;
-            this.StartWaybillFolderPathTxt.Text = SettingsManager.Settings.StartWaybillFolder;
+            this.DestinationWaybillFolderPathTxt.Text = SessionManager.Sessions[0].ArchieveFolder;
+            this.StartWaybillFolderPathTxt.Text = SessionManager.Sessions[0].WorkFolder;
         }
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
@@ -41,15 +41,6 @@ namespace EdiModule.Windows
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            Settings newSettings = new Settings
-            {
-                DestinationWaybillFolder = this.DestinationWaybillFolderPathTxt.Text,
-                StartWaybillFolder = this.StartWaybillFolderPathTxt.Text
-            };
-
-            SettingsManager.SaveSettings(newSettings);
-
-            this.Close();
         }
     }
 }

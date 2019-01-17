@@ -18,10 +18,8 @@
         public MainWindow()
         {
             InitializeComponent();
-            this.bindings.Add("Код", "ID");
             this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
-            this.bindings.Add("Дата загрузки", "DownloadDate");
             this.bindings.Add("Поставщик", "Supplier.Name");
             this.bindings.Add("Склад", "Warehouse.Name");
         }

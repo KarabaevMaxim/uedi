@@ -57,6 +57,7 @@
     <Compile Include="EntitiesTest.cs" />
     <Compile Include="ServiceRepositoryTest.cs" />
     <Compile Include="RespositoryTest.cs" />
+    <Compile Include="EntryPointTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

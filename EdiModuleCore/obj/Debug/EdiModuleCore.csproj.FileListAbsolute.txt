@@ -9,3 +9,14 @@ C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\bin\Debug\Ne
 C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Debug\EdiModuleCore.csproj.CopyComplete
 C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Debug\EdiModuleCore.dll
 C:\Users\Максим\source\repos\UniversalEdiModule\EdiModuleCore\obj\Debug\EdiModuleCore.pdb
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\EdiModuleCore.dll
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\EdiModuleCore.pdb
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\Bridge1C.dll
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\Newtonsoft.Json.dll
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\Bridge1C.pdb
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\Newtonsoft.Json.xml
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\obj\Debug\EdiModuleCore.csproj.CoreCompileInputs.cache
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\obj\Debug\EdiModuleCore.csproj.CopyComplete
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\obj\Debug\EdiModuleCore.dll
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\obj\Debug\EdiModuleCore.pdb
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\obj\Debug\EdiModuleCore.csprojAssemblyReference.cache

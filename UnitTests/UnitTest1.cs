@@ -79,14 +79,9 @@ namespace UnitTests
             Assert.IsTrue(service.AddNewWare(startWare));
         }
 
-        [TestMethod]
-        public void EdiModuleTest()
-        {
-            EdiModuleEntryPoint ediModuleEntryPoint = new EdiModuleEntryPoint();
-            ediModuleEntryPoint.MainWindowShow();
-        }
 
-        [TestMethod]
+
+		[TestMethod]
         public void ServiceTest()
         {
             RepositoryService repositoryService = new RepositoryService(@"C:\Users\Максим\Documents\InfoBase7", "", "");

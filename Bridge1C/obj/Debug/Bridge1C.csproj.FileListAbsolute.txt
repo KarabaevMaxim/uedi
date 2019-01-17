@@ -6,3 +6,11 @@ C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Debug\Interop
 C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Debug\Bridge1C.dll
 C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Debug\Bridge1C.pdb
 C:\Users\Максим\source\repos\UniversalEdiModule\Bridge1C\obj\Debug\Bridge1C.csprojAssemblyReference.cache
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\bin\Debug\Bridge1C.dll
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\bin\Debug\Bridge1C.pdb
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\obj\Debug\Bridge1C.csprojAssemblyReference.cache
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\obj\Debug\Interop.V83.dll
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\obj\Debug\Bridge1C.csproj.ResolveComReference.cache
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\obj\Debug\Bridge1C.csproj.CoreCompileInputs.cache
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\obj\Debug\Bridge1C.dll
+C:\Доработки\УниверсальныеЕдиМодуль\Bridge1C\obj\Debug\Bridge1C.pdb

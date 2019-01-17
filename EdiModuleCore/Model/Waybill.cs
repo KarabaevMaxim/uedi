@@ -12,7 +12,6 @@
     {
         public string Number { get; set; }
         public DateTime Date { get; set; }
-        public DateTime DownloadDate { get; set; } 
         public Counteragent Supplier { get; set; }
         public Organization Organization { get; set; }
         public Warehouse Warehouse { get; set; }
@@ -22,15 +21,23 @@
 
         public override bool Equals(object obj)
         {
-            if (obj is Waybill waybill)
-                return  this.Number == waybill.Number &&
-                        this.Date == waybill.Date &&
-                        this.Supplier.Equals(waybill.Supplier) &&
-                        this.Organization.Equals(waybill.Organization) &&
-                        this.Warehouse.Equals(waybill.Warehouse) &&
-                        this.Wares.Any(waybill.Wares.Contains);
-            else
-                return false;
+			try
+			{
+				if (obj is Waybill waybill)
+					return this.Number == waybill.Number &&
+							this.Date == waybill.Date &&
+							this.Supplier.Equals(waybill.Supplier) &&
+							this.Organization.Equals(waybill.Organization) &&
+							this.Warehouse.Equals(waybill.Warehouse) &&
+							this.Wares.Any(waybill.Wares.Contains);
+				else
+					return false;
+			}
+			catch(NullReferenceException)
+			{
+				return false;
+			}
+            
         }
 
         public override int GetHashCode()

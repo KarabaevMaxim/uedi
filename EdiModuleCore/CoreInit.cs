@@ -8,6 +8,12 @@
         {
             CoreInit.RepositoryService = new RepositoryService(@"C:\Users\Максим\Documents\InfoBase7", login, pass);
         }
+
+		public static void Connect(string login, string pass, string db)
+		{
+			CoreInit.RepositoryService = new RepositoryService(db, login, pass);
+		}
+
         public static void Init()
         {
             CoreInit.ModuleRepository = new ModuleRepository();

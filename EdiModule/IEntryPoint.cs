@@ -1,16 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EdiModule
+﻿namespace EdiModule
 {
-    using System.Runtime.InteropServices;
+	using System;
+	using System.Runtime.InteropServices;
 
     [Guid("6A2B049B-7FEE-4F89-BE73-A59A06C7E07C")]
     public interface IEntryPoint
     {
-        void MainWindowShow();
-    }
+		/// <summary>
+		/// Метод подключения к файловой базе.
+		/// </summary>
+		/// <param name="userName">Имя пользовалея входа.</param>
+		/// <param name="userPassword">Пароль пользователя входа.</param>
+		/// <param name="dbPath">Путь до папки с базой.</param>
+		/// <param name="waybillFolder">Рабочая папка пользователя.</param>
+		/// <param name="archieveFolder">Папка архива.</param>
+		void ConnectToFileBase(string userName, string userPassword, string dbPath, string waybillFolder, string archieveFolder);
+
+		void ConnectToServerBase(string connectionString, string waybillFolder, string archieveFolder);
+
+	}
 }

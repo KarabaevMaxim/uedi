@@ -56,18 +56,9 @@
                 { TaxRates.Tax_18, "18" },
                 { TaxRates.Tax_None, "None" },
             };
-
-            //RequisiteBindingConfig.EntityTypeBindings = new Dictionary<EntityTypes, string>
-            //{
-            //    { EntityTypes.Counteragents, "Контрагенты" },
-            //    { EntityTypes.Wares, "Номенклатура" },
-            //    { EntityTypes.Warehouses, "Склады" },
-            //    { EntityTypes.PersonalOrganizations, "Организации" },
-            //};
         }
 
         public static Dictionary<Requisites, string> RequisiteBingings { get; private set; }
         public static Dictionary<TaxRates, string> TaxBindings { get; private set; }
-      //  public static Dictionary<EntityTypes, string> EntityTypeBindings { get; private set; }
     }
 }
