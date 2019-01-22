@@ -4,8 +4,7 @@
 
     public enum Requisites
     {
-        GLN_Counteragent,
-        GLN_WareHouse,
+        GLN,
         Name,
         Code,
         InternationalReduction_Unit,
@@ -41,8 +40,7 @@
         {
             RequisiteBindingConfig.RequisiteBingings = new Dictionary<Requisites, string>
             {
-                { Requisites.GLN_Counteragent, "ГЛН_Контрагента" },
-                { Requisites.GLN_WareHouse, "ГЛН_Склада" },
+                { Requisites.GLN, "ГЛН" },
                 { Requisites.Name, "Наименование" },
                 { Requisites.Code, "Код" },
                 { Requisites.InternationalReduction_Unit, "МеждународноеСокращение" },

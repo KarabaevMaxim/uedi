@@ -204,33 +204,35 @@
         /// </summary>
         /// <param name="entity">Объект, ГЛН которого необходимо получить.</param>
         /// <returns>Строка с ГЛН.</returns>
-        private string GetGLN(dynamic entity)
+        public string GetGLN(dynamic entity)
         {
             if (entity == null)
                 return null;
 
-            string result = null;
+			return entity.ГЛН;
+			//       string result = null;
 
-            switch (entity.Метаданные().Имя)
-            {
-                case EntityTypes.Контрагенты:
-                    foreach (var запись in entity.ДополнительныеРеквизиты)
-                        if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[Requisites.GLN_Counteragent])
-                            return запись.Значение;
-                    break;
-                case EntityTypes.Склады:
-                    foreach (var запись in entity.ДополнительныеРеквизиты)
-                        if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[Requisites.GLN_WareHouse])
-                            return запись.Значение;
-                    break;
-                case EntityTypes.НашиОрганизации:
-                    break;
-                default:
-                    break;
-            }
+			//       switch (entity.Метаданные().Имя)
+			//       {
+			//           case EntityTypes.Контрагенты:
+			//return entity.ГЛН;
+			//foreach (var запись in entity.ДополнительныеРеквизиты)
+			//                   if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[Requisites.GLN])
+			//                       return запись.Значение;
+			//               break;
+			//           case EntityTypes.Склады:
+			//               foreach (var запись in entity.ДополнительныеРеквизиты)
+			//                   if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[Requisites.GLN])
+			//                       return запись.Значение;
+			//               break;
+			//           case EntityTypes.НашиОрганизации:
+			//               break;
+			//           default:
+			//               break;
+			//       }
 
-            return result;
-        }
+			//       return result;
+		}
 
         /// <summary>
         /// Получить список внешних кодов для товара.

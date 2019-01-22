@@ -49,5 +49,22 @@ namespace UnitTests
 
             Assert.IsTrue(repository.AddNewWaybill("123456789", DateTime.Now, supplier, warehouse, shop, rows));
         }
+
+		[TestMethod]
+		public void GetWareHouseTest()
+		{
+			Repository repository = new Repository(new Connector(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123"));
+			var warehouse = repository.GetWareHouse(Requisites.GLN, "1832027380051");
+			Assert.IsFalse(string.IsNullOrWhiteSpace(warehouse?.Код));
+		}
+
+		[TestMethod]
+		public void GetCounteragentTest()
+		{
+			Repository repository = new Repository(new Connector(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123"));
+			var counteragent = repository.GetWareHouse(Requisites.GLN, "1832027380051");
+			Assert.IsFalse(string.IsNullOrWhiteSpace(counteragent?.Код));
+		}
+	
     }
 }

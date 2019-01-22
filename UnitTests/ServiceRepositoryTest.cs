@@ -52,5 +52,14 @@ namespace UnitTests
             };
             Assert.IsTrue(repositoryService.AddNewWaybill(waybill));
         }
-    }
+
+		[TestMethod]
+		public void GetGLNTest()
+		{
+			RepositoryService repositoryService = new RepositoryService(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123");
+			Repository repository = new Repository(new Connector(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123"));
+			var warehouse = repository.GetWareHouse(Requisites.Name, "Склад 3");
+			var gln = repositoryService.GetGLN(warehouse);
+		}
+	}
 }

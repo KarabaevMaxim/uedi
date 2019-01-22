@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ArxOne.Ftp, Version=1.14.1.0, Culture=neutral, PublicKeyToken=da7223da01d9ab51, processorArchitecture=MSIL">
+      <HintPath>..\packages\ArxOne.Ftp.1.14.1\lib\net40-Client\ArxOne.Ftp.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -45,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Exceptions\NotProcessedDocumentException.cs" />
     <Compile Include="Exceptions\NotMatchedException.cs" />
+    <Compile Include="FtpService.cs" />
     <Compile Include="MatchingModule.cs" />
     <Compile Include="DocumentManager.cs" />
     <Compile Include="Exceptions\NotInitializedException.cs" />

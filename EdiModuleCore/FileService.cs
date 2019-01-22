@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Text;
     using System.IO;
+	using System.Linq;
 
     public static class FileService
     {
@@ -114,6 +115,11 @@
                 throw ex;
             }
         }
+
+		public static void WriteBytesToFile(string fileName, IEnumerable<byte> bytes)
+		{
+			File.WriteAllBytes(fileName, bytes.ToArray());
+		}
 
         private static readonly Encoding defaultEncoding;
     }

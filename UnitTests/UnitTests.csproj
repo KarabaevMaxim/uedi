@@ -58,6 +58,7 @@
     <Compile Include="ServiceRepositoryTest.cs" />
     <Compile Include="RespositoryTest.cs" />
     <Compile Include="EntryPointTest.cs" />
+    <Compile Include="FtpServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

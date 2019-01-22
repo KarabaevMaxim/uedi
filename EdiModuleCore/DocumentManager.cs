@@ -70,8 +70,8 @@
             {
                 Number = xWaybill.Number,
                 Date = xWaybill.Date,
-                Supplier = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN_Counteragent, xWaybill.Header.SupplierGln),
-                Warehouse = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN_WareHouse, xWaybill.Header.DeliveryPlace),
+                Supplier = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN, xWaybill.Header.SupplierGln),
+                Warehouse = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, xWaybill.Header.DeliveryPlace),
                 FileName = fileName,
                 Wares = new List<Model.WaybillRow>()
             };

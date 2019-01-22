@@ -35,7 +35,7 @@
                     case Requisites.Name:
                         counteragent = this.Connector.Connection.Справочники.Контрагенты.НайтиПоНаименованию(propertyValue);
                         break;
-                    case Requisites.GLN_Counteragent:
+                    case Requisites.GLN:
                         var выборка = this.Connector.Connection.Справочники.Контрагенты.Выбрать();
                         while (выборка.Следующий())
                         {
@@ -75,20 +75,21 @@
                         warehouse = this.Connector.Connection.Справочники.Склады.НайтиПоНаименованию(propertyValue);
                         break;
                     default:
-                        var выборка = this.Connector.Connection.Справочники.Склады.Выбрать();
+						warehouse = this.Connector.Connection.Справочники.Склады.НайтиПоРеквизиту(RequisiteBindingConfig.RequisiteBingings[propertyName], propertyValue);
+                        //var выборка = this.Connector.Connection.Справочники.Склады.Выбрать();
 
-                        while (выборка.Следующий)
-                        {
-                            var склад = выборка.ПолучитьОбъект();
+                        //while (выборка.Следующий)
+                        //{
+                        //    var склад = выборка.ПолучитьОбъект();
 
-                            foreach (var запись in склад.ДополнительныеРеквизиты)
-                            {
-                                if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[propertyName] && запись.Значение == propertyValue)
-                                {
-                                    return склад;
-                                }
-                            }
-                        }
+                        //    foreach (var запись in склад.ДополнительныеРеквизиты)
+                        //    {
+                        //        if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[propertyName] && запись.Значение == propertyValue)
+                        //        {
+                        //            return склад;
+                        //        }
+                        //    }
+                        //}
                         break;
                 }
                 return warehouse;
