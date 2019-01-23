@@ -14,7 +14,17 @@
 		/// <param name="dbPath">Путь до папки с базой.</param>
 		/// <param name="waybillFolder">Рабочая папка пользователя.</param>
 		/// <param name="archieveFolder">Папка архива.</param>
-		void ConnectToFileBase(string userName, string userPassword, string dbPath, string waybillFolder, string archieveFolder);
+		void ConnectToFileBase(string userName,
+			string userPassword,
+			string dbPath,
+			string waybillFolder,
+			string archieveFolder,
+			string ftpUri,
+			bool ftpPassive,
+			int ftpTimeout,
+			string ftpLogin,
+			string ftpPassword,
+			string ftpRemoteFolder);
 
 		void ConnectToServerBase(string connectionString, string waybillFolder, string archieveFolder);
 

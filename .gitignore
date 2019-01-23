@@ -2,3 +2,9 @@ EdiModule/obj/
 UnitTests/bin/
 packages/
 .vs/
+UnitTests/obj/
+EdiModuleCore/obj/
+EdiModuleCore/bin/
+EdiModule/bin/
+Bridge1C/obj/
+Bridge1C/bin/

@@ -62,7 +62,7 @@ namespace UnitTests
 		public void GetCounteragentTest()
 		{
 			Repository repository = new Repository(new Connector(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123"));
-			var counteragent = repository.GetWareHouse(Requisites.GLN, "1832027380051");
+			var counteragent = repository.GetWareHouse(Requisites.GLN, "4607068529991");
 			Assert.IsFalse(string.IsNullOrWhiteSpace(counteragent?.Код));
 		}
 	

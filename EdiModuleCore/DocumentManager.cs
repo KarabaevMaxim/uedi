@@ -50,9 +50,9 @@
         /// <summary>
         /// Загрузить все накладные из указанной в настройках папки.
         /// </summary>
-        public static void DownloadWaybills()
+        public static void DownloadWaybills(string workFolder)
         {
-            string[] fileNames = FileService.GetFileList(SessionManager.Sessions[0].WorkFolder);
+            string[] fileNames = FileService.GetFileList(workFolder);
 
             foreach (var item in fileNames)
                 DocumentManager.DownloadWaybill(FileService.ReadTextFile(item), item);
@@ -91,7 +91,6 @@
                     Name = item.WareName,
                     Unit = CoreInit.RepositoryService.GetUnit(Requisites.InternationalReduction_Unit, item.Unit)
                 };
-
                 MatchedWare ware = null;
 
                 try

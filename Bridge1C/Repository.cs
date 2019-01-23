@@ -36,19 +36,20 @@
                         counteragent = this.Connector.Connection.Справочники.Контрагенты.НайтиПоНаименованию(propertyValue);
                         break;
                     case Requisites.GLN:
-                        var выборка = this.Connector.Connection.Справочники.Контрагенты.Выбрать();
-                        while (выборка.Следующий())
-                        {
-                            var контрагент = выборка.ПолучитьОбъект();
-                            foreach (var запись in контрагент.ДополнительныеРеквизиты)
-                            {
-                                if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[propertyName] && запись.Значение == propertyValue)
-                                {
-                                    return контрагент.Ссылка;
-                                }
-                            }
-                        }
-                        break;
+						counteragent = this.Connector.Connection.Справочники.Контрагенты.НайтиПоРеквизиту(RequisiteBindingConfig.RequisiteBingings[propertyName], propertyValue);
+						//var выборка = this.Connector.Connection.Справочники.Контрагенты.Выбрать();
+						//while (выборка.Следующий())
+						//{
+						//    var контрагент = выборка.ПолучитьОбъект();
+						//    foreach (var запись in контрагент.ДополнительныеРеквизиты)
+						//    {
+						//        if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[propertyName] && запись.Значение == propertyValue)
+						//        {
+						//            return контрагент.Ссылка;
+						//        }
+						//    }
+						//}
+						break;
                     default:
                         break;
                 }

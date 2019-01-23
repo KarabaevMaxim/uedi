@@ -44,7 +44,9 @@
 
         public void UpdateTablePart()
         {
-            DocumentManager.DownloadWaybills();
+			Session session = SessionManager.Sessions[0];
+			FtpService.DownloadDocuments(session.FtpURI, session.FtpPassive, session.FtpTimeout, session.FtpLogin, session.FtpPassword, session.FtpRemoteFolder, session.WorkFolder);
+            DocumentManager.DownloadWaybills(session.WorkFolder);
             this.UpdateUnprocessedWaybillTbl(CoreInit.ModuleRepository.GetUnprocessedWaybills());
         }
 

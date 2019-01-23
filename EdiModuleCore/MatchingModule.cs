@@ -67,7 +67,7 @@
                 return null;
 
             MatchedWare result = new MatchedWare();
-            result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier.Code);
+            result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier?.Code); //todo: Валится исключение, если не найден поставщик
 
             if(result.InnerWare == null)
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
