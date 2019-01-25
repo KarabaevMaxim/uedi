@@ -55,6 +55,7 @@
     <Compile Include="FileService.cs" />
     <Compile Include="CoreInit.cs" />
     <Compile Include="Model\ExWare.cs" />
+    <Compile Include="Model\ExWarehouse.cs" />
     <Compile Include="Model\MatchedWare.cs" />
     <Compile Include="Model\Waybill.cs" />
     <Compile Include="Model\WaybillRow.cs" />

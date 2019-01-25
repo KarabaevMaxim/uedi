@@ -16,7 +16,7 @@
         }
 
         /// <summary>
-        /// Получить кконтрагента.
+        /// Получить контрагента.
         /// </summary>
         /// <param name="propertyName">Имя свойства, по которому будет производиться поиск.</param>
         /// <param name="propertyValue">Значение свойства.</param>
@@ -37,18 +37,6 @@
                         break;
                     case Requisites.GLN:
 						counteragent = this.Connector.Connection.Справочники.Контрагенты.НайтиПоРеквизиту(RequisiteBindingConfig.RequisiteBingings[propertyName], propertyValue);
-						//var выборка = this.Connector.Connection.Справочники.Контрагенты.Выбрать();
-						//while (выборка.Следующий())
-						//{
-						//    var контрагент = выборка.ПолучитьОбъект();
-						//    foreach (var запись in контрагент.ДополнительныеРеквизиты)
-						//    {
-						//        if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[propertyName] && запись.Значение == propertyValue)
-						//        {
-						//            return контрагент.Ссылка;
-						//        }
-						//    }
-						//}
 						break;
                     default:
                         break;
@@ -77,20 +65,6 @@
                         break;
                     default:
 						warehouse = this.Connector.Connection.Справочники.Склады.НайтиПоРеквизиту(RequisiteBindingConfig.RequisiteBingings[propertyName], propertyValue);
-                        //var выборка = this.Connector.Connection.Справочники.Склады.Выбрать();
-
-                        //while (выборка.Следующий)
-                        //{
-                        //    var склад = выборка.ПолучитьОбъект();
-
-                        //    foreach (var запись in склад.ДополнительныеРеквизиты)
-                        //    {
-                        //        if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[propertyName] && запись.Значение == propertyValue)
-                        //        {
-                        //            return склад;
-                        //        }
-                        //    }
-                        //}
                         break;
                 }
                 return warehouse;
@@ -100,6 +74,70 @@
                 return null;
             }
         }
+
+		/// <summary>
+		/// Получить справочник складов.
+		/// </summary>
+		/// <returns>Справочник складов.</returns>
+		public List<dynamic> GetAllWarehouses()
+		{
+			try
+			{
+				List<dynamic> result = new List<dynamic>();
+				dynamic выборка = this.Connector.Connection.Справочники.Склады.Выбрать();
+
+				while (выборка.Следующий())
+				{
+					if (!выборка.ЭтоГруппа)
+					{
+						result.Add(выборка.Ссылка);
+					}
+				}
+
+				return result;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Изменить ГЛН склада.
+		/// </summary>
+		/// <param name="warehouseCode">Код склада.</param>
+		/// <param name="gln">Новый ГЛН.</param>
+		/// <returns>true в случае успеха, иначе false.</returns>
+		public bool UpdateWarehouseGLN(string warehouseCode, string gln)
+		{
+			if (string.IsNullOrWhiteSpace(warehouseCode) || string.IsNullOrWhiteSpace(gln))
+				return false;
+
+			var склад = this.GetWareHouse(Requisites.Code, warehouseCode);
+
+			if (склад == null)
+				return false;
+
+			var старыйСклад = this.GetWareHouse(Requisites.GLN, gln);
+			try
+			{
+				if (старыйСклад != null && !string.IsNullOrWhiteSpace(старыйСклад.Код))
+				{
+					var объектСтарогоСклада = старыйСклад.ПолучитьОбъект();
+					объектСтарогоСклада.ГЛН = string.Empty;
+					объектСтарогоСклада.Записать();
+				}
+
+				var объектСклада = склад.ПолучитьОбъект();
+				объектСклада.ГЛН = gln;
+				объектСклада.Записать();
+				return true;	
+			}
+			catch
+			{
+				return false;
+			}
+		}
 
         public dynamic GetShop(dynamic warehouse)
         {

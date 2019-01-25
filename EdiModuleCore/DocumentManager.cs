@@ -34,7 +34,7 @@
         /// <summary>
         /// Загрузить накладную.
         /// </summary>
-        /// <param name="fileName">Имя файла.</param>
+        /// <param name="fileName">Имя файла.</param>s
         /// <returns>true, если успешно, иначе false.</returns>
         public static bool DownloadWaybill(string fileContent, string fileName)
         {
@@ -43,7 +43,8 @@
             if (waybill == null)
                 return false;
 
-            CoreInit.ModuleRepository.AddWaybill(DocumentManager.ConvertWaybillToDomain(waybill, fileName));
+			Waybill domainWaybill = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
+			CoreInit.ModuleRepository.AddWaybill(domainWaybill);
             return true;
         }
 
@@ -66,12 +67,15 @@
         /// <returns>Объект доменной накладной.</returns>
         private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
         {
-            Model.Waybill result = new Model.Waybill
+			var warehouse = MatchingModule.AutomaticWHMatching(new Bridge1C.DomainEntities.Warehouse { GLN = xWaybill.Header.SupplierGln });
+			var supplier = MatchingModule.AutomaticSupMatching(new Bridge1C.DomainEntities.Counteragent { GLN = xWaybill.Header.SupplierGln });
+
+			Model.Waybill result = new Model.Waybill
             {
                 Number = xWaybill.Number,
                 Date = xWaybill.Date,
-                Supplier = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN, xWaybill.Header.SupplierGln),
-                Warehouse = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, xWaybill.Header.DeliveryPlace),
+                Supplier = supplier,
+                Warehouse = warehouse,
                 FileName = fileName,
                 Wares = new List<Model.WaybillRow>()
             };

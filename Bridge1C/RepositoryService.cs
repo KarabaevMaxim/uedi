@@ -70,18 +70,6 @@
             return result;
         }
 
-
-        //public async Task<List<Ware>> GetAllWaresAsync()
-        //{
-        //    return await this.GetAllWares();
-        //    List<Ware> result = new List<Ware>();
-
-        //    foreach (var item in Repository.GetAllWares())
-        //        result.Add(this.GetDomainWareFromDbWare(item));
-
-        //    return result;
-        //}
-
         /// <summary>
         /// Получить контрагента по указанному реквизиту.
         /// </summary>
@@ -99,7 +87,7 @@
             result.Code = counteragent.Код;
             result.Name = counteragent.Наименование;
             result.FullName = counteragent.НаименованиеПолное;
-            result.GLN = this.GetGLN(counteragent);
+            result.GLN = counteragent.ГЛН;
             return result;
         }
 
@@ -134,11 +122,32 @@
 
             result.Code = warehouse.Код;
             result.Name = warehouse.Наименование;
-            result.GLN = this.GetGLN(warehouse);
+            result.GLN = warehouse.ГЛН;
             return result;
         }
 
-        public Shop GetShop(string warehouseCode)
+		public List<Warehouse> GetAllWarehouses()
+		{
+			List<Warehouse> result = new List<Warehouse>();
+
+			foreach (var item in Repository.GetAllWarehouses())
+				result.Add(new Warehouse
+				{
+					Code = item.Код,
+					Name = item.Наименование,
+					GLN = item.ГЛН
+				});
+
+			return result;
+		}
+
+		public bool UpdateWarehouseGLN(string warehouseCode, string gln)
+		{
+			return this.Repository.UpdateWarehouseGLN(warehouseCode, gln);
+		}
+
+
+		public Shop GetShop(string warehouseCode)
         {
             Shop result = new Shop();
             var shop = this.Repository.GetShop(warehouseCode);
@@ -198,41 +207,6 @@
             result.BarCodes = this.GetWareBarcodes(ware);
             return result;
         }
-
-        /// <summary>
-        /// Получить ГЛН объекта.
-        /// </summary>
-        /// <param name="entity">Объект, ГЛН которого необходимо получить.</param>
-        /// <returns>Строка с ГЛН.</returns>
-        public string GetGLN(dynamic entity)
-        {
-            if (entity == null)
-                return null;
-
-			return entity.ГЛН;
-			//       string result = null;
-
-			//       switch (entity.Метаданные().Имя)
-			//       {
-			//           case EntityTypes.Контрагенты:
-			//return entity.ГЛН;
-			//foreach (var запись in entity.ДополнительныеРеквизиты)
-			//                   if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[Requisites.GLN])
-			//                       return запись.Значение;
-			//               break;
-			//           case EntityTypes.Склады:
-			//               foreach (var запись in entity.ДополнительныеРеквизиты)
-			//                   if (запись.Свойство.Имя == RequisiteBindingConfig.RequisiteBingings[Requisites.GLN])
-			//                       return запись.Значение;
-			//               break;
-			//           case EntityTypes.НашиОрганизации:
-			//               break;
-			//           default:
-			//               break;
-			//       }
-
-			//       return result;
-		}
 
         /// <summary>
         /// Получить список внешних кодов для товара.

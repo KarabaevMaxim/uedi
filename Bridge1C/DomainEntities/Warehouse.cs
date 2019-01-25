@@ -9,9 +9,9 @@
         public override bool Equals(object obj)
         {
             if (obj is Warehouse wh)
-                return this.Code == wh.Code &&
-                    this.Name == wh.Name &&
-                    this.GLN == wh.GLN;
+                return	this.Code == wh.Code &&
+						this.Name == wh.Name &&
+						this.GLN == wh.GLN;
             else
                 return false;
         }

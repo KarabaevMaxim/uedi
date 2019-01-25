@@ -27,7 +27,8 @@
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.UpdateTablePart();
-        }
+			UserNameTxt.Text = SessionManager.Sessions[0].UserName;
+		}
 
         private void UpdateUnprocessedWaybillTbl(List<Waybill> waybills)
         {
@@ -102,7 +103,17 @@
             CoreInit.ModuleRepository.InitProductReference();
         }
 
-        private Dictionary<string, string> bindings = new Dictionary<string, string>();
+		private void ShowMatchingWarehouseBtn_Click(object sender, RoutedEventArgs e)
+		{
+			WarehouseMatchingListWindow window = new WarehouseMatchingListWindow();
+			window.ShowDialog();
+		}
 
-    }
+		private Dictionary<string, string> bindings = new Dictionary<string, string>();
+
+		private void ShowMatchingSupplierBtn_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+	}
 }

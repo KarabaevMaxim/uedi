@@ -59,6 +59,7 @@
     <Compile Include="RespositoryTest.cs" />
     <Compile Include="EntryPointTest.cs" />
     <Compile Include="FtpServiceTest.cs" />
+    <Compile Include="MatchingModuleTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

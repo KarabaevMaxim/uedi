@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdiModule.Windows"
         mc:Ignorable="d"
-        Title="Главное окно" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="Необработанные накладные" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35"/>
@@ -17,7 +17,10 @@
             <RowDefinition/>
             <RowDefinition Height="54"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Необработанные накладные" Grid.Column="1" Grid.Row="0" FontSize="15" Margin="5" TextAlignment="Center"/>
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" FlowDirection="LeftToRight">
+            <TextBlock Text="Пользователь:" FontSize="15" Margin="5" TextAlignment="Center"/>
+            <TextBlock Name="UserNameTxt" Text="Пользователь" FontSize="15" Margin="5" TextAlignment="Center"/>
+        </StackPanel>
         <DataGrid Grid.Column="1" Grid.Row="1" Name="UnprocessedWaybillTbl" Background="Aqua" AutoGenerateColumns="False" 
                       CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
             <DataGrid.Resources>
@@ -29,17 +32,20 @@
         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button  Content="Загрузить накладные" Margin="10,10,10,10" Click="Button_Click"/>
         </StackPanel>
-        <Grid Grid.Column="2" Grid.Row="1" ShowGridLines="True">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+        <StackPanel Grid.Column="2" Grid.Row="1">
             <Button Grid.Row="0" Name="ShowMatchingWindowBtn" Margin="5" Click="ShowMatchingWindowBtn_Click">
                 <ContentControl>
                     <TextBlock Text="Сопоставление номенклатуры" TextWrapping="Wrap" FontSize="10"/>
+                </ContentControl>
+            </Button>
+            <Button Grid.Row="0" Name="ShowMatchingWarehouseBtn" Margin="5" Click="ShowMatchingWarehouseBtn_Click">
+                <ContentControl>
+                    <TextBlock Text="Сопоставление складов" TextWrapping="Wrap" FontSize="10"/>
+                </ContentControl>
+            </Button>
+            <Button Grid.Row="0" Name="ShowMatchingSupplierBtn" Margin="5" Click="ShowMatchingSupplierBtn_Click">
+                <ContentControl>
+                    <TextBlock Text="Сопоставление поставщиков" TextWrapping="Wrap" FontSize="10"/>
                 </ContentControl>
             </Button>
             <Button Grid.Row="4" Name="btn" Content="Настройки" Margin="5" Click="btn_Click"/>
@@ -48,6 +54,6 @@
                     <TextBlock Text="Обновить справочник" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </ContentControl>
             </Button>
-        </Grid>
+        </StackPanel>
     </Grid>
 </Window>

@@ -75,8 +75,6 @@
             result.ExWare = exWare;
 
             return result;
-
-
         }
 
         /// <summary>
@@ -120,5 +118,62 @@
             if(matchedWare.InnerWare == null)
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
         }
-    }
+
+		public static Warehouse AutomaticWHMatching(Warehouse warehouse)
+		{
+			if (warehouse == null || !string.IsNullOrWhiteSpace(warehouse.Code) || string.IsNullOrWhiteSpace(warehouse.GLN))
+				return warehouse;
+
+			var result = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.GLN);
+
+			if(string.IsNullOrWhiteSpace(result.Code))
+				return warehouse;
+
+			return result;
+		}
+
+		/// <summary>
+		/// Сопоставляет склад1 со складом2.
+		/// </summary>
+		/// <param name="warehouse1">Склад из базы (должен содержать код и наименование).</param>
+		/// <param name="warehouse2">Склад из накладной (должен содержать ГЛН).</param>
+		/// <returns>Сопоставленный склад.</returns>
+		public static Warehouse ManualWHMatching(Warehouse warehouse1, Warehouse warehouse2)
+		{
+			if (warehouse1 == null
+					|| warehouse2 == null
+					|| string.IsNullOrWhiteSpace(warehouse1.Code)
+					|| string.IsNullOrWhiteSpace(warehouse1.Name)
+					|| string.IsNullOrWhiteSpace(warehouse2.GLN))
+				return null;
+
+			Warehouse result = new Warehouse
+			{
+				Code = warehouse1.Code,
+				Name = warehouse1.Name,
+				GLN = warehouse2.GLN
+			};
+
+			if (!CoreInit.RepositoryService.UpdateWarehouseGLN(result.Code, result.GLN))
+			{
+				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
+			}
+			
+
+			return result;
+		}
+
+		public static Counteragent AutomaticSupMatching(Counteragent counteragent)
+		{
+			if (counteragent == null || !string.IsNullOrWhiteSpace(counteragent.Code) || string.IsNullOrWhiteSpace(counteragent.GLN))
+				return counteragent;
+
+			var result = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN, counteragent.GLN);
+
+			if (string.IsNullOrWhiteSpace(result.Code))
+				return counteragent;
+
+			return result;
+		}
+	}
 }

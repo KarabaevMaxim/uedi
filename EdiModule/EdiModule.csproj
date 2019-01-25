@@ -67,11 +67,17 @@
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\WarehouseReferenceWindow.xaml.cs">
+      <DependentUpon>WarehouseReferenceWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ProductReferenceWindow.xaml.cs">
       <DependentUpon>ProductReferenceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\WarehouseMatchingListWindow.xaml.cs">
+      <DependentUpon>WarehouseMatchingListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\WareMatchingListWindow.xaml.cs">
       <DependentUpon>WareMatchingListWindow.xaml</DependentUpon>
@@ -93,6 +99,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\WarehouseReferenceWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\ProductReferenceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,6 +110,10 @@
     <Page Include="Windows\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\WarehouseMatchingListWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\WareMatchingListWindow.xaml">
       <SubType>Designer</SubType>

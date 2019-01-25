@@ -10,12 +10,19 @@
         public ModuleRepository()
         {
             this.InitProductReference();
-        }
+			this.InitWarehouseReference();
+
+		}
 
         public void InitProductReference()
         {
             this.ProductReference = CoreInit.RepositoryService.GetAllWares();
         }
+
+		public void InitWarehouseReference()
+		{
+			this.WarehouseReference = CoreInit.RepositoryService.GetAllWarehouses();
+		}
 
         /// <summary>
         /// Добавить накладную в общий список.
@@ -49,6 +56,7 @@
         {
             this.AddWaybillToGeneralList(waybill);
             this.AddUnprocessedWaybill(this.GeneralWaybillList.Last());
+			this.AddWarehouse(waybill.Warehouse);
         }
 
         /// <summary>
@@ -82,10 +90,21 @@
             return this.UnprocessedWaybills;
         }
 
-        /// <summary>
-        /// Список необработанных накладных.
-        /// </summary>
-        private List<Waybill> UnprocessedWaybills { get; set; } = new List<Waybill>();
+		public List<Bridge1C.DomainEntities.Warehouse> GetWarehouses()
+		{
+			return this.Warehouses;
+		}
+
+		public void AddWarehouse(Bridge1C.DomainEntities.Warehouse warehouse)
+		{
+			if (!this.Warehouses.Contains(warehouse))
+				this.Warehouses.Add(warehouse);
+		}
+
+		/// <summary>
+		/// Список необработанных накладных.
+		/// </summary>
+		private List<Waybill> UnprocessedWaybills { get; set; } = new List<Waybill>();
 
         /// <summary>
         /// Список накладных за все время.
@@ -94,6 +113,19 @@
 
         private List<MatchedWare> MatchedWares { get; set; } = new List<MatchedWare>();
 
-        public List<Bridge1C.DomainEntities.Ware> ProductReference { get; private set; } = new List<Bridge1C.DomainEntities.Ware>();
+		/// <summary>
+		/// Список складов из небоработанных накладных.
+		/// </summary>
+		private List<Bridge1C.DomainEntities.Warehouse> Warehouses { get; set; } = new List<Bridge1C.DomainEntities.Warehouse>();
+
+		/// <summary>
+		/// Справочник складов из базы.
+		/// </summary>
+		public List<Bridge1C.DomainEntities.Warehouse> WarehouseReference { get; private set; } = new List<Bridge1C.DomainEntities.Warehouse>();
+
+		/// <summary>
+		/// Справочник товаров из базы.
+		/// </summary>
+		public List<Bridge1C.DomainEntities.Ware> ProductReference { get; private set; } = new List<Bridge1C.DomainEntities.Ware>();
     }
 }

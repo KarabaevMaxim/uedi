@@ -1,11 +1,11 @@
-﻿<Window x:Class="EdiModule.Windows.WareMatchingListWindow"
+﻿<Window x:Class="EdiModule.Windows.WarehouseMatchingListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdiModule.Windows"
         mc:Ignorable="d"
-        Title="Сопоставление номенклатуры" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
+        Title="Сопоставление складов" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35"/>
@@ -17,7 +17,7 @@
             <RowDefinition Height="325*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
-        <DataGrid Grid.Column="1" Grid.Row="1" Name="WaresTbl" IsReadOnly="True" AutoGenerateColumns="False" LoadingRow="WaresTbl_LoadingRow">
+        <DataGrid Grid.Column="1" Grid.Row="1" Name="WarehousesTbl" IsReadOnly="True" AutoGenerateColumns="False" LoadingRow="WarehousesTbl_LoadingRow">
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
@@ -27,7 +27,7 @@
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" FlowDirection="RightToLeft">
             <GroupBox Header="Создать номенклатуру для несоп-ных строк" BorderBrush="Black" Margin="6" FontSize="8">
                 <StackPanel  Orientation="Horizontal" FlowDirection ="LeftToRight">
-                    <Button Grid.Column="0" Name="AddAllWaresBtn" Content="Для всех строк" Margin="2 2 5 2" Click="AddAllWaresBtn_Click"/>
+                    <Button Grid.Column="0" Name="AddAllWarehousesBtn" Content="Для всех строк" Margin="2 2 5 2" Click="AddAllWarehousesBtn_Click"/>
                     <Button Grid.Column="1" Name="AddSelectedBtn" Content="Для выделенных строк" Margin="10 2 2 2" Click="AddSelectedBtn_Click"/>
                 </StackPanel>
             </GroupBox>

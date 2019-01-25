@@ -18,7 +18,6 @@
         public List<WaybillRow> Wares { get; set; }
         public string FileName { get; set; }
 
-
         public override bool Equals(object obj)
         {
 			try

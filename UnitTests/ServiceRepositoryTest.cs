@@ -1,15 +1,22 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace UnitTests
+﻿namespace UnitTests
 {
-    using Bridge1C;
+	using System;
+	using Microsoft.VisualStudio.TestTools.UnitTesting;
+	using Bridge1C;
     using Bridge1C.DomainEntities;
     using System.Collections.Generic;
+	using EdiModuleCore;
+
     [TestClass]
     public class ServiceRepositoryTest
     {
-        [TestMethod]
+		[TestInitialize]
+		public void TestInit()
+		{
+			CoreInit.Connect("Админ", "123", @"C:\Users\Максим\Documents\InfoBase7");
+		}
+
+		[TestMethod]
         public void AddNewWaybillTest()
         {
             RepositoryService repositoryService = new RepositoryService(@"C:\Users\Максим\Documents\InfoBase7", "", "");
@@ -54,12 +61,21 @@ namespace UnitTests
         }
 
 		[TestMethod]
-		public void GetGLNTest()
+		public void UpdateWHGLN()
 		{
-			RepositoryService repositoryService = new RepositoryService(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123");
-			Repository repository = new Repository(new Connector(@"C:\Users\Максим\Documents\InfoBase7", "Админ", "123"));
-			var warehouse = repository.GetWareHouse(Requisites.Name, "Склад 3");
-			var gln = repositoryService.GetGLN(warehouse);
+			var wh = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, "1234567890");
+
+			if (wh == null || string.IsNullOrWhiteSpace(wh.Code))
+				Assert.Fail("Склад с указанным ГЛН не найден.");
+
+			string newGLN = "0987654321";
+			var result = CoreInit.RepositoryService.UpdateWarehouseGLN(wh.Code, newGLN);
+
+			var wh2 = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, newGLN);
+
+			if (wh2 == null || string.IsNullOrWhiteSpace(wh2.Code))
+				Assert.Fail("У склада не изменился ГЛН.");
+
 		}
 	}
 }
