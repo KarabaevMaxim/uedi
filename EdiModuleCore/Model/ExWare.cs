@@ -7,10 +7,25 @@
     /// </summary>
     public class ExWare
     {
+		/// <summary>
+		/// Код товара поставщика.
+		/// </summary>
         public string Code { get; set; }
+		/// <summary>
+		/// Наименование товара поставщика.
+		/// </summary>
         public string Name { get; set; }
+		/// <summary>
+		/// Штрихкод товара поставщика.
+		/// </summary>
         public string Barcode { get; set; }
+		/// <summary>
+		/// Единица измерения.
+		/// </summary>
         public Unit Unit { get; set; }
+		/// <summary>
+		/// Поставщик.
+		/// </summary>
         public Counteragent Supplier { get; set; }
 
         public override bool Equals(object obj)

@@ -10,12 +10,33 @@
     /// </summary>
     public class Waybill
     {
+		/// <summary>
+		/// Номер накладной.
+		/// </summary>
         public string Number { get; set; }
+		/// <summary>
+		/// Дата накладной.
+		/// </summary>
         public DateTime Date { get; set; }
+		/// <summary>
+		/// Поставщик.
+		/// </summary>
         public MatchedCounteragent Supplier { get; set; }
+		/// <summary>
+		/// Организация.
+		/// </summary>
         public Organization Organization { get; set; }
+		/// <summary>
+		/// Склад.
+		/// </summary>
         public Warehouse Warehouse { get; set; }
+		/// <summary>
+		/// Строки товара.
+		/// </summary>
         public List<WaybillRow> Wares { get; set; }
+		/// <summary>
+		/// Имя файла.
+		/// </summary>
         public string FileName { get; set; }
 
         public override bool Equals(object obj)

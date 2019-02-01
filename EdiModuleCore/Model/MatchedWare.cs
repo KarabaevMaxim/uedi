@@ -2,9 +2,18 @@
 {
     using Bridge1C.DomainEntities;
 
+	/// <summary>
+	/// Сопоставленная сущность номенклатуры.
+	/// </summary>
     public class MatchedWare
     {
+		/// <summary>
+		/// Номенклатура из базы.
+		/// </summary>
         public Ware InnerWare { get; set; }
+		/// <summary>
+		/// Номенклатура из накладной.
+		/// </summary>
         public ExWare ExWare { get; set; }
 
         public override bool Equals(object obj)

@@ -1,7 +1,13 @@
 ﻿namespace EdiModuleCore.Model
 {
+	/// <summary>
+	/// Внешняя сущность склада.
+	/// </summary>
 	public class ExWarehouse
 	{
-		string GLN { get; set; }
+		/// <summary>
+		/// ГЛН склада из накладной.
+		/// </summary>
+		public string GLN { get; set; }
 	}
 }

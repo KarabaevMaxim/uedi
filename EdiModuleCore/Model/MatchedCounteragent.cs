@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EdiModuleCore.Model
+﻿namespace EdiModuleCore.Model
 {
-    using Bridge1C.DomainEntities;
+	using System;
+	using Bridge1C.DomainEntities;
 
+	/// <summary>
+	/// Сопоставленная сущность контрагента.
+	/// </summary>
     public class MatchedCounteragent
     {
+		/// <summary>
+		/// Контрагент из базы данных.
+		/// </summary>
         public Counteragent InnerCounteragent { get; set; }
+		/// <summary>
+		/// Контрагент из накладной.
+		/// </summary>
         public ExCounteragent ExCounteragent { get; set; }
 
 		public override string ToString()

@@ -67,7 +67,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
-    <Compile Include="WareManager.cs" />
     <Compile Include="XEntities\Header.cs" />
     <Compile Include="XEntities\WarePosition.cs" />
     <Compile Include="XEntities\Waybill.cs" />

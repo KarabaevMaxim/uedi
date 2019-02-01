@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EdiModuleCore.Model
+﻿namespace EdiModuleCore.Model
 {
-	class MatchedWarehouse
+	using Bridge1C.DomainEntities;
+
+	/// <summary>
+	/// Сопоставленная сущность склада.
+	/// </summary>
+	public class MatchedWarehouse
 	{
+		/// <summary>
+		/// Склад из базы.
+		/// </summary>
+		public Warehouse InnerWarehouse { get; set; }
+		/// <summary>
+		/// Склад из накладной.
+		/// </summary>
+		public ExWarehouse ExWarehouse { get; set; }
 	}
 }
