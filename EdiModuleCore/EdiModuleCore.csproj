@@ -54,9 +54,12 @@
     <Compile Include="Exceptions\NotInitializedException.cs" />
     <Compile Include="FileService.cs" />
     <Compile Include="CoreInit.cs" />
+    <Compile Include="Model\ExCounteragent.cs" />
     <Compile Include="Model\ExWare.cs" />
     <Compile Include="Model\ExWarehouse.cs" />
+    <Compile Include="Model\MatchedCounteragent.cs" />
     <Compile Include="Model\MatchedWare.cs" />
+    <Compile Include="Model\MatchedWarehouse.cs" />
     <Compile Include="Model\Waybill.cs" />
     <Compile Include="Model\WaybillRow.cs" />
     <Compile Include="ModuleRepository.cs" />

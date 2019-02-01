@@ -1,11 +1,13 @@
 ﻿namespace UnitTests
 {
 	using System;
+	using System.Threading.Tasks;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using Bridge1C;
     using Bridge1C.DomainEntities;
     using System.Collections.Generic;
 	using EdiModuleCore;
+	using System.Linq;
 
     [TestClass]
     public class ServiceRepositoryTest
@@ -13,7 +15,7 @@
 		[TestInitialize]
 		public void TestInit()
 		{
-			CoreInit.Connect("Админ", "123", @"C:\Users\Максим\Documents\InfoBase7");
+			CoreInit.Connect("Админ", "123", @"C:\Базы данных\1С\Розница для тестов ЕДИ модуля");
 		}
 
 		[TestMethod]
@@ -75,6 +77,21 @@
 
 			if (wh2 == null || string.IsNullOrWhiteSpace(wh2.Code))
 				Assert.Fail("У склада не изменился ГЛН.");
+
+		}
+
+		[TestMethod]
+		public async Task GetAllCounteragentsTest()
+		{
+			var list = await CoreInit.RepositoryService.GetAllCounteragentsAsync();
+			Assert.IsTrue(list.Any());
+		}
+
+		[TestMethod]
+		public async Task RematchingCounteragentAsyncTest()
+		{
+			Counteragent counter = new Counteragent { Code = "00001", Name = "Поликон", FullName = "ООО Поликон" };
+			var list = await CoreInit.RepositoryService.RematchingCounteragentAsync(counter, "12345");
 
 		}
 	}

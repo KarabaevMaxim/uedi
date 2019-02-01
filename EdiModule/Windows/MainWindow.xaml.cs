@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -20,13 +19,15 @@
             InitializeComponent();
             this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
-            this.bindings.Add("Поставщик", "Supplier.Name");
+            this.bindings.Add("Поставщик", "Supplier.InnerCounteragent.Name");
             this.bindings.Add("Склад", "Warehouse.Name");
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.UpdateTablePart();
+			this.GetSession();
+			this.DownloadDocuments();
+			this.UpdateTablePart();
 			UserNameTxt.Text = SessionManager.Sessions[0].UserName;
 		}
 
@@ -43,19 +44,37 @@
                 this.UnprocessedWaybillTbl.Items.Add(item);
         }
 
-        public void UpdateTablePart()
+		private void GetSession()
+		{
+			 this.CurrentSession = SessionManager.Sessions[0];
+		}
+
+		private void DownloadDocuments()
+		{
+			FtpService.DownloadDocuments(this.CurrentSession.FtpURI,
+				this.CurrentSession.FtpPassive, 
+				this.CurrentSession.FtpTimeout, 
+				this.CurrentSession.FtpLogin,
+				this.CurrentSession.FtpPassword,
+				this.CurrentSession.FtpRemoteFolder,
+				this.CurrentSession.WorkFolder);
+			DocumentManager.DownloadWaybills(this.CurrentSession.WorkFolder);
+		}
+
+		public void UpdateTablePart()
         {
-			Session session = SessionManager.Sessions[0];
-			FtpService.DownloadDocuments(session.FtpURI, session.FtpPassive, session.FtpTimeout, session.FtpLogin, session.FtpPassword, session.FtpRemoteFolder, session.WorkFolder);
-            DocumentManager.DownloadWaybills(session.WorkFolder);
             this.UpdateUnprocessedWaybillTbl(CoreInit.ModuleRepository.GetUnprocessedWaybills());
         }
 
+		/// <summary>
+		/// Загрузить накладные.
+		/// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                this.UpdateTablePart();
+				this.DownloadDocuments();
+				this.UpdateTablePart();
             }
             catch(Exception ex)
             {
@@ -108,12 +127,16 @@
 			WarehouseMatchingListWindow window = new WarehouseMatchingListWindow();
 			window.ShowDialog();
 		}
-
-		private Dictionary<string, string> bindings = new Dictionary<string, string>();
-
 		private void ShowMatchingSupplierBtn_Click(object sender, RoutedEventArgs e)
 		{
-
+			SupplierMatchingListWindow window = new SupplierMatchingListWindow();
+			window.ParentWindow = this;
+			window.ShowDialog();
 		}
+
+		private Dictionary<string, string> bindings = new Dictionary<string, string>();
+		private Session CurrentSession { get; set; }
+
+
 	}
 }

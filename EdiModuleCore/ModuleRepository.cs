@@ -4,15 +4,16 @@
     using System.Linq;
     using System.Collections.Generic;
     using Model;
+	using System.Threading.Tasks;
 
     public class ModuleRepository
     {
-        public ModuleRepository()
+		public ModuleRepository()
         {
             this.InitProductReference();
 			this.InitWarehouseReference();
-
-		}
+            this.InitCounteragentReference();
+        }
 
         public void InitProductReference()
         {
@@ -23,6 +24,11 @@
 		{
 			this.WarehouseReference = CoreInit.RepositoryService.GetAllWarehouses();
 		}
+
+        public async void InitCounteragentReference()
+        {
+            this.CounteragentReference = await CoreInit.RepositoryService.GetAllCounteragentsAsync();
+        }
 
         /// <summary>
         /// Добавить накладную в общий список.
@@ -57,6 +63,7 @@
             this.AddWaybillToGeneralList(waybill);
             this.AddUnprocessedWaybill(this.GeneralWaybillList.Last());
 			this.AddWarehouse(waybill.Warehouse);
+			this.AddCounteragent(waybill.Supplier);
         }
 
         /// <summary>
@@ -101,6 +108,17 @@
 				this.Warehouses.Add(warehouse);
 		}
 
+		public List<MatchedCounteragent> GetCounteragents()
+		{
+			return this.Counteragents;
+		}
+
+		public void AddCounteragent(MatchedCounteragent counteragent)
+		{
+			if (!this.Counteragents.Contains(counteragent))
+				this.Counteragents.Add(counteragent);
+		}
+
 		/// <summary>
 		/// Список необработанных накладных.
 		/// </summary>
@@ -124,8 +142,18 @@
 		public List<Bridge1C.DomainEntities.Warehouse> WarehouseReference { get; private set; } = new List<Bridge1C.DomainEntities.Warehouse>();
 
 		/// <summary>
-		/// Справочник товаров из базы.
+		/// Список контрагентов из необработанных накладных.
 		/// </summary>
-		public List<Bridge1C.DomainEntities.Ware> ProductReference { get; private set; } = new List<Bridge1C.DomainEntities.Ware>();
+		private List<MatchedCounteragent> Counteragents { get; set; } = new List<MatchedCounteragent>();
+
+		/// <summary>
+		/// Справочник контрагентов из базы.
+		/// </summary>
+		public List<Bridge1C.DomainEntities.Counteragent> CounteragentReference { get; private set; } = new List<Bridge1C.DomainEntities.Counteragent>();
+
+        /// <summary>
+        /// Справочник товаров из базы.
+        /// </summary>
+        public List<Bridge1C.DomainEntities.Ware> ProductReference { get; private set; } = new List<Bridge1C.DomainEntities.Ware>();
     }
 }

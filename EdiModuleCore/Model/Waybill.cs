@@ -12,7 +12,7 @@
     {
         public string Number { get; set; }
         public DateTime Date { get; set; }
-        public Counteragent Supplier { get; set; }
+        public MatchedCounteragent Supplier { get; set; }
         public Organization Organization { get; set; }
         public Warehouse Warehouse { get; set; }
         public List<WaybillRow> Wares { get; set; }

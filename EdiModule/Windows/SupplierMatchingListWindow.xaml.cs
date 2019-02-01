@@ -1,5 +1,4 @@
-﻿
-namespace EdiModule.Windows
+﻿namespace EdiModule.Windows
 {
 	using System.Collections.Generic;
 	using System.Windows;
@@ -12,17 +11,18 @@ namespace EdiModule.Windows
     /// <summary>
     /// Логика взаимодействия для WareMatchingListWindow.xaml
     /// </summary>
-    public partial class WarehouseMatchingListWindow : Window, ITableWindow, IDependentWindow
+    public partial class SupplierMatchingListWindow : Window, ITableWindow, IDependentWindow
     {
-        public WarehouseMatchingListWindow()
+        public SupplierMatchingListWindow()
         {
             InitializeComponent();
 
             this.bindings = new Dictionary<string, string>
             {
-                { "Внут. код", "Code" },
-                { "Название", "Name" },
-                { "ГЛН", "GLN" }
+                { "Внут. код", "InnerCounteragent.Code" },
+                { "Наименование", "InnerCounteragent.Name" },
+				{ "Полн. наименование", "InnerCounteragent.FullName" },
+				{ "ГЛН", "ExCounteragent.GLN" }
             };
         }
 
@@ -33,21 +33,21 @@ namespace EdiModule.Windows
 
         public void UpdateTablePart()
         {
-            this.WarehousesTbl.Columns.Clear();
+            this.SuppliersTbl.Columns.Clear();
 
             foreach (var item in this.bindings)
-                this.WarehousesTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
+                this.SuppliersTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
 
-            this.WarehousesTbl.ItemsSource = CoreInit.ModuleRepository.GetWarehouses();
-        }
+            this.SuppliersTbl.ItemsSource = CoreInit.ModuleRepository.GetCounteragents();
+		}
 
         /// <summary>
         /// Автонумерация строк таблицы.
         /// </summary>
-        private void WarehousesTbl_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
-        }
+		private void SuppliersTbl_LoadingRow(object sender, DataGridRowEventArgs e)
+		{
+			e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+		}
 
         /// <summary>
         /// Нажание на кнопку "Создать для всех строк".
@@ -78,19 +78,24 @@ namespace EdiModule.Windows
         {
             if (sender is DataGridRow row)
             {
-                if (row.DataContext is Bridge1C.DomainEntities.Warehouse warehouse)
+                if (row.DataContext is MatchedCounteragent counteragent)
                 {
-                   WarehouseReferenceWindow prodWindow = new WarehouseReferenceWindow
-				   {
-						CurrentWarehouse = warehouse,
-                        ParentWindow = this
-                    };
-                    prodWindow.ShowDialog();
-                }
-            }
+					SupplierReferenceWindow prodWindow = new SupplierReferenceWindow
+					{
+						CurrentCounteragent = counteragent,
+						ParentWindow = this
+					};
+					prodWindow.ShowDialog();
+				}
+			}
         }
 
-        private Dictionary<string, string> bindings;
+		private void Window_Closed(object sender, System.EventArgs e)
+		{
+			this.ParentWindow.UpdateTablePart();
+		}
+
+		private Dictionary<string, string> bindings;
 		public ITableWindow ParentWindow { get; set; }
 	}
 }

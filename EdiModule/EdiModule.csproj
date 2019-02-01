@@ -63,9 +63,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Windows\IDependentWindow.cs" />
     <Compile Include="Windows\ITableWindow.cs" />
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SupplierMatchingListWindow.xaml.cs">
+      <DependentUpon>SupplierMatchingListWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SupplierReferenceWindow.xaml.cs">
+      <DependentUpon>SupplierReferenceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\WarehouseReferenceWindow.xaml.cs">
       <DependentUpon>WarehouseReferenceWindow.xaml</DependentUpon>
@@ -98,6 +105,14 @@
     <Page Include="Windows\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SupplierMatchingListWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\SupplierReferenceWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\WarehouseReferenceWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

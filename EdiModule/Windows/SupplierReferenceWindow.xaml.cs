@@ -13,19 +13,17 @@
     /// <summary>
     /// Логика взаимодействия для ProductReference.xaml
     /// </summary>
-    public partial class WarehouseReferenceWindow : Window
+    public partial class SupplierReferenceWindow : Window, IDependentWindow
     {
-        public WarehouseReferenceWindow()
+        public SupplierReferenceWindow()
         {
             InitializeComponent();
             bindings = new Dictionary<string, string>
             {
 				{ "Код", "Code" },
-				{ "Название", "Name" },
-				{ "ГЛН", "GLN" }
+				{ "Наименование", "Name" },
+				{ "Полн. наименование", "FullName" }
 			};
-
-           // this.Warehouses = CoreInit.ModuleRepository.GetWarehouses();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -35,7 +33,7 @@
 
         private void UpdateTablePart()
         {
-            if (this.ParentWindow == null || this.CurrentWarehouse == null)
+            if (this.ParentWindow == null || this.CurrentCounteragent == null)
                 throw new NotInitializedException("Один из параметров формы выбора номенклатуры для сопоставления не инициализирован.");
 
             this.WarehousesTbl.Columns.Clear();
@@ -43,24 +41,23 @@
             foreach (var item in this.bindings)
                 this.WarehousesTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
 
-            //this.WarehousesTbl.Items.Clear();
-            this.WarehousesTbl.ItemsSource = CoreInit.ModuleRepository.WarehouseReference;
+            this.WarehousesTbl.ItemsSource = CoreInit.ModuleRepository.CounteragentReference;
         }
 
-        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is DataGridRow row)
             {
-                if (row.DataContext is Warehouse warehouse)
+                if (row.DataContext is Counteragent innerCountergent)
                 {
                     try
                     {
-					    if(!MatchingModule.ManualWHMatching(warehouse, this.CurrentWarehouse))
-                            MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить склад.");
+						if(!(await MatchingModule.ManualSupMatchingAsync(this.CurrentCounteragent, innerCountergent)))
+							MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить поставщика.");
                     }
                     catch(NotMatchedException ex)
                     {
-                        MessageBox.Show(ex.Message, "Не удалось сопоставить склад.");
+                        MessageBox.Show(ex.Message, "Не удалось сопоставить поставщика.");
                     }
                 }
             }
@@ -71,7 +68,7 @@
         }
 
         public ITableWindow ParentWindow { get; set; }
-		public Warehouse CurrentWarehouse { get; set; }
+		public MatchedCounteragent CurrentCounteragent { get; set; }
         private Dictionary<string, string> bindings;
     }
 }

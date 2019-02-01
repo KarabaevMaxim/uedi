@@ -87,17 +87,65 @@
             result.Code = counteragent.Код;
             result.Name = counteragent.Наименование;
             result.FullName = counteragent.НаименованиеПолное;
-            result.GLN = counteragent.ГЛН;
+          //  result.GLN = counteragent.ГЛН;
             return result;
         }
 
-        /// <summary>
-        /// Получить единицу измерения.
-        /// </summary>
-        /// <param name="prop">Свойство, по которому будет осуществлен поиск.</param>
-        /// <param name="propValue">Значение свойства для поиска.</param>
-        /// <returns>ЕИ.</returns>
-        public Unit GetUnit(Requisites prop, string propValue)
+        public async Task<List<Counteragent>> GetAllCounteragentsAsync()
+        {
+            List<Counteragent> result = new List<Counteragent>();
+			var list = await Task.Run(() => this.Repository.GetAllCounteragents());
+
+            foreach (var item in list)
+            {
+                Counteragent counteragent = new Counteragent
+                {
+                    Code = item.Код,
+                    Name = item.Наименование,
+                    FullName = item.НаименованиеПолное,
+              //      GLN = item.ГЛН
+                };
+                result.Add(counteragent);
+            }
+
+            return result;
+        }
+
+		/// <summary>
+		/// Инициализирует поле ГЛН контрагента counteagent значением gln, если в базе есть контрагент с ГЛН gln 
+		/// </summary>
+		/// <param name="counteragent">Контрагент для инициализации.</param>
+		/// <param name="gln">ГЛН.</param>
+		public async Task<bool> RematchingCounteragentAsync(Counteragent counteragent, string gln)
+		{
+			if (counteragent == null || string.IsNullOrWhiteSpace(gln))
+				return false;
+
+			bool result = await Task.Run(() => this.RematchingCounteragent(counteragent, gln));
+			return result;
+		}
+
+		/// <summary>
+		/// Инициализирует поле ГЛН контрагента counteagent значением gln, если в базе есть контрагент с ГЛН gln 
+		/// </summary>
+		/// <param name="counteragent">Контрагент для инициализации.</param>
+		/// <param name="gln">ГЛН.</param>
+		public bool RematchingCounteragent(Counteragent counteragent, string gln)
+		{
+			if (counteragent == null || string.IsNullOrWhiteSpace(gln))
+				return false;
+
+			return this.Repository.RematchingCounteragent(counteragent.Code, gln);
+		}
+
+
+		/// <summary>
+		/// Получить единицу измерения.
+		/// </summary>
+		/// <param name="prop">Свойство, по которому будет осуществлен поиск.</param>
+		/// <param name="propValue">Значение свойства для поиска.</param>
+		/// <returns>ЕИ.</returns>
+		public Unit GetUnit(Requisites prop, string propValue)
         {
             Unit result = new Unit();
             var unit = this.Repository.GetUnit(prop, propValue);
@@ -145,7 +193,6 @@
 		{
 			return this.Repository.UpdateWarehouseGLN(warehouseCode, gln);
 		}
-
 
 		public Shop GetShop(string warehouseCode)
         {
@@ -247,5 +294,6 @@
         }
 
         private Repository Repository { get; set; }
+
     }
 }

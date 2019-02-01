@@ -13,9 +13,9 @@ namespace UnitTests
 			IEntryPoint ediModuleEntryPoint = new EdiModuleEntryPoint();
 			ediModuleEntryPoint.ConnectToFileBase("Админ", 
 				"123",
-				@"C:\Users\Максим\Documents\InfoBase7",
-				@"C:\Темп\Поликон накладные EDI\Визит",
-				@"C:\Темп\Поликон накладные EDI\Архив",
+                @"C:\Базы данных\1С\Розница для тестов ЕДИ модуля",
+                @"C:\Базы данных\1С\Розница для тестов ЕДИ модуля\Рабочая папка",
+                @"C:\Базы данных\1С\Розница для тестов ЕДИ модуля\Архивная папка",
 				"ftp://192.168.5.5",
 				false,
 				10,

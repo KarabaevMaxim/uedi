@@ -47,7 +47,7 @@
             this.UpdateTablePart();
             this.WaybillNumberLbl.Text = this.Waybill.Number;
             this.WaybillDateLbl.Text = this.Waybill.Date.ToString("dd.MM.yyyy");
-            this.SupplierNameLbl.Text = this.Waybill.Supplier?.Name;
+            this.SupplierNameLbl.Text = this.Waybill.Supplier?.InnerCounteragent?.Name;
             this.OrganizationLbl.Text = this.Waybill.Organization?.Name;
             this.TradeObjectLbl.Text = this.Waybill.Warehouse?.Name;
         }

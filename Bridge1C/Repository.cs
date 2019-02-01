@@ -1,6 +1,7 @@
 ﻿namespace Bridge1C
 {
     using System;
+	using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -49,7 +50,74 @@
             }
         }
 
-        public dynamic GetWareHouse(Requisites propertyName, string propertyValue)
+        /// <summary>
+        /// Получить справочник контрагентов.
+        /// </summary>
+        public List<dynamic> GetAllCounteragents()
+        {
+            try
+            {
+                List<dynamic> result = new List<dynamic>();
+                dynamic выборка = this.Connector.Connection.Справочники.Контрагенты.Выбрать();
+
+                while (выборка.Следующий())
+                {
+                    if (!выборка.ЭтоГруппа)
+                    {
+                        result.Add(выборка.Ссылка);
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+		/// <summary>
+		/// Инициализирует значением gln поле ГЛН контрагента с кодом counteragentCode, если перед этим в базе найден контрагент с 
+		/// ГЛН gln, после будет переинициализировано пустой строкой.
+		/// </summary>
+		/// <param name="counteragentCode">Код контрагента для переициализации.</param>
+		/// <param name="gln">ГНЛ.</param>
+		/// <returns>true, если операция завершена успешно, иначе false.</returns>
+		public bool RematchingCounteragent(string counteragentCode, string gln)
+		{
+			if (string.IsNullOrWhiteSpace(counteragentCode) || string.IsNullOrWhiteSpace(gln))
+				return false;
+
+			try
+			{
+				dynamic oldCounteragent = this.GetCounteragent(Requisites.GLN, gln);
+
+				if (oldCounteragent != null && !string.IsNullOrWhiteSpace(oldCounteragent.Код))
+				{
+					dynamic oldCounteragentObj = oldCounteragent.ПолучитьОбъект();
+					oldCounteragentObj.ГЛН = string.Empty;
+					oldCounteragentObj.Записать();
+				}
+					
+
+				dynamic newCounteragent = this.GetCounteragent(Requisites.Code, counteragentCode);
+
+				if (newCounteragent == null || string.IsNullOrWhiteSpace(newCounteragent.Код))
+					return false;
+
+				dynamic newCounteragentObj = newCounteragent.ПолучитьОбъект();
+				newCounteragentObj.ГЛН = gln;
+				newCounteragentObj.Записать();
+
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public dynamic GetWareHouse(Requisites propertyName, string propertyValue)
         {
             try
             {

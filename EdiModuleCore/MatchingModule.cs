@@ -1,6 +1,8 @@
 ﻿namespace EdiModuleCore
 {
     using System.Collections.Generic;
+	using System.Threading.Tasks;
+
     using Bridge1C;
     using Bridge1C.DomainEntities;
     using Model;
@@ -137,43 +139,72 @@
 		/// </summary>
 		/// <param name="warehouse1">Склад из базы (должен содержать код и наименование).</param>
 		/// <param name="warehouse2">Склад из накладной (должен содержать ГЛН).</param>
-		/// <returns>Сопоставленный склад.</returns>
-		public static Warehouse ManualWHMatching(Warehouse warehouse1, Warehouse warehouse2)
+		public static bool ManualWHMatching(Warehouse warehouse1, Warehouse warehouse2)
 		{
 			if (warehouse1 == null
 					|| warehouse2 == null
 					|| string.IsNullOrWhiteSpace(warehouse1.Code)
 					|| string.IsNullOrWhiteSpace(warehouse1.Name)
 					|| string.IsNullOrWhiteSpace(warehouse2.GLN))
+				return false;
+
+            warehouse1.GLN = warehouse2.GLN;
+            warehouse2.Code = warehouse1.Code;
+            warehouse2.Name = warehouse1.Name;
+
+            //Warehouse result = new Warehouse
+            //{
+            //    Code = warehouse1.Code,
+            //    Name = warehouse1.Name,
+            //    GLN = warehouse2.GLN
+            //};
+
+            if (!CoreInit.RepositoryService.UpdateWarehouseGLN(warehouse2.Code, warehouse2.GLN))
+				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
+
+            	//return result;
+            return true;
+        }
+
+		public static MatchedCounteragent AutomaticSupMatching(ExCounteragent counteragent)
+		{
+			if (counteragent == null || string.IsNullOrWhiteSpace(counteragent.GLN))
 				return null;
 
-			Warehouse result = new Warehouse
+			MatchedCounteragent result = new MatchedCounteragent
 			{
-				Code = warehouse1.Code,
-				Name = warehouse1.Name,
-				GLN = warehouse2.GLN
+				ExCounteragent = counteragent,
+				InnerCounteragent = null
 			};
 
-			if (!CoreInit.RepositoryService.UpdateWarehouseGLN(result.Code, result.GLN))
-			{
-				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
-			}
-			
+			var innerCount = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN, counteragent.GLN);
+
+			if (innerCount == null || string.IsNullOrWhiteSpace(innerCount.Code))
+				return result;
+
+			result.InnerCounteragent = innerCount;
 
 			return result;
 		}
 
-		public static Counteragent AutomaticSupMatching(Counteragent counteragent)
+		public static async Task<bool> ManualSupMatchingAsync(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
 		{
-			if (counteragent == null || !string.IsNullOrWhiteSpace(counteragent.Code) || string.IsNullOrWhiteSpace(counteragent.GLN))
-				return counteragent;
+			if (matchedCounteragent == null || counteragent == null)
+				return false;
 
-			var result = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN, counteragent.GLN);
+			matchedCounteragent.InnerCounteragent = counteragent;
 
-			if (string.IsNullOrWhiteSpace(result.Code))
-				return counteragent;
+			return await CoreInit.RepositoryService.RematchingCounteragentAsync(counteragent, matchedCounteragent.ExCounteragent.GLN);
+		}
 
-			return result;
+		public static bool ManualSupMatching(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
+		{
+			if (matchedCounteragent == null || counteragent == null)
+				return false;
+
+			matchedCounteragent.InnerCounteragent = counteragent;
+
+			return CoreInit.RepositoryService.RematchingCounteragent(counteragent, matchedCounteragent.ExCounteragent.GLN);
 		}
 	}
 }

@@ -68,7 +68,7 @@
         private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
         {
 			var warehouse = MatchingModule.AutomaticWHMatching(new Bridge1C.DomainEntities.Warehouse { GLN = xWaybill.Header.SupplierGln });
-			var supplier = MatchingModule.AutomaticSupMatching(new Bridge1C.DomainEntities.Counteragent { GLN = xWaybill.Header.SupplierGln });
+			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 
 			Model.Waybill result = new Model.Waybill
             {
@@ -89,7 +89,7 @@
                 row.Count = item.Quantity;
                 ExWare exWare = new ExWare
                 {
-                    Supplier = result.Supplier,
+                    Supplier = result.Supplier?.InnerCounteragent,
                     Barcode = item.Barcode,
                     Code = item.WareSupplierCode,
                     Name = item.WareName,
@@ -141,7 +141,7 @@
                 Bridge1C.DomainEntities.Waybill domainWaybill = new Bridge1C.DomainEntities.Waybill();
                 domainWaybill.Number = waybill.Number;
                 domainWaybill.Date = waybill.Date;
-                domainWaybill.Supplier = waybill.Supplier;
+                domainWaybill.Supplier = waybill.Supplier?.InnerCounteragent;
                 domainWaybill.Warehouse = waybill.Warehouse;
                 domainWaybill.Organization = waybill.Organization;
                 domainWaybill.Positions = new List<Bridge1C.DomainEntities.WaybillRow>();
