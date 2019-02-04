@@ -47,7 +47,7 @@
             this.WarehousesTbl.ItemsSource = CoreInit.ModuleRepository.WarehouseReference;
         }
 
-        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is DataGridRow row)
             {
@@ -55,7 +55,7 @@
                 {
                     try
                     {
-					    if(!MatchingModule.ManualWHMatching(warehouse, this.CurrentWarehouse))
+					    if(!(await MatchingModule.ManualWHMatchingAsync(CurrentWarehouse, warehouse)))
                             MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить склад.");
                     }
                     catch(NotMatchedException ex)
@@ -71,7 +71,7 @@
         }
 
         public ITableWindow ParentWindow { get; set; }
-		public Warehouse CurrentWarehouse { get; set; }
+		public MatchedWarehouse CurrentWarehouse { get; set; }
         private Dictionary<string, string> bindings;
     }
 }

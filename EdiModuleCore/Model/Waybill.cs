@@ -29,7 +29,7 @@
 		/// <summary>
 		/// Склад.
 		/// </summary>
-        public Warehouse Warehouse { get; set; }
+        public MatchedWarehouse Warehouse { get; set; }
 		/// <summary>
 		/// Строки товара.
 		/// </summary>

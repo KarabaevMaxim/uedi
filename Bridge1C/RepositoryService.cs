@@ -189,7 +189,7 @@
 			return result;
 		}
 
-		public bool UpdateWarehouseGLN(string warehouseCode, string gln)
+		public bool RematchingWarehouse(string warehouseCode, string gln)
 		{
 			return this.Repository.UpdateWarehouseGLN(warehouseCode, gln);
 		}

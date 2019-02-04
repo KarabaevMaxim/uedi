@@ -58,20 +58,26 @@
         /// <summary>
         /// Добавить новую накладную.
         /// </summary>
-        public void AddWaybill(Waybill waybill)
+        public bool AddWaybill(Waybill waybill)
         {
             this.AddWaybillToGeneralList(waybill);
             this.AddUnprocessedWaybill(this.GeneralWaybillList.Last());
 			this.AddWarehouse(waybill.Warehouse);
 			this.AddCounteragent(waybill.Supplier);
+			return true;
         }
 
-        /// <summary>
-        /// Удалить накладную из списка необработанных накладных.
-        /// </summary>
-        /// <param name="waybill"></param>
-        /// <returns></returns>
-        public bool RemoveUnprocessedWaybill(Waybill waybill)
+		public async Task<bool> AddWaybillAsync(Waybill waybill)
+		{
+			return await Task.Run(() => this.AddWaybill(waybill));
+		}
+
+		/// <summary>
+		/// Удалить накладную из списка необработанных накладных.
+		/// </summary>
+		/// <param name="waybill"></param>
+		/// <returns></returns>
+		public bool RemoveUnprocessedWaybill(Waybill waybill)
         {
             return this.UnprocessedWaybills.Remove(waybill);
         }
@@ -97,12 +103,12 @@
             return this.UnprocessedWaybills;
         }
 
-		public List<Bridge1C.DomainEntities.Warehouse> GetWarehouses()
+		public List<MatchedWarehouse> GetWarehouses()
 		{
 			return this.Warehouses;
 		}
 
-		public void AddWarehouse(Bridge1C.DomainEntities.Warehouse warehouse)
+		public void AddWarehouse(MatchedWarehouse warehouse)
 		{
 			if (!this.Warehouses.Contains(warehouse))
 				this.Warehouses.Add(warehouse);
@@ -134,7 +140,7 @@
 		/// <summary>
 		/// Список складов из небоработанных накладных.
 		/// </summary>
-		private List<Bridge1C.DomainEntities.Warehouse> Warehouses { get; set; } = new List<Bridge1C.DomainEntities.Warehouse>();
+		private List<MatchedWarehouse> Warehouses { get; set; } = new List<MatchedWarehouse>();
 
 		/// <summary>
 		/// Справочник складов из базы.

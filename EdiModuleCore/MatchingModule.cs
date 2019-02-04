@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
 	using System.Threading.Tasks;
-
     using Bridge1C;
     using Bridge1C.DomainEntities;
     using Model;
@@ -121,50 +120,63 @@
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
         }
 
-		public static Warehouse AutomaticWHMatching(Warehouse warehouse)
+		/// <summary>
+		/// Автоматическое сопоставление складов по ГЛН.
+		/// </summary>
+		/// <param name="warehouse">Склад, который нужно сопоставить.</param>
+		/// <returns>Объект сопоставленного склада.</returns>
+		public static MatchedWarehouse AutomaticWHMatching(ExWarehouse warehouse)
 		{
-			if (warehouse == null || !string.IsNullOrWhiteSpace(warehouse.Code) || string.IsNullOrWhiteSpace(warehouse.GLN))
-				return warehouse;
+			if (warehouse == null || string.IsNullOrWhiteSpace(warehouse.GLN))
+				return null;
 
-			var result = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.GLN);
+			
+			var cache = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.GLN);
 
-			if(string.IsNullOrWhiteSpace(result.Code))
-				return warehouse;
+			if(string.IsNullOrWhiteSpace(cache.Code))
+				return null;
 
+			MatchedWarehouse result = new MatchedWarehouse { ExWarehouse = warehouse, InnerWarehouse = cache };
 			return result;
 		}
 
 		/// <summary>
-		/// Сопоставляет склад1 со складом2.
+		/// Асинхронная версия автоматического сопоставления складов по ГЛН.
 		/// </summary>
-		/// <param name="warehouse1">Склад из базы (должен содержать код и наименование).</param>
-		/// <param name="warehouse2">Склад из накладной (должен содержать ГЛН).</param>
-		public static bool ManualWHMatching(Warehouse warehouse1, Warehouse warehouse2)
+		/// <param name="warehouse">Склад, который нужно сопоставить.</param>
+		/// <returns>Объект сопоставленного склада.</returns>
+		public async static Task<MatchedWarehouse> AutomaticWHMatchingAsync(ExWarehouse warehouse)
 		{
-			if (warehouse1 == null
-					|| warehouse2 == null
-					|| string.IsNullOrWhiteSpace(warehouse1.Code)
-					|| string.IsNullOrWhiteSpace(warehouse1.Name)
-					|| string.IsNullOrWhiteSpace(warehouse2.GLN))
+			return await Task.Run(() => AutomaticWHMatching(warehouse));
+		}
+
+		/// <summary>
+		/// Выполняет сопоставление склада matchedWarehouse с warehouse.
+		/// </summary>
+		/// <param name="matchedWarehouse">Объект сопоставленного склада, с инициализированным объектом внешнего склада.</param>
+		/// <param name="warehouse">Объекта склада из базы данных.</param>
+		public static bool ManualWHMatching(MatchedWarehouse matchedWarehouse, Warehouse warehouse)
+		{
+			if (matchedWarehouse == null || warehouse == null)
 				return false;
 
-            warehouse1.GLN = warehouse2.GLN;
-            warehouse2.Code = warehouse1.Code;
-            warehouse2.Name = warehouse1.Name;
-
-            //Warehouse result = new Warehouse
-            //{
-            //    Code = warehouse1.Code,
-            //    Name = warehouse1.Name,
-            //    GLN = warehouse2.GLN
-            //};
-
-            if (!CoreInit.RepositoryService.UpdateWarehouseGLN(warehouse2.Code, warehouse2.GLN))
+			if(!CoreInit.RepositoryService.RematchingWarehouse(warehouse.Code, matchedWarehouse.ExWarehouse.GLN))
 				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
 
-            	//return result;
-            return true;
+			matchedWarehouse.InnerWarehouse = warehouse;
+
+			return true;
         }
+
+		/// <summary>
+		/// Асинхронно выполняет сопоставление склада matchedWarehouse с warehouse.
+		/// </summary>
+		/// <param name="matchedWarehouse">Объект сопоставленного склада, с инициализированным объектом внешнего склада.</param>
+		/// <param name="warehouse">Объекта склада из базы данных.</param>
+		public async static Task<bool> ManualWHMatchingAsync(MatchedWarehouse matchedWarehouse, Warehouse warehouse)
+		{
+			return await Task.Run(() => ManualWHMatching(matchedWarehouse, warehouse));
+		}
 
 		public static MatchedCounteragent AutomaticSupMatching(ExCounteragent counteragent)
 		{
@@ -187,14 +199,21 @@
 			return result;
 		}
 
-		public static async Task<bool> ManualSupMatchingAsync(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
+		public async static Task<MatchedCounteragent> AutomaticSupMatchingAsync(ExCounteragent counteragent)
+		{
+			return await Task.Run(() => AutomaticSupMatching(counteragent));
+		}
+
+		public async static Task<bool> ManualSupMatchingAsync(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
 		{
 			if (matchedCounteragent == null || counteragent == null)
 				return false;
 
-			matchedCounteragent.InnerCounteragent = counteragent;
+			if(!await CoreInit.RepositoryService.RematchingCounteragentAsync(counteragent, matchedCounteragent.ExCounteragent.GLN))
+				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
 
-			return await CoreInit.RepositoryService.RematchingCounteragentAsync(counteragent, matchedCounteragent.ExCounteragent.GLN);
+			matchedCounteragent.InnerCounteragent = counteragent;
+			return true;
 		}
 
 		public static bool ManualSupMatching(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
@@ -202,9 +221,11 @@
 			if (matchedCounteragent == null || counteragent == null)
 				return false;
 
-			matchedCounteragent.InnerCounteragent = counteragent;
+			if(!CoreInit.RepositoryService.RematchingCounteragent(counteragent, matchedCounteragent.ExCounteragent.GLN))
+				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
 
-			return CoreInit.RepositoryService.RematchingCounteragent(counteragent, matchedCounteragent.ExCounteragent.GLN);
+			matchedCounteragent.InnerCounteragent = counteragent;
+			return true;
 		}
 	}
 }

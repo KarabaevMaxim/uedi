@@ -1,6 +1,7 @@
 ﻿namespace EdiModule.Windows
 {
     using System;
+	using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Controls;
@@ -23,64 +24,79 @@
             this.bindings.Add("Склад", "Warehouse.Name");
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
 			this.GetSession();
 			this.DownloadDocuments();
+			await this.DownloadDocumentsAsync();
 			this.UpdateTablePart();
-			UserNameTxt.Text = SessionManager.Sessions[0].UserName;
+			UserNameTxt.Text = CurrentSession.UserName;
 		}
-
-        private void UpdateUnprocessedWaybillTbl(List<Waybill> waybills)
-        {
-            this.UnprocessedWaybillTbl.Columns.Clear();
-
-            foreach (var item in this.bindings)
-                this.UnprocessedWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
-
-            this.UnprocessedWaybillTbl.Items.Clear();
-
-            foreach (var item in waybills)
-                this.UnprocessedWaybillTbl.Items.Add(item);
-        }
 
 		private void GetSession()
 		{
 			 this.CurrentSession = SessionManager.Sessions[0];
 		}
 
-		private void DownloadDocuments()
+		private bool DownloadDocuments()
 		{
-			FtpService.DownloadDocuments(this.CurrentSession.FtpURI,
-				this.CurrentSession.FtpPassive, 
-				this.CurrentSession.FtpTimeout, 
+			var result = FtpService.DownloadDocuments(this.CurrentSession.FtpURI,
+			this.CurrentSession.FtpPassive,
+			this.CurrentSession.FtpTimeout,
+			this.CurrentSession.FtpLogin,
+			this.CurrentSession.FtpPassword,
+			this.CurrentSession.FtpRemoteFolder,
+			this.CurrentSession.WorkFolder);
+
+			if (result)
+				return DocumentManager.DownloadWaybills(this.CurrentSession.WorkFolder);
+			else
+				return false;
+		}
+
+		private async Task<bool> DownloadDocumentsAsync()
+		{
+			var result = await FtpService.DownloadDocumentsAsync(this.CurrentSession.FtpURI,
+				this.CurrentSession.FtpPassive,
+				this.CurrentSession.FtpTimeout,
 				this.CurrentSession.FtpLogin,
 				this.CurrentSession.FtpPassword,
 				this.CurrentSession.FtpRemoteFolder,
 				this.CurrentSession.WorkFolder);
-			DocumentManager.DownloadWaybills(this.CurrentSession.WorkFolder);
+
+			if (result)
+				return await DocumentManager.DownloadWaybillsAsync(this.CurrentSession.WorkFolder);
+			else
+				return false;
 		}
 
 		public void UpdateTablePart()
         {
-            this.UpdateUnprocessedWaybillTbl(CoreInit.ModuleRepository.GetUnprocessedWaybills());
-        }
+			this.UnprocessedWaybillTbl.Columns.Clear();
+
+			foreach (var item in this.bindings)
+				this.UnprocessedWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
+
+			this.UnprocessedWaybillTbl.Items.Clear();
+
+			foreach (var item in CoreInit.ModuleRepository.GetUnprocessedWaybills())
+				this.UnprocessedWaybillTbl.Items.Add(item);
+		}
 
 		/// <summary>
 		/// Загрузить накладные.
 		/// </summary>
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-				this.DownloadDocuments();
+				await this.DownloadDocumentsAsync();
 				this.UpdateTablePart();
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message + " " + ex.StackTrace);
             }
-            
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -125,8 +141,10 @@
 		private void ShowMatchingWarehouseBtn_Click(object sender, RoutedEventArgs e)
 		{
 			WarehouseMatchingListWindow window = new WarehouseMatchingListWindow();
+			window.ParentWindow = this;
 			window.ShowDialog();
 		}
+
 		private void ShowMatchingSupplierBtn_Click(object sender, RoutedEventArgs e)
 		{
 			SupplierMatchingListWindow window = new SupplierMatchingListWindow();
@@ -136,7 +154,5 @@
 
 		private Dictionary<string, string> bindings = new Dictionary<string, string>();
 		private Session CurrentSession { get; set; }
-
-
 	}
 }

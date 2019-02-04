@@ -48,11 +48,11 @@
         {
             if (sender is DataGridRow row)
             {
-                if (row.DataContext is Counteragent innerCountergent)
+                if (row.DataContext is Counteragent innerCounteragent)
                 {
                     try
                     {
-						if(!(await MatchingModule.ManualSupMatchingAsync(this.CurrentCounteragent, innerCountergent)))
+						if(!(await MatchingModule.ManualSupMatchingAsync(this.CurrentCounteragent, innerCounteragent)))
 							MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить поставщика.");
                     }
                     catch(NotMatchedException ex)

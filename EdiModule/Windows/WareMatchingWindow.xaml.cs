@@ -49,7 +49,7 @@
             this.WaybillDateLbl.Text = this.Waybill.Date.ToString("dd.MM.yyyy");
             this.SupplierNameLbl.Text = this.Waybill.Supplier?.InnerCounteragent?.Name;
             this.OrganizationLbl.Text = this.Waybill.Organization?.Name;
-            this.TradeObjectLbl.Text = this.Waybill.Warehouse?.Name;
+            this.TradeObjectLbl.Text = this.Waybill.Warehouse?.InnerWarehouse?.Name;
         }
 
         public void UpdateTablePart()

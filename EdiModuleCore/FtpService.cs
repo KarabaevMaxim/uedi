@@ -8,10 +8,11 @@
 	using ArxOne.Ftp;
 	using System.Net;
 	using System.IO;
+	using ArxOne.Ftp.Exceptions;
 
 	public static class FtpService
 	{
-		public static void DownloadDocuments(string serverURI, bool passiveMode, int timeoutSec,  string login, string password, string remoteFolder, string localFolder)
+		public static bool DownloadDocuments(string serverURI, bool passiveMode, int timeoutSec,  string login, string password, string remoteFolder, string localFolder)
 		{
 			NetworkCredential networkCredential = new NetworkCredential(login, password);
 			TimeSpan timeout = new TimeSpan(0, 0, timeoutSec);
@@ -26,13 +27,29 @@
 
 			using (var ftpClient = new FtpClient(uri, networkCredential, parametres))
 			{
-				var files = ftpClient.ListEntries(ftpPath).Where(en => en.Type == FtpEntryType.File);
-
-				foreach (var item in files)
+				try
 				{
-					FtpService.DownloadFile(ftpClient, item, localFolder);
+					var files = ftpClient.ListEntries(ftpPath).Where(en => en.Type == FtpEntryType.File);
+
+					foreach (var item in files)
+						FtpService.DownloadFile(ftpClient, item, localFolder);
+				}
+				catch(FtpAuthenticationException)
+				{
+					return false;
+				}
+				catch(FtpTransportException)
+				{
+					return false;
 				}
 			}
+
+			return true;
+		}
+
+		public async static Task<bool> DownloadDocumentsAsync(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
+		{
+			return await Task.Run(() => DownloadDocuments(serverURI, passiveMode, timeoutSec, login, password, remoteFolder, localFolder));
 		}
 
 		/// <summary>

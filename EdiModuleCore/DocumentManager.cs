@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
+	using System.Threading.Tasks;
     using Bridge1C;
     using Model;
     using Exceptions;
@@ -36,39 +37,45 @@
         /// </summary>
         /// <param name="fileName">Имя файла.</param>s
         /// <returns>true, если успешно, иначе false.</returns>
-        public static bool DownloadWaybill(string fileContent, string fileName)
+        public async static void DownloadWaybill(string fileContent, string fileName)
         {
             XEntities.Waybill waybill = DocumentManager.DownloadDocument(fileContent, DocumentTypes.DESADV);
 
             if (waybill == null)
-                return false;
+                return;
 
-			Waybill domainWaybill = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
-			CoreInit.ModuleRepository.AddWaybill(domainWaybill);
-            return true;
+			Waybill domainWaybill = await DocumentManager.ConvertWaybillToDomain(waybill, fileName);
+			await CoreInit.ModuleRepository.AddWaybillAsync(domainWaybill);
         }
 
         /// <summary>
         /// Загрузить все накладные из указанной в настройках папки.
         /// </summary>
-        public static void DownloadWaybills(string workFolder)
-        {
+        public static bool DownloadWaybills(string workFolder)
+		{ 
             string[] fileNames = FileService.GetFileList(workFolder);
 
             foreach (var item in fileNames)
                 DocumentManager.DownloadWaybill(FileService.ReadTextFile(item), item);
+
+			return true;
         }
 
-        /// <summary>
-        /// Конвертирует загруженную из XML накладную в доменную накладную.
-        /// </summary>
-        /// <param name="xWaybill">Загруженная накладная.</param>
-        /// <param name="fileName">Имя файла накладной.</param>
-        /// <returns>Объект доменной накладной.</returns>
-        private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
+		public async static Task<bool> DownloadWaybillsAsync(string workFolder)
+		{
+			return await Task.Run(() => DocumentManager.DownloadWaybills(workFolder));
+		}
+
+		/// <summary>
+		/// Конвертирует загруженную из XML накладную в доменную накладную.
+		/// </summary>
+		/// <param name="xWaybill">Загруженная накладная.</param>
+		/// <param name="fileName">Имя файла накладной.</param>
+		/// <returns>Объект доменной накладной.</returns>
+		private async static Task<Model.Waybill> ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
         {
-			var warehouse = MatchingModule.AutomaticWHMatching(new Bridge1C.DomainEntities.Warehouse { GLN = xWaybill.Header.SupplierGln });
-			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
+			var warehouse = await MatchingModule.AutomaticWHMatchingAsync(new ExWarehouse { GLN = xWaybill.Header.SupplierGln });
+			var supplier = await MatchingModule.AutomaticSupMatchingAsync(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 
 			Model.Waybill result = new Model.Waybill
             {
@@ -79,7 +86,7 @@
                 FileName = fileName,
                 Wares = new List<Model.WaybillRow>()
             };
-            result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.Code);
+            result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.InnerWarehouse.Code);
 
             foreach (var item in xWaybill.Header.Positions)
             {
@@ -142,7 +149,7 @@
                 domainWaybill.Number = waybill.Number;
                 domainWaybill.Date = waybill.Date;
                 domainWaybill.Supplier = waybill.Supplier?.InnerCounteragent;
-                domainWaybill.Warehouse = waybill.Warehouse;
+                domainWaybill.Warehouse = waybill.Warehouse?.InnerWarehouse;
                 domainWaybill.Organization = waybill.Organization;
                 domainWaybill.Positions = new List<Bridge1C.DomainEntities.WaybillRow>();
 

@@ -20,9 +20,9 @@ namespace EdiModule.Windows
 
             this.bindings = new Dictionary<string, string>
             {
-                { "Внут. код", "Code" },
-                { "Название", "Name" },
-                { "ГЛН", "GLN" }
+                { "Внут. код", "InnerWarehouse.Code" },
+                { "Название", "InnerWarehouse.Name" },
+                { "ГЛН", "ExWarehouse.GLN" }
             };
         }
 
@@ -78,7 +78,7 @@ namespace EdiModule.Windows
         {
             if (sender is DataGridRow row)
             {
-                if (row.DataContext is Bridge1C.DomainEntities.Warehouse warehouse)
+                if (row.DataContext is MatchedWarehouse warehouse)
                 {
                    WarehouseReferenceWindow prodWindow = new WarehouseReferenceWindow
 				   {
@@ -90,7 +90,17 @@ namespace EdiModule.Windows
             }
         }
 
-        private Dictionary<string, string> bindings;
+		/// <summary>
+		/// При закрытии окна.
+		/// </summary>
+		private void Window_Closed(object sender, System.EventArgs e)
+		{
+			this.ParentWindow.UpdateTablePart();
+		}
+
+		private Dictionary<string, string> bindings;
 		public ITableWindow ParentWindow { get; set; }
+
+
 	}
 }

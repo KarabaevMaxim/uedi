@@ -71,7 +71,7 @@
 				Assert.Fail("Склад с указанным ГЛН не найден.");
 
 			string newGLN = "0987654321";
-			var result = CoreInit.RepositoryService.UpdateWarehouseGLN(wh.Code, newGLN);
+			var result = CoreInit.RepositoryService.RematchingWarehouse(wh.Code, newGLN);
 
 			var wh2 = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, newGLN);
 
