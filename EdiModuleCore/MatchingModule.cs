@@ -9,7 +9,7 @@
 
     public static class MatchingModule
     {
-        public static MatchedWare ManualMatching(Ware ware, string exCode, Counteragent supplier)
+        public static MatchedWare ManualMatching(Ware ware, string exCode, MatchedCounteragent supplier)
         {
             if (ware == null || supplier == null || string.IsNullOrWhiteSpace(exCode))
                  throw new NotMatchedException("Сопоставление не выполнено, внутренний или внешний товар не указан.");
@@ -19,7 +19,7 @@
             result.ExWare = new ExWare { Code = exCode, Supplier = supplier, Name = ware.Name };
 
             if (!CoreInit.RepositoryService.AddNewExCodeToWare(result.InnerWare,
-                                        new WareExCode { Counteragent = result.ExWare.Supplier, Value = result.ExWare.Code }))
+                                        new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
             return result;
@@ -35,7 +35,7 @@
             result.ExWare = exWare;
 
             if (!CoreInit.RepositoryService.AddNewExCodeToWare(result.InnerWare,
-                                        new WareExCode { Counteragent = result.ExWare.Supplier, Value = result.ExWare.Code }))
+                                        new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
             return result;
@@ -54,7 +54,7 @@
             matchedWare.InnerWare = ware;
 
             if (!CoreInit.RepositoryService.AddNewExCodeToWare(matchedWare.InnerWare,
-                                        new WareExCode { Counteragent = matchedWare.ExWare.Supplier, Value = matchedWare.ExWare.Code }))
+                                        new WareExCode { Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent, Value = matchedWare.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
         }
 
@@ -68,7 +68,7 @@
                 return null;
 
             MatchedWare result = new MatchedWare();
-            result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier?.Code); //todo: Валится исключение, если не найден поставщик
+            result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier?.InnerCounteragent.Code); //todo: Валится исключение, если не найден поставщик
 
             if(result.InnerWare == null)
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
@@ -98,7 +98,7 @@
             {
                 new WareExCode
                 {
-                    Counteragent = matchedWare.ExWare.Supplier,
+                    Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent,
                     Value = matchedWare.ExWare.Code
                 }
             };
@@ -114,7 +114,7 @@
             if (matchedWare == null || matchedWare.ExWare == null)
                 return;
 
-            matchedWare.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, matchedWare.ExWare.Code, matchedWare.ExWare.Supplier.Code);
+            matchedWare.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, matchedWare.ExWare.Code, matchedWare.ExWare.Supplier.InnerCounteragent.Code);
 
             if(matchedWare.InnerWare == null)
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");

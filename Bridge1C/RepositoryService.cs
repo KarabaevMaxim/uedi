@@ -170,7 +170,7 @@
 
             result.Code = warehouse.Код;
             result.Name = warehouse.Наименование;
-            result.GLN = warehouse.ГЛН;
+            result.Shop = new Shop { Code = warehouse.Магазин.Код, Name = warehouse.Магазин.Наименование };
             return result;
         }
 
@@ -183,7 +183,11 @@
 				{
 					Code = item.Код,
 					Name = item.Наименование,
-					GLN = item.ГЛН
+					Shop = new Shop
+					{
+						Code = item.Магазин.Код,
+						Name = item.Магазин.Наименование
+					}
 				});
 
 			return result;

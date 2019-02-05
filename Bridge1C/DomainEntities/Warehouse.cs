@@ -4,16 +4,16 @@
     {
         public string Code { get; set; }
         public string Name { get; set; }
-        public string GLN { get; set; }
+        public Shop Shop { get; set; }
 
         public override bool Equals(object obj)
         {
-            if (obj is Warehouse wh)
-                return	this.Code == wh.Code &&
+			if (obj is Warehouse wh)
+				return this.Code == wh.Code &&
 						this.Name == wh.Name &&
-						this.GLN == wh.GLN;
-            else
-                return false;
+						this.Shop.Equals(wh.Shop);
+			else
+				return false;
         }
 
         public override int GetHashCode()

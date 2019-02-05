@@ -44,7 +44,7 @@
             this.WarehousesTbl.ItemsSource = CoreInit.ModuleRepository.CounteragentReference;
         }
 
-        private async void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is DataGridRow row)
             {
@@ -52,7 +52,7 @@
                 {
                     try
                     {
-						if(!(await MatchingModule.ManualSupMatchingAsync(this.CurrentCounteragent, innerCounteragent)))
+						if(!(MatchingModule.ManualSupMatching(this.CurrentCounteragent, innerCounteragent)))
 							MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить поставщика.");
                     }
                     catch(NotMatchedException ex)

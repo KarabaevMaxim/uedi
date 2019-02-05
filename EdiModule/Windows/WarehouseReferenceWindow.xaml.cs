@@ -22,7 +22,7 @@
             {
 				{ "Код", "Code" },
 				{ "Название", "Name" },
-				{ "ГЛН", "GLN" }
+				{ "Магазин", "Shop.Name" }
 			};
 
            // this.Warehouses = CoreInit.ModuleRepository.GetWarehouses();
@@ -57,6 +57,7 @@
                     {
 					    if(!(await MatchingModule.ManualWHMatchingAsync(CurrentWarehouse, warehouse)))
                             MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить склад.");
+						CoreInit.ModuleRepository.InitWarehouseReference();
                     }
                     catch(NotMatchedException ex)
                     {

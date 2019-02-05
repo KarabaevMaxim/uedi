@@ -26,7 +26,7 @@
 		/// <summary>
 		/// Поставщик.
 		/// </summary>
-        public Counteragent Supplier { get; set; }
+        public MatchedCounteragent Supplier { get; set; }
 
         public override bool Equals(object obj)
         {

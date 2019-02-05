@@ -37,15 +37,15 @@
         /// </summary>
         /// <param name="fileName">Имя файла.</param>s
         /// <returns>true, если успешно, иначе false.</returns>
-        public async static void DownloadWaybill(string fileContent, string fileName)
+        public static void DownloadWaybill(string fileContent, string fileName)
         {
             XEntities.Waybill waybill = DocumentManager.DownloadDocument(fileContent, DocumentTypes.DESADV);
 
             if (waybill == null)
                 return;
 
-			Waybill domainWaybill = await DocumentManager.ConvertWaybillToDomain(waybill, fileName);
-			await CoreInit.ModuleRepository.AddWaybillAsync(domainWaybill);
+			Waybill domainWaybill = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
+			CoreInit.ModuleRepository.AddWaybill(domainWaybill);
         }
 
         /// <summary>
@@ -66,79 +66,91 @@
 			return await Task.Run(() => DocumentManager.DownloadWaybills(workFolder));
 		}
 
+		private static Model.Waybill RaiseWaybill(XEntities.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)
+		{
+			Model.Waybill result = new Model.Waybill
+			{
+				Number = xWaybill.Number,
+				Date = xWaybill.Date,
+				Supplier = matchedCounteragent,
+				Warehouse = matchedWarehouse,
+				FileName = fileName,
+				Wares = new List<Model.WaybillRow>()
+			};
+			result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.InnerWarehouse.Code);
+
+			foreach (var item in xWaybill.Header.Positions)
+			{
+				Model.WaybillRow row = new Model.WaybillRow();
+				row.Amount = (decimal)item.Amount;
+				row.Price = (decimal)item.Price;
+				row.Count = item.Quantity;
+				ExWare exWare = new ExWare
+				{
+					Supplier = result.Supplier,
+					Barcode = item.Barcode,
+					Code = item.WareSupplierCode,
+					Name = item.WareName,
+					Unit = CoreInit.RepositoryService.GetUnit(Requisites.InternationalReduction_Unit, item.Unit)
+				};
+				MatchedWare ware = null;
+
+				try
+				{
+					ware = MatchingModule.AutomaticMatching(exWare);
+				}
+				catch (NotMatchedException)
+				{
+					ware = new MatchedWare
+					{
+						ExWare = exWare
+					};
+				}
+
+				var test = CoreInit.ModuleRepository.GetMatchedWares().FirstOrDefault(w => w.Equals(ware));
+
+				if (test != null)
+				{
+					row.Ware = test;
+				}
+				else
+				{
+					row.Ware = ware;
+					CoreInit.ModuleRepository.AddMatchedWare(ware);
+				}
+
+				result.Wares.Add(row);
+			}
+
+			return result;
+		}
+
+		private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
+		{
+			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.SupplierGln });
+			var supplier =  MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
+			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
+		}
+
 		/// <summary>
 		/// Конвертирует загруженную из XML накладную в доменную накладную.
 		/// </summary>
 		/// <param name="xWaybill">Загруженная накладная.</param>
 		/// <param name="fileName">Имя файла накладной.</param>
 		/// <returns>Объект доменной накладной.</returns>
-		private async static Task<Model.Waybill> ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
+		private async static Task<Model.Waybill> ConvertWaybillToDomainAsync(XEntities.Waybill xWaybill, string fileName)
         {
 			var warehouse = await MatchingModule.AutomaticWHMatchingAsync(new ExWarehouse { GLN = xWaybill.Header.SupplierGln });
 			var supplier = await MatchingModule.AutomaticSupMatchingAsync(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 
-			Model.Waybill result = new Model.Waybill
-            {
-                Number = xWaybill.Number,
-                Date = xWaybill.Date,
-                Supplier = supplier,
-                Warehouse = warehouse,
-                FileName = fileName,
-                Wares = new List<Model.WaybillRow>()
-            };
-            result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.InnerWarehouse.Code);
-
-            foreach (var item in xWaybill.Header.Positions)
-            {
-                Model.WaybillRow row = new Model.WaybillRow();
-                row.Amount = (decimal)item.Amount;
-                row.Price = (decimal)item.Price;
-                row.Count = item.Quantity;
-                ExWare exWare = new ExWare
-                {
-                    Supplier = result.Supplier?.InnerCounteragent,
-                    Barcode = item.Barcode,
-                    Code = item.WareSupplierCode,
-                    Name = item.WareName,
-                    Unit = CoreInit.RepositoryService.GetUnit(Requisites.InternationalReduction_Unit, item.Unit)
-                };
-                MatchedWare ware = null;
-
-                try
-                {
-                    ware = MatchingModule.AutomaticMatching(exWare);
-                }
-                catch (NotMatchedException)
-                {
-                    ware = new MatchedWare
-                    {
-                        ExWare = exWare
-                    };
-                }
-
-                var test = CoreInit.ModuleRepository.GetMatchedWares().FirstOrDefault(w => w.Equals(ware));
-
-                if(test != null)
-                {
-                    row.Ware = test;
-                }
-                else
-                {
-                    row.Ware = ware;
-                    CoreInit.ModuleRepository.AddMatchedWare(ware);
-                }
-
-                result.Wares.Add(row);
-            }
-
-            return result;
+			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
         }
 
-        /// <summary>
-        /// Сохраняет в базу данных накладную.
-        /// </summary>
-        /// <returns>true, если успешно, иначе false.</returns>
-        private static bool SaveWaybillToBase(Waybill waybill)
+		/// <summary>
+		/// Сохраняет в базу данных накладную.
+		/// </summary>
+		/// <returns>true, если успешно, иначе false.</returns>
+		private static bool SaveWaybillToBase(Waybill waybill)
         {
             try
             {

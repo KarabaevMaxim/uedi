@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdiModule.Windows"
         mc:Ignorable="d"
-        Title="Сопоставление складов" Height="450" Width="800" Loaded="Window_Loaded" Closed="Window_Closed" WindowState="Maximized">
+        Title="Сопоставление поставщиков" Height="450" Width="800" Loaded="Window_Loaded" Closed="Window_Closed" WindowState="Maximized">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35"/>

@@ -21,14 +21,13 @@
             this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
             this.bindings.Add("Поставщик", "Supplier.InnerCounteragent.Name");
-            this.bindings.Add("Склад", "Warehouse.Name");
+            this.bindings.Add("Склад", "Warehouse.InnerWarehouse.Name");
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 			this.GetSession();
 			this.DownloadDocuments();
-			await this.DownloadDocumentsAsync();
 			this.UpdateTablePart();
 			UserNameTxt.Text = CurrentSession.UserName;
 		}
