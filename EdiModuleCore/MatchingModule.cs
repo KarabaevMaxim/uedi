@@ -48,7 +48,7 @@
         /// <param name="matchedWare">Объект, где должно быть выполнено сопоставление.</param>
         public static void ManualMatching(Ware ware, MatchedWare matchedWare)
         {
-            if (ware == null || matchedWare == null)
+            if (ware == null || string.IsNullOrWhiteSpace(ware.Code) || matchedWare == null)
                 throw new NotMatchedException("Сопоставление не выполнено, внутренний или товар для сопоставления не указан.");
 
             matchedWare.InnerWare = ware;
@@ -68,7 +68,7 @@
                 return null;
 
             MatchedWare result = new MatchedWare();
-            result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier?.InnerCounteragent.Code); //todo: Валится исключение, если не найден поставщик
+            result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier?.ExCounteragent?.GLN); //todo: Валится исключение, если не найден поставщик
 
             if(result.InnerWare == null)
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
@@ -195,7 +195,6 @@
 				return result;
 
 			result.InnerCounteragent = innerCount;
-
 			return result;
 		}
 
@@ -212,6 +211,7 @@
 			if(!await CoreInit.RepositoryService.RematchingCounteragentAsync(counteragent, matchedCounteragent.ExCounteragent.GLN))
 				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
 
+			counteragent.GLN = matchedCounteragent.ExCounteragent.GLN;
 			matchedCounteragent.InnerCounteragent = counteragent;
 			return true;
 		}
@@ -224,6 +224,7 @@
 			if(!CoreInit.RepositoryService.RematchingCounteragent(counteragent, matchedCounteragent.ExCounteragent.GLN))
 				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
 
+			counteragent.GLN = matchedCounteragent.ExCounteragent.GLN;
 			matchedCounteragent.InnerCounteragent = counteragent;
 			return true;
 		}

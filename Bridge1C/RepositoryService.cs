@@ -32,7 +32,7 @@
                     this.Repository.AddNewBarcodes(ware.Code, ware.BarCodes);
 
                 if (ware.ExCodes != null && ware.ExCodes.Any())
-                    this.Repository.AddNewExCodes(ware.Code, ware.ExCodes.Select(ec => ec.Counteragent.Code).ToList(), ware.ExCodes.Select(ec => ec.Value).ToList());
+                    this.Repository.AddNewExCodes(ware.Code, ware.ExCodes.Select(ec => ec.Counteragent.GLN).ToList(), ware.ExCodes.Select(ec => ec.Value).ToList());
 
                 return true;
             }
@@ -47,11 +47,9 @@
         /// <param name="propValue">Значение свойства для поиска.</param>
         /// <param name="counteragentCode">Код контрагента, если поиск будет по внешнему коду.</param>
         /// <returns>Объект товара.</returns>
-        public Ware GetWare(Requisites prop, string propValue, string counteragentCode = "")
+        public Ware GetWare(Requisites prop, string propValue, string counteragentGln = "")
         {
-            //   var counteragent = this.GetCounteragent(Requisites.Code, counteragentCode);
-            //   var ware = this.Repository.GetWare(prop, propValue, counteragent.Code);
-            var ware = this.Repository.GetWare(prop, propValue, counteragentCode);
+            var ware = this.Repository.GetWare(prop, propValue, counteragentGln);
 
             if (ware == null)
                 return null;
@@ -87,7 +85,7 @@
             result.Code = counteragent.Код;
             result.Name = counteragent.Наименование;
             result.FullName = counteragent.НаименованиеПолное;
-          //  result.GLN = counteragent.ГЛН;
+            result.GLN = counteragent.ГЛН;
             return result;
         }
 
@@ -103,7 +101,7 @@
                     Code = item.Код,
                     Name = item.Наименование,
                     FullName = item.НаименованиеПолное,
-              //      GLN = item.ГЛН
+                    GLN = item.ГЛН
                 };
                 result.Add(counteragent);
             }
@@ -236,7 +234,7 @@
         public bool AddNewExCodeToWare(Ware ware, WareExCode exCode)
         {
             ware.ExCodes.Add(exCode);
-            return this.Repository.AddNewExCode(ware.Code, exCode.Counteragent.Code, exCode.Value);
+            return this.Repository.AddNewExCode(ware.Code, exCode.Counteragent.GLN, exCode.Value);
         }
 
         /// <summary>
@@ -277,7 +275,7 @@
             {
                 WareExCode wec = new WareExCode();
                 wec.Value = item.ВнешнийКод;
-                wec.Counteragent = this.GetCounteragent(Requisites.Code, item.Контрагент.Код);
+                wec.Counteragent = this.GetCounteragent(Requisites.GLN, item.ГЛНКонтрагента);
                 result.Add(wec);
             }
 

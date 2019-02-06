@@ -14,7 +14,7 @@
         dynamic GetBarCodeType(BarcodeTypes type);
         string AddNewWare(string name, string fullName, string unit, List<string> barCodes);
         bool AddNewBarcode(dynamic ware, string value);
-        bool AddNewExCode(dynamic ware, dynamic counteragent, string value);
+        bool AddNewExCode(string wareCode, string counteragentGln, string value);
         bool AddNewWaybill(string number, DateTime date, dynamic counteragent, dynamic warehouse, dynamic shop, List<DomainEntities.WaybillRow> rows);
     }
 }

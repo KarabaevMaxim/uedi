@@ -279,7 +279,7 @@
             }
         }
 
-        public dynamic GetWare(Requisites propertyName, string propertyValue, string counteragentCode = "")
+        public dynamic GetWare(Requisites propertyName, string propertyValue, string counteragentGln = "")
         {
             try
             {
@@ -296,14 +296,15 @@
                     case Requisites.ExCode_Ware:
                         dynamic запрос = this.Connector.Connection.NewObject("Запрос");
                         запрос.Текст = @"   ВЫБРАТЬ
-                                                ЕДИ_СопоставлениеНоменклатуры.Номенклатура, ЕДИ_СопоставлениеНоменклатуры.Контрагент
+                                                ЕДИ_СопоставлениеНоменклатуры.Номенклатура, 
+												ЕДИ_СопоставлениеНоменклатуры.ГЛНКонтрагента
                                             ИЗ
                                                 РегистрСведений.ЕДИ_СопоставлениеНоменклатуры как ЕДИ_СопоставлениеНоменклатуры
                                             ГДЕ
-                                                ЕДИ_СопоставлениеНоменклатуры.Контрагент.Код = &КодКонтрагента
+                                                ЕДИ_СопоставлениеНоменклатуры.ГЛНКонтрагента = &ГЛНКонтрагента
                                             И
                                                 ЕДИ_СопоставлениеНоменклатуры.ВнешнийКод = &ВнешнийКод";
-                        запрос.УстановитьПараметр("КодКонтрагента", counteragentCode);
+                        запрос.УстановитьПараметр("ГЛНКонтрагента", counteragentGln);
                         запрос.УстановитьПараметр("ВнешнийКод", propertyValue);
                         dynamic выборка = запрос.Выполнить().Выбрать();
 
@@ -361,7 +362,7 @@
             {
                 var temp = this.Connector.Connection.NewObject("Структура");
                 temp.Вставить("ВнешнийКод", выборка.ВнешнийКод);
-                temp.Вставить("Контрагент", выборка.Контрагент);
+                temp.Вставить("ГЛНКонтрагента", выборка.ГЛНКонтрагента);
                 result.Add(temp);
             }
 
@@ -531,16 +532,21 @@
             }
         }
 
-        public bool AddNewExCode(dynamic ware, dynamic counteragent, string value)
+        public bool AddNewExCode(string wareCode, string counteragentGln, string value)
         {
             try
             {
-                if (ware == null || counteragent == null || string.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(wareCode) || string.IsNullOrWhiteSpace(counteragentGln) || string.IsNullOrWhiteSpace(value))
                     return false;
 
-                var менеджер = this.Connector.Connection.РегистрыСведений.ЕДИ_СопоставлениеНоменклатуры.СоздатьМенеджерЗаписи();
-                менеджер.Номенклатура = ware;
-                менеджер.Контрагент = counteragent;
+				var номенклатура = this.GetWare(Requisites.Code, wareCode);
+
+				if (номенклатура == null || string.IsNullOrWhiteSpace(номенклатура.Код))
+					return false;
+
+				var менеджер = this.Connector.Connection.РегистрыСведений.ЕДИ_СопоставлениеНоменклатуры.СоздатьМенеджерЗаписи();
+                менеджер.Номенклатура = номенклатура;
+                менеджер.ГЛНКонтрагента = counteragentGln;
                 менеджер.ВнешнийКод = value;
                 менеджер.Записать(true);
                 return true;
@@ -551,29 +557,11 @@
             }
         }
 
-        public bool AddNewExCode(string wareCode, string counteragentCode, string value)
+        public bool AddNewExCodes(string wareCode, List<string> counteragentGlns, List<string> values)
         {
             try
             {
-                var ware = this.GetWare(Requisites.Code, wareCode);
-                var counteragent = this.GetCounteragent(Requisites.Code, counteragentCode);
-
-                if (ware == null || counteragent == null)
-                    return false;
-
-                return this.AddNewExCode(ware, counteragent, value);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public bool AddNewExCodes(string wareCode, List<string> counteragentCodes, List<string> values)
-        {
-            try
-            {
-                if (counteragentCodes == null || !counteragentCodes.Any() || values == null || !values.Any() || counteragentCodes.Count != values.Count)
+                if (counteragentGlns == null || !counteragentGlns.Any() || values == null || !values.Any() || counteragentGlns.Count != values.Count)
                     return false;
 
                 var ware = this.GetWare(Requisites.Code, wareCode);
@@ -582,7 +570,8 @@
                     return false;
 
                 for (int i = 0; i < values.Count; i++)
-                    this.AddNewExCode(ware, this.GetCounteragent(Requisites.Code, counteragentCodes[i]), values[i]);
+
+                    this.AddNewExCode(ware, counteragentGlns[i], values[i]);
                    
                 return true;
             }
