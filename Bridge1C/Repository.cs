@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Repository : IRepository
+    public class Repository
     {
         /// <summary>
         /// Инициализирует объект в памяти.

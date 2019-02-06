@@ -74,7 +74,6 @@
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
 
             result.ExWare = exWare;
-
             return result;
         }
 
