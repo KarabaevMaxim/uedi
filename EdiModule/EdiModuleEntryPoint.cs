@@ -46,7 +46,7 @@
 		/// </summary>
 		public void ConnectToServerBase(string connectionString, string waybillFolder, string archieveFolder)
 		{
-
+			
 		}
 	}
 }

@@ -29,5 +29,10 @@
         {
             return base.GetHashCode();
         }
-    }
+
+		public override string ToString()
+		{
+			return string.Format("{0} | {1}", this.Code, this.Name); 
+		}
+	}
 }

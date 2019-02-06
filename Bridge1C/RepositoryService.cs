@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using DomainEntities;
 
-    public class RepositoryService
+    public class RepositoryService : IRepositoryService
     {
         public RepositoryService(string dataBaseFile, string login, string pass)
         {
@@ -135,7 +135,6 @@
 
 			return this.Repository.RematchingCounteragent(counteragent.Code, gln);
 		}
-
 
 		/// <summary>
 		/// Получить единицу измерения.
@@ -296,6 +295,5 @@
         }
 
         private Repository Repository { get; set; }
-
     }
 }

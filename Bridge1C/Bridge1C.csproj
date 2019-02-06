@@ -85,7 +85,9 @@
     <Compile Include="DomainEntities\Warehouse.cs" />
     <Compile Include="DomainEntities\Waybill.cs" />
     <Compile Include="DomainEntities\WaybillRow.cs" />
-    <Compile Include="IRepository.cs" />
+    <Compile Include="IRepositoryService.cs" />
+    <Compile Include="Itida\ItidaRepository.cs" />
+    <Compile Include="Itida\ItidaRepositoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="RepositoryService.cs" />
