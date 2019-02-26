@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests
 {
+	using System.Collections.Generic;
 	using System.Linq;
 	using Bridge1C.DomainEntities;
 	using Bridge1C.Itida;
@@ -114,6 +115,53 @@ namespace UnitTests
 		{
 			var warehouses = this.repository.GetAllWarehouses();
 			Assert.IsNull(warehouses);
+		}
+
+		[TestMethod]
+		public void AddNewWareTest()
+		{
+			var unit = this.repository.GetUnit(Bridge1C.Requisites.Code, "шт");	
+			var counteragent1 = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000001");
+			var counteragent2 = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000002");
+			var counteragent3 = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000003");
+
+			if (unit == null)
+				Assert.Fail("ЕИ не найдена в базе");
+
+			if(counteragent1 == null || counteragent2 == null || counteragent3 == null)
+				Assert.Fail("Контрагенты не найдены в базе");
+
+			var ware = new Ware
+			{
+				Name = "Товар из теста с ЕИ",
+				FullName = "Товар добавленный из теста с ЕИ",
+				Unit = unit,
+				BarCodes = new List<string>()
+				{
+					"423451515",
+					"523535345345",
+					"5252352551431243"
+				},
+				ExCodes = new List<WareExCode>
+				{
+					new WareExCode
+					{
+						Counteragent = counteragent1,
+						Value = "123456789"
+					},
+					new WareExCode
+					{
+						Counteragent = counteragent2,
+						Value = "5535215"
+					},
+					new WareExCode
+					{
+						Counteragent = counteragent3,
+						Value = "325325325"
+					}
+				}
+			};
+			Assert.IsTrue(this.repository.AddNewWare(ware));
 		}
 	}
 }

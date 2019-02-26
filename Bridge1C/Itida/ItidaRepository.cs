@@ -456,7 +456,104 @@
 			}
 		}
 
+		/// <summary>
+		/// Записать в базу данных объект номенклатуры.
+		/// </summary>
+		/// <param name="ware">Объект для записи.</param>
+		public bool AddNewWare(Ware ware)
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("sp_addware", conn);
+				command.CommandType = System.Data.CommandType.StoredProcedure;
+				command.Parameters.Add(new SqlParameter("@name", ware.FullName));
+				command.Parameters.Add(new SqlParameter("@submaincode", ""));
+				int identityColumn = (int)command.ExecuteScalar();
+				command = new SqlCommand(@"	UPDATE sprres 
+											SET shortname = @sName, ed = @unit
+											WHERE identity_column = @ic", conn);
+				command.Parameters.Add(new SqlParameter("@sName", ware.Name));
+				command.Parameters.Add(new SqlParameter("@unit", ware.Unit.Code));
+				command.Parameters.Add(new SqlParameter("@ic", identityColumn));
+				int result = command.ExecuteNonQuery(); // todo: касяк - возвращает 2, хотя должна быть задействована всего одна строка
+
+				command = new SqlCommand("SELECT code FROM sprres WHERE identity_column = @ic", conn);
+				command.Parameters.Add(new SqlParameter("@ic", identityColumn));
+
+				SqlDataReader reader = command.ExecuteReader();
+				
+				if(reader.HasRows)
+				{
+					reader.Read();
+					string wareIc = reader.GetValue(0) == DBNull.Value ? string.Empty : (string)reader.GetValue(0);
+					this.AddNewBarcodes(wareIc, ware.BarCodes);
+					this.AddNewExCodes(wareIc, ware.ExCodes);
+				}
+
+				return result > 0;
+			}
+		}
+
 		#region Закрытые члены класса (потенциально закрытые)
+
+		/// <summary>
+		/// Сохраняет в базу данных штрихкода номенклатуры с кодом wareIc (sprnnbc.nn или sprres.code)
+		/// </summary>
+		/// <param name="wareIc">Код товара (sprnnbc.nn или sprres.code).</param>
+		/// <param name="barcodes">Список штрихкодов.</param>
+		private void AddNewBarcodes(string wareIc, List<string> barcodes)
+		{
+			if (string.IsNullOrWhiteSpace(wareIc) || barcodes == null || barcodes.Count == 0)
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("", conn);
+				SqlParameter parameterCode = new SqlParameter("@code", wareIc);
+				SqlParameter parameterBarcode = new SqlParameter("@barcode", null);
+				command.Parameters.Add(parameterCode);
+				command.Parameters.Add(parameterBarcode);
+
+				foreach (var item in barcodes)
+				{
+					if (string.IsNullOrWhiteSpace(item))
+						continue;
+
+					command.CommandText = "INSERT INTO sprnnbc (nn, bc) VAlUES (@code, @barcode)";
+					parameterBarcode.Value = item;
+					command.ExecuteNonQuery();
+				}
+
+			}
+		}
+
+		private void AddNewExCodes(string wareIc, List<WareExCode> exCodes)
+		{
+			if (string.IsNullOrWhiteSpace(wareIc) || exCodes == null || exCodes.Count == 0)
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("", conn);
+				SqlParameter parameterCode = new SqlParameter("@wareCode", wareIc);
+				SqlParameter parameterClientCode = new SqlParameter("@clientCode", null);
+				SqlParameter parameterExCode = new SqlParameter("@exCode", null);
+				command.Parameters.Add(parameterCode);
+				command.Parameters.Add(parameterClientCode);
+				command.Parameters.Add(parameterExCode);
+
+				foreach (var item in exCodes)
+				{
+					command.CommandText = "INSERT INTO sprres_clients (code, client, ex_code) VAlUES (@wareCode, @clientCode, @exCode)";
+					parameterClientCode.Value = item.Counteragent.Code;
+					parameterExCode.Value = item.Value;
+					command.ExecuteNonQuery();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Возвращает список ШК для товара с указанным кодом wareCode (sprres.maincode или sprnn.maincode).

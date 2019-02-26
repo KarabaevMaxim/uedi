@@ -295,5 +295,10 @@
         }
 
         private Repository Repository { get; set; }
-    }
+
+		public Organization GetOrganization(Requisites prop, string propValue)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
 }

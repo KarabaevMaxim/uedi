@@ -14,9 +14,13 @@
 			this.Repository = new ItidaRepository(connectionString);
 		}
 
+		/// <summary>
+		/// Записать в базу данных объект номенклатуры.
+		/// </summary>
+		/// <param name="ware">Объект для записи.</param>
 		public bool AddNewWare(Ware ware)
 		{
-			throw new NotImplementedException();
+			return this.Repository.AddNewWare(ware);
 		}
 
 		/// <summary>
