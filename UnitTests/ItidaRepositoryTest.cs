@@ -68,7 +68,7 @@ namespace UnitTests
 		}
 
 		[TestMethod]
-		public void GetWaybillsByCode()
+		public void GetWaybillsByCodeTest()
 		{
 			var waybills = this.repository.GetWaybillsByNumber("A-1");
 			Assert.IsTrue(waybills.Any());
@@ -82,10 +82,38 @@ namespace UnitTests
 		}
 
 		[TestMethod]
-		public void GetWareBarcodes()
+		public void GetWareBarcodesTest()
 		{
 			var barcodes = this.repository.GetWareBarcodes("1509");
 			Assert.IsTrue(barcodes.Any());
+		}
+
+		[TestMethod]
+		public void GetWareByCodeTest()
+		{
+			var ware = this.repository.GetWare(Bridge1C.Requisites.Code, "1509");
+			Assert.IsNotNull(ware);
+		}
+
+		[TestMethod]
+		public void GetWareByExCodeTest()
+		{
+			var ware = this.repository.GetWare(Bridge1C.Requisites.ExCode_Ware, "424214241242", "4607068529991");
+			Assert.IsNotNull(ware);
+		}
+
+		[TestMethod]
+		public void GetWareByExCodeWithNonexistentCounteragentGLNTest()
+		{
+			var ware = this.repository.GetWare(Bridge1C.Requisites.ExCode_Ware, "424214241242", "243423dsdbvdb");
+			Assert.IsNull(ware);
+		}
+
+		[TestMethod]
+		public void GetAllWarehousesTest()
+		{
+			var warehouses = this.repository.GetAllWarehouses();
+			Assert.IsNull(warehouses);
 		}
 	}
 }

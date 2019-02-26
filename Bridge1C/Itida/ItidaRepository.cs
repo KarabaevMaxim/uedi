@@ -15,7 +15,6 @@
 		/// <summary>
 		/// Получить список товаров.
 		/// </summary>
-		/// <returns></returns>
 		public List<Ware> GetAllWares()
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
@@ -27,15 +26,19 @@
 
 				if(reader.HasRows)
 				{
-					while(reader.Read())
+					string wareCode = string.Empty;
+
+					while (reader.Read())
 					{
+						wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
 						Ware ware = new Ware
 						{
-							Code = ((string)reader.GetValue(0)).Trim(),
-							Name = ((string)reader.GetValue(1)).Trim(),
-							FullName = ((string)reader.GetValue(2)).Trim(),
-							Unit = this.GetUnit(Requisites.Code, ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
-							ExCodes = this.GetExCodes(((string)reader.GetValue(0)).Trim())
+							Code = wareCode,
+							Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+							FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
+							Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+							ExCodes = this.GetExCodes(wareCode),
+							BarCodes = this.GetWareBarcodes(wareCode)
 						};
 						result.Add(ware);
 					}
@@ -46,11 +49,84 @@
 		}
 
 		/// <summary>
+		/// Возвращает объект номенклатуры по указанному реквизиту.
+		/// </summary>
+		/// <param name="propertyName">Реквизит для поиска.</param>
+		/// <param name="propertyValue">Значение реквизита для поиска.</param>
+		/// <param name="counteragentGln">ГЛН контрагента (необходимо в случае поиска по внешнему коду номенклатуры).</param>
+		public Ware GetWare(Requisites propertyName, string propertyValue, string counteragentGln = "")
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				Ware result = null;
+				SqlCommand command = null;
+				SqlDataReader reader = null;
+				switch (propertyName)
+				{
+					case Requisites.Name:
+						break;
+					case Requisites.Code:
+						command = new SqlCommand("SELECT maincode, shortname, name, ed FROM sprnn WHERE maincode = @code", conn);
+						command.Parameters.Add(new SqlParameter("@code", propertyValue));
+						reader = command.ExecuteReader();
+
+						if (reader.HasRows)
+						{
+							reader.Read();
+							string wareCode = ((string)reader.GetValue(0)).Trim();
+							result = new Ware
+							{
+								Code = wareCode,
+								Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+								FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
+								Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+								ExCodes = this.GetExCodes(wareCode),
+								BarCodes = this.GetWareBarcodes(wareCode)
+							};
+						}
+						break;
+					case Requisites.ExCode_Ware:
+						if (string.IsNullOrWhiteSpace(counteragentGln))
+							throw new ArgumentOutOfRangeException("Значение counteragentGln не корректно");
+
+						command = new SqlCommand(@"	SELECT spr.maincode, spr.shortname, spr.name, spr.ed
+													FROM sprnn AS spr 
+														LEFT JOIN sprres_clients AS excode ON spr.nn = excode.code 
+														LEFT JOIN sprclient AS client ON excode.client = client.code 
+													WHERE excode.ex_code = @wareEx AND client.ex_code = @clientEx", conn);
+						command.Parameters.Add(new SqlParameter("@wareEx", propertyValue));
+						command.Parameters.Add(new SqlParameter("@clientEx", counteragentGln));
+						reader = command.ExecuteReader();
+
+						if (reader.HasRows)
+						{
+							reader.Read();
+							string wareCode = ((string)reader.GetValue(0)).Trim();
+							result = new Ware
+							{
+								Code = wareCode,
+								Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+								FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
+								Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+								ExCodes = this.GetExCodes(wareCode),
+								BarCodes = this.GetWareBarcodes(wareCode)
+							};
+						}
+						break;
+					default:
+						throw new ArgumentOutOfRangeException("Значение propertyName не допустимо");
+				}
+
+				return result;
+			}
+		}
+
+		/// <summary>
 		/// Получить ЕИ.
 		/// </summary>
-		/// <param name="propertyName"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <param name="propertyName">Реквизит для поиска.</param>
+		/// <param name="value">Значение реквизита для поиска.</param>
 		public Unit GetUnit(Requisites propertyName, string value)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
@@ -71,8 +147,8 @@
 							result = new Unit
 							{
 								Code = value.Trim(),
-								International = ((string)reader.GetValue(0)).Trim(),
-								FullName = ((string)reader.GetValue(1)).Trim(),
+								International = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
+								FullName = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
 								Name = value.Trim()
 							};
 						}
@@ -83,7 +159,7 @@
 					case Requisites.InternationalReduction_Unit:
 						break;
 					default:
-						break;
+						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
 				}
 
 				return result;
@@ -93,9 +169,8 @@
 		/// <summary>
 		/// Получить контрагента.
 		/// </summary>
-		/// <param name="propertyName"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <param name="propertyName">Реквизит для поиска.</param>
+		/// <param name="value">Значение реквизита для поиска.</param>
 		public Counteragent GetCounteragent(Requisites propertyName, string value)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
@@ -127,13 +202,18 @@
 					case Requisites.GLN:
 						break;
 					default:
-						break;
+						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
 				}
 
 				return result;
 			}
 		}
 
+		/// <summary>
+		/// Получить организацию.
+		/// </summary>
+		/// <param name="propertyName">Реквизит для поиска.</param>
+		/// <param name="value">Значение реквизита для поиска.</param>
 		public Organization GetOrganization(Requisites propertyName, string value)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
@@ -164,13 +244,18 @@
 					case Requisites.GLN:
 						break;
 					default:
-						break;
+						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
 				}
 
 				return result;
 			}
 		}
 
+		/// <summary>
+		/// Получить склад.
+		/// </summary>
+		/// <param name="propertyName">Реквизит для поиска.</param>
+		/// <param name="value">Значение реквизита для поиска.</param>
 		public Warehouse GetWarehouse(Requisites propertyName, string value)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
@@ -193,7 +278,7 @@
 							result = new Warehouse
 							{
 								Code = value,
-								Name = ((string)reader.GetValue(0)).Trim(),
+								Name = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
 								Shop = null
 							};
 						}
@@ -210,18 +295,47 @@
 							reader.Read();
 							result = new Warehouse
 							{
-								Code = ((string)reader.GetValue(0)).Trim(),
-								Name = ((string)reader.GetValue(1)).Trim(),
+								Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
+								Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
 								Shop = null
 							};
 						}
 						break;
 					default:
-						break;
-
+						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
 				}
 
+				return result;
+			}
+		}
 
+		/// <summary>
+		/// Получить список складов.
+		/// </summary>
+		public List<Warehouse> GetAllWarehouses()
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				List<Warehouse> result = new List<Warehouse>();
+				SqlCommand command = new SqlCommand("SELECT code, name FROM sprskl", conn);
+				SqlDataReader reader = command.ExecuteReader();
+
+				if (reader.HasRows)
+				{
+					string wareCode = string.Empty;
+
+					while (reader.Read())
+					{
+						Warehouse warehouse = new Warehouse
+						{
+							Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
+							Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+							Shop = null
+						};
+						result.Add(warehouse);
+					}
+				}
 
 				return result;
 			}
@@ -249,40 +363,33 @@
 				{
 					while (reader.Read())
 					{
-						try
+						Waybill wb = new Waybill
 						{
-							Waybill wb = new Waybill
+							Number = ((string)reader.GetValue(0)).Trim(),
+							Date = ((DateTime)reader.GetValue(1)),
+							Supplier = new Counteragent
 							{
-								Number = ((string)reader.GetValue(0)).Trim(),
-								Date = ((DateTime)reader.GetValue(1)),
-								Supplier = new Counteragent
-								{
-									Code = ((string)reader.GetValue(2)).Trim(),
-									FullName = ((string)reader.GetValue(3)).Trim(),
-									Name = ((string)reader.GetValue(4)).Trim(),
-									GLN = ((string)reader.GetValue(5)).Trim(),
-								},
-								Organization = new Organization
-								{
-									Code = ((string)reader.GetValue(6)).Trim(),
-									Name = ((string)reader.GetValue(7)).Trim(),
-									GLN = ((string)reader.GetValue(8)).Trim()
-								},
-								Warehouse = new Warehouse
-								{
-									Code = ((string)reader.GetValue(9)).Trim(),
-									Name = ((string)reader.GetValue(10)).Trim(),
-									Shop = null
-								},
-								Positions = new List<WaybillRow>(),
+								Code = ((string)reader.GetValue(2)).Trim(),
+								FullName = ((string)reader.GetValue(3)).Trim(),
+								Name = ((string)reader.GetValue(4)).Trim(),
+								GLN = ((string)reader.GetValue(5)).Trim(),
+							},
+							Organization = new Organization
+							{
+								Code = ((string)reader.GetValue(6)).Trim(),
+								Name = ((string)reader.GetValue(7)).Trim(),
+								GLN = ((string)reader.GetValue(8)).Trim()
+							},
+							Warehouse = new Warehouse
+							{
+								Code = ((string)reader.GetValue(9)).Trim(),
+								Name = ((string)reader.GetValue(10)).Trim(),
 								Shop = null
-							};
-							result.Add(wb);
-						}
-						catch(InvalidCastException ex)
-						{
-							
-						}
+							},
+							Positions = new List<WaybillRow>(),
+							Shop = null
+						};
+						result.Add(wb);
 					}
 				}
 
@@ -354,7 +461,7 @@
 		/// <summary>
 		/// Возвращает список ШК для товара с указанным кодом wareCode (sprres.maincode или sprnn.maincode).
 		/// </summary>
-		/// <param name="wareCode">Код товара (sprres.code или sprnn.nn).</param>
+		/// <param name="wareCode">Код товара (sprres.maincode или sprnn.maincode).</param>
 		public List<string> GetWareBarcodes(string wareCode)
 		{
 			using (SqlConnection conn = new SqlConnection(connectionString))
@@ -371,7 +478,7 @@
 				{
 					while (reader.Read())
 					{
-						result.Add(((string)reader.GetValue(0)).Trim());
+						result.Add(reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim());
 					}
 				}
 
@@ -470,12 +577,12 @@
 						{
 							Counteragent = new Counteragent
 							{
-								Code = ((string)reader.GetValue(0)).Trim(),
-								FullName = ((string)reader.GetValue(1)).Trim(),
-								Name = ((string)reader.GetValue(2)).Trim(),
-								GLN = ((string)reader.GetValue(3)).Trim(),
+								Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
+								FullName = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+								Name = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
+								GLN = reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim(),
 							},
-							Value = ((string)reader.GetValue(4)).Trim()
+							Value = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim()
 						};
 
 						result.Add(exCode);

@@ -93,6 +93,12 @@
 		/// <returns>Объект организации.</returns>
 		Organization GetOrganization(string warehouseCode);
 		/// <summary>
+		/// Получить организацию по реквизиту.
+		/// </summary>
+		/// <param name="propertyName">Реквизит для поиска.</param>
+		/// <param name="value">Значение реквизита для поиска.</param>
+		Organization GetOrganization(Requisites prop, string propValue);
+		/// <summary>
 		/// Добавить в базу данных новую накладную.
 		/// </summary>
 		/// <param name="waybill">Объект накладной.</param>

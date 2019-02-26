@@ -19,19 +19,33 @@
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Возвращает объект номенклатуры по указанному реквизиту.
+		/// </summary>
+		/// <param name="prop">Реквизит для поиска.</param>
+		/// <param name="propValue">Значение реквизита для поиска.</param>
+		/// <param name="counteragentGln">ГЛН контрагента (необходимо в случае поиска по внешнему коду номенклатуры).</param>
 		public Ware GetWare(Requisites prop, string propValue, string counteragentGln = "")
 		{
-			throw new NotImplementedException();
+			return this.Repository.GetWare(prop, propValue, counteragentGln);
 		}
 
+		/// <summary>
+		/// Получить список товаров.
+		/// </summary>
 		public List<Ware> GetAllWares()
 		{
-			throw new NotImplementedException();
+			return this.Repository.GetAllWares();
 		}
 
+		/// <summary>
+		/// Получить контрагента.
+		/// </summary>
+		/// <param name="prop">Реквизит для поиска.</param>
+		/// <param name="propValue">Значение реквизита для поиска.</param>
 		public Counteragent GetCounteragent(Requisites prop, string propValue)
 		{
-			throw new NotImplementedException();
+			return this.Repository.GetCounteragent(prop, propValue);
 		}
 
 		public Task<List<Counteragent>> GetAllCounteragentsAsync()
@@ -49,19 +63,32 @@
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Получить ЕИ.
+		/// </summary>
+		/// <param name="prop">Реквизит для поиска.</param>
+		/// <param name="propValue">Значение реквизита для поиска.</param>
 		public Unit GetUnit(Requisites prop, string propValue)
 		{
-			throw new NotImplementedException();
+			return this.Repository.GetUnit(prop, propValue);
 		}
 
+		/// <summary>
+		/// Получить склад.
+		/// </summary>
+		/// <param name="prop">Реквизит для поиска.</param>
+		/// <param name="propValue">Значение реквизита для поиска.</param>
 		public Warehouse GetWarehouse(Requisites prop, string propValue)
 		{
-			throw new NotImplementedException();
+			return this.Repository.GetWarehouse(prop, propValue);
 		}
 
+		/// <summary>
+		/// Получить список складов.
+		/// </summary>
 		public List<Warehouse> GetAllWarehouses()
 		{
-			throw new NotImplementedException();
+			return this.Repository.GetAllWarehouses();
 		}
 
 		public bool RematchingWarehouse(string warehouseCode, string gln)
@@ -77,6 +104,16 @@
 		public Organization GetOrganization(string warehouseCode)
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Получить организацию.
+		/// </summary>
+		/// <param name="prop">Реквизит для поиска.</param>
+		/// <param name="propValue">Значение реквизита для поиска.</param>
+		public Organization GetOrganization(Requisites prop, string propValue)
+		{
+			return this.Repository.GetOrganization(prop, propValue);
 		}
 
 		public bool AddNewWaybill(Waybill waybill)
