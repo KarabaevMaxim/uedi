@@ -100,11 +100,20 @@
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Нереализуемый метод.
+		/// </summary>
+		/// <param name="warehouseCode"></param>
 		public Shop GetShop(string warehouseCode)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Нереализуемый метод.
+		/// </summary>
+		/// <param name="warehouseCode"></param>
+		/// <returns></returns>
 		public Organization GetOrganization(string warehouseCode)
 		{
 			throw new NotImplementedException();
@@ -120,14 +129,22 @@
 			return this.Repository.GetOrganization(prop, propValue);
 		}
 
+
 		public bool AddNewWaybill(Waybill waybill)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Добавляет внешний код номенклатуре.
+		/// </summary>
+		/// <param name="ware">Номенклатура.</param>
+		/// <param name="exCode">Внешний код.</param>
 		public bool AddNewExCodeToWare(Ware ware, WareExCode exCode)
 		{
-			throw new NotImplementedException();
+			this.Repository.AddNewExCode(ware.Code, exCode);
+			ware.ExCodes.Add(exCode);
+			return true;
 		}
 
 		private ItidaRepository Repository { get; set; }

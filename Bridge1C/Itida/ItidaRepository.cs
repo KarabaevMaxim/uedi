@@ -495,6 +495,66 @@
 			}
 		}
 
+		public void AddNewExCodes(string wareIc, List<WareExCode> exCodes)
+		{
+			if (string.IsNullOrWhiteSpace(wareIc) || exCodes == null || exCodes.Count == 0)
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("", conn);
+				SqlParameter parameterCode = new SqlParameter("@wareCode", wareIc);
+				SqlParameter parameterClientCode = new SqlParameter("@clientCode", null);
+				SqlParameter parameterExCode = new SqlParameter("@exCode", null);
+				command.Parameters.Add(parameterCode);
+				command.Parameters.Add(parameterClientCode);
+				command.Parameters.Add(parameterExCode);
+
+				foreach (var item in exCodes)
+				{
+					command.CommandText = "INSERT INTO sprres_clients (code, client, ex_code) VAlUES (@wareCode, @clientCode, @exCode)";
+					parameterClientCode.Value = item.Counteragent.Code;
+					parameterExCode.Value = item.Value;
+					command.ExecuteNonQuery();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Добавить новый внешний код к номенклатуре с кодом wareMainCode (sprnn.maincode).
+		/// </summary>
+		/// <param name="wareMainCode">Код номенклатуры(sprnn.maincode).</param>
+		/// <param name="exCode">Внешний код для записи.</param>
+		public void AddNewExCode(string wareMainCode, WareExCode exCode)
+		{
+			if (string.IsNullOrWhiteSpace(wareMainCode) || exCode == null)
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("SELECT nn FROM sprnn WHERE maincode = @maincode");
+				command.Parameters.Add(new SqlParameter("@maincode", wareMainCode));
+				SqlDataReader reader = command.ExecuteReader();
+
+				if(reader.HasRows)
+				{
+					reader.Read();
+					string wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+
+					if (string.IsNullOrWhiteSpace(wareCode))
+						return;
+
+					command = new SqlCommand("INSERT INTO sprres_clients (code, client, ex_code) VAlUES (@wareCode, @clientCode, @exCode)", conn);
+					command.Parameters.Add(new SqlParameter("@wareCode", wareCode));
+					command.Parameters.Add(new SqlParameter("@clientCode", exCode.Counteragent.Code));
+					command.Parameters.Add(new SqlParameter("@exCode", exCode.Value));
+					command.ExecuteNonQuery();
+				}
+			}
+		}
+
 		#region Закрытые члены класса (потенциально закрытые)
 
 		/// <summary>
@@ -526,32 +586,6 @@
 					command.ExecuteNonQuery();
 				}
 
-			}
-		}
-
-		private void AddNewExCodes(string wareIc, List<WareExCode> exCodes)
-		{
-			if (string.IsNullOrWhiteSpace(wareIc) || exCodes == null || exCodes.Count == 0)
-				throw new ArgumentOutOfRangeException();
-
-			using (SqlConnection conn = new SqlConnection(connectionString))
-			{
-				conn.Open();
-				SqlCommand command = new SqlCommand("", conn);
-				SqlParameter parameterCode = new SqlParameter("@wareCode", wareIc);
-				SqlParameter parameterClientCode = new SqlParameter("@clientCode", null);
-				SqlParameter parameterExCode = new SqlParameter("@exCode", null);
-				command.Parameters.Add(parameterCode);
-				command.Parameters.Add(parameterClientCode);
-				command.Parameters.Add(parameterExCode);
-
-				foreach (var item in exCodes)
-				{
-					command.CommandText = "INSERT INTO sprres_clients (code, client, ex_code) VAlUES (@wareCode, @clientCode, @exCode)";
-					parameterClientCode.Value = item.Counteragent.Code;
-					parameterExCode.Value = item.Value;
-					command.ExecuteNonQuery();
-				}
 			}
 		}
 
