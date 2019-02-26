@@ -6,7 +6,7 @@
         public Unit Unit { get; set; }
         public float Count { get; set; }
         public decimal Price { get; set; }
-        public int TaxRate { get; set; } // todo: налоги не записываются в базу
+        public int TaxRate { get; set; } // todo: налоги не записываются в базу 1С
         public decimal TaxAmount { get; set; }
 
         public override bool Equals(object obj)

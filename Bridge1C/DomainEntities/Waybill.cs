@@ -12,5 +12,10 @@
         public Organization Organization { get; set; }
         public Shop Shop { get; set; }
         public List<WaybillRow> Positions { get; set; }
-    }
+
+		public override string ToString()
+		{
+			return string.Format("№ {0} от {1}", this.Number, this.Date);
+		}
+	}
 }

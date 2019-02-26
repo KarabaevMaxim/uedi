@@ -40,10 +40,52 @@ namespace UnitTests
 		}
 
 		[TestMethod]
-		public void GetExCodes()
+		public void GetExCodesTest()
 		{
-			var exCodes = this.repository.GetExCodes("0000001832");
+			var exCodes = this.repository.GetExCodes("1509");
 			Assert.IsTrue(exCodes.Any());
+		}
+
+		[TestMethod]
+		public void GetOrganizationTest()
+		{
+			var organization = this.repository.GetOrganization(Bridge1C.Requisites.Code, "0000001");
+			Assert.IsNotNull(organization);
+		}
+
+		[TestMethod]
+		public void GetWarehouseTest()
+		{
+			var warehouse = this.repository.GetWarehouse(Bridge1C.Requisites.Code, "001");
+			Assert.IsNotNull(warehouse);
+		}
+
+		[TestMethod]
+		public void GetAllWaybillsTest()
+		{
+			var waybills = this.repository.GetAllWaybills();
+			Assert.IsTrue(waybills.Any());
+		}
+
+		[TestMethod]
+		public void GetWaybillsByCode()
+		{
+			var waybills = this.repository.GetWaybillsByNumber("A-1");
+			Assert.IsTrue(waybills.Any());
+		}
+
+		[TestMethod]
+		public void GetWaybillRowsTest()
+		{
+			var rows = this.repository.GetWaybillRows("7239");
+			Assert.IsTrue(rows.Any());
+		}
+
+		[TestMethod]
+		public void GetWareBarcodes()
+		{
+			var barcodes = this.repository.GetWareBarcodes("1509");
+			Assert.IsTrue(barcodes.Any());
 		}
 	}
 }
