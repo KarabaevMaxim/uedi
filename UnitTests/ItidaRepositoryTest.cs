@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace UnitTests
+﻿namespace UnitTests
 {
+	using System;
+	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using System.Collections.Generic;
 	using System.Linq;
 	using Bridge1C.DomainEntities;
@@ -162,6 +161,44 @@ namespace UnitTests
 				}
 			};
 			Assert.IsTrue(this.repository.AddNewWare(ware));
+		}
+
+		[TestMethod]
+		public void RematchingCounteragentTest()
+		{
+			var result = this.repository.RematchingCounteragent("0000002", "123456789");
+			Assert.IsTrue(result);
+		}
+
+		[TestMethod]
+		public void RematchingWarehouseTest()
+		{
+			var result = this.repository.RematchingWarehouse("002", "123456789");
+			Assert.IsTrue(result);
+		}
+
+		[TestMethod]
+		public void AddNewWaybill()
+		{
+			Organization organization = this.repository.GetOrganization(Bridge1C.Requisites.Code, "0000001");
+			Counteragent counteragent = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000254");
+			Warehouse warehouse = this.repository.GetWarehouse(Bridge1C.Requisites.Code, "001");
+
+			if (organization == null || counteragent == null || warehouse == null)
+				Assert.Fail("Объект не найден в базе");
+
+			Waybill waybill = new Waybill
+			{
+				Number = "",
+				Date = DateTime.Now,
+				Organization = organization,
+				Supplier = counteragent,
+				Warehouse = warehouse,
+				Shop = null,
+				Positions = new List<WaybillRow>()
+			};
+			var result = this.repository.AddNewWaybill(waybill);
+			Assert.IsTrue(result);
 		}
 	}
 }

@@ -52,19 +52,19 @@
 			return this.Repository.GetCounteragent(prop, propValue);
 		}
 
-		public Task<List<Counteragent>> GetAllCounteragentsAsync()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> RematchingCounteragentAsync(Counteragent counteragent, string gln)
-		{
-			throw new NotImplementedException();
-		}
-
+		/// <summary>
+		/// Инициализирует значением gln поле ГЛН контрагента с кодом counteragentCode, если перед этим в базе найден контрагент с 
+		/// ГЛН gln, после будет переинициализировано пустой строкой.
+		/// </summary>
+		/// <param name="counteragentCode">Код контрагента для переициализации.</param>
+		/// <param name="gln">ГНЛ.</param>
+		/// <returns>true, если операция завершена успешно, иначе false.</returns>
 		public bool RematchingCounteragent(Counteragent counteragent, string gln)
 		{
-			throw new NotImplementedException();
+			if (counteragent == null || string.IsNullOrWhiteSpace(gln))
+				return false;
+
+			return this.Repository.RematchingCounteragent(counteragent.Code, gln);
 		}
 
 		/// <summary>
@@ -95,9 +95,17 @@
 			return this.Repository.GetAllWarehouses();
 		}
 
+		/// <summary>
+		/// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть контрагент с ex_code gln 
+		/// </summary>
+		/// <param name="warehouseCode">Код склада для инициализации.</param>
+		/// <param name="gln">ГЛН.</param>
 		public bool RematchingWarehouse(string warehouseCode, string gln)
 		{
-			throw new NotImplementedException();
+			if (string.IsNullOrWhiteSpace(warehouseCode) || string.IsNullOrWhiteSpace(gln))
+				return false;
+
+			return this.Repository.RematchingWarehouse(warehouseCode, gln);
 		}
 
 		/// <summary>
@@ -129,10 +137,12 @@
 			return this.Repository.GetOrganization(prop, propValue);
 		}
 
-
 		public bool AddNewWaybill(Waybill waybill)
 		{
-			throw new NotImplementedException();
+			if (waybill == null)
+				return false;
+
+			return this.Repository.AddNewWaybill(waybill);
 		}
 
 		/// <summary>
@@ -145,6 +155,16 @@
 			this.Repository.AddNewExCode(ware.Code, exCode);
 			ware.ExCodes.Add(exCode);
 			return true;
+		}
+
+		public Task<List<Counteragent>> GetAllCounteragentsAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> RematchingCounteragentAsync(Counteragent counteragent, string gln)
+		{
+			throw new NotImplementedException();
 		}
 
 		private ItidaRepository Repository { get; set; }

@@ -555,6 +555,86 @@
 			}
 		}
 
+		/// <summary>
+		/// Инициализирует значением gln поле ГЛН контрагента с кодом counteragentCode, если перед этим в базе найден контрагент с 
+		/// ГЛН gln, после будет переинициализировано пустой строкой.
+		/// </summary>
+		/// <param name="counteragentCode">Код контрагента для переициализации.</param>
+		/// <param name="gln">ГНЛ.</param>
+		/// <returns>true, если операция завершена успешно, иначе false.</returns>
+		public bool RematchingCounteragent(string counteragentCode, string gln)
+		{
+			if (string.IsNullOrWhiteSpace(counteragentCode) || string.IsNullOrWhiteSpace(gln))
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("UPDATE sprclient SET ex_code = '' WHERE ex_code = @gln", conn);
+				command.Parameters.Add(new SqlParameter("@gln", gln));
+				command.ExecuteNonQuery();
+
+				command = new SqlCommand("UPDATE sprclient SET ex_code = @gln WHERE code = @code", conn);
+				command.Parameters.Add(new SqlParameter("@gln", gln));
+				command.Parameters.Add(new SqlParameter("@code", counteragentCode));
+				int result = command.ExecuteNonQuery();
+				return result > 0;
+			}
+		}
+
+		/// <summary>
+		/// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть контрагент с ex_code gln 
+		/// </summary>
+		/// <param name="warehouseCode">Код склада для инициализации.</param>
+		/// <param name="gln">ГЛН.</param>
+		public bool RematchingWarehouse(string warehouseCode, string gln)
+		{
+			if (string.IsNullOrWhiteSpace(warehouseCode) || string.IsNullOrWhiteSpace(gln))
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("UPDATE sprskl SET ex_code = '' WHERE ex_code = @gln", conn);
+				command.Parameters.Add(new SqlParameter("@gln", gln));
+				command.ExecuteNonQuery();
+
+				command = new SqlCommand("UPDATE sprskl SET ex_code = @gln WHERE code = @code", conn);
+				command.Parameters.Add(new SqlParameter("@gln", gln));
+				command.Parameters.Add(new SqlParameter("@code", warehouseCode));
+				int result = command.ExecuteNonQuery();
+				return result > 0;
+			}
+		}
+
+		public bool AddNewWaybill(Waybill waybill)
+		{
+			if (waybill == null)
+				throw new ArgumentNullException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("sp_insertdoc", conn);
+				command.CommandType = System.Data.CommandType.StoredProcedure;
+				command.Parameters.Add(new SqlParameter("@docCode", "001"));
+				command.Parameters.Add(new SqlParameter("@ndok", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
+				command.Parameters.Add(new SqlParameter("@parentNDOK", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@parentFIRM", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@parentAUTHOR", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@parentCUR", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@bfn", "0000000002"));
+				command.Parameters.Add(new SqlParameter("@accountList", "001"));
+				command.Parameters.Add(new SqlParameter("@onlyNewNumber", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@defaultAccount", DBNull.Value));
+				command.Parameters.Add(new SqlParameter("@viewpoint", "0000000001"));
+				object result = command.ExecuteScalar(); 
+			}
+
+			return true;
+		}
+
 		#region Закрытые члены класса (потенциально закрытые)
 
 		/// <summary>
