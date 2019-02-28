@@ -189,7 +189,7 @@
 
 			Waybill waybill = new Waybill
 			{
-				Number = "",
+				Number = "ABC123",
 				Date = DateTime.Now,
 				Organization = organization,
 				Supplier = counteragent,

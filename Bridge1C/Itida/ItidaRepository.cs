@@ -618,8 +618,8 @@
 				SqlCommand command = new SqlCommand("sp_insertdoc", conn);
 				command.CommandType = System.Data.CommandType.StoredProcedure;
 				command.Parameters.Add(new SqlParameter("@docCode", "001"));
-				command.Parameters.Add(new SqlParameter("@ndok", DBNull.Value));
-				command.Parameters.Add(new SqlParameter("@date", DateTime.Now));
+				command.Parameters.Add(new SqlParameter("@ndok", waybill.Number));
+				command.Parameters.Add(new SqlParameter("@date", waybill.Date));
 				command.Parameters.Add(new SqlParameter("@parentNDOK", DBNull.Value));
 				command.Parameters.Add(new SqlParameter("@parentFIRM", DBNull.Value));
 				command.Parameters.Add(new SqlParameter("@parentAUTHOR", DBNull.Value));
@@ -629,7 +629,23 @@
 				command.Parameters.Add(new SqlParameter("@onlyNewNumber", DBNull.Value));
 				command.Parameters.Add(new SqlParameter("@defaultAccount", DBNull.Value));
 				command.Parameters.Add(new SqlParameter("@viewpoint", "0000000001"));
-				object result = command.ExecuteScalar(); 
+				//string newNdoc = (string)command.ExecuteScalar();
+
+				command = new SqlCommand("SELECT identity_column FROM spr001 WHERE ndok = @newNdoc ORDER BY identity_column DESC", conn);
+				command.Parameters.Add(new SqlParameter("@newNdoc", waybill.Number));
+				SqlDataReader reader = command.ExecuteReader();
+
+				int newIc = -1;
+				if(reader.HasRows)
+				{
+					reader.Read();
+					newIc = (int)reader.GetValue(0);
+
+					foreach (var item in waybill.Positions)
+					{
+						command = new SqlCommand("INSERT INTO spec001 () VALUES ()", conn);
+					}
+				}
 			}
 
 			return true;
