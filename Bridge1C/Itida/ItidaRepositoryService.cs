@@ -122,10 +122,10 @@
 		/// </summary>
 		/// <param name="warehouseCode"></param>
 		/// <returns></returns>
-		public Organization GetOrganization(string warehouseCode)
-		{
-			throw new NotImplementedException();
-		}
+		//public Organization GetOrganization(string warehouseCode)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		/// <summary>
 		/// Получить организацию.
@@ -137,6 +137,10 @@
 			return this.Repository.GetOrganization(prop, propValue);
 		}
 
+		/// <summary>
+		/// Добавить новую накладную в базу данных.
+		/// </summary>
+		/// <param name="waybill">Накладная для записи.</param>
 		public bool AddNewWaybill(Waybill waybill)
 		{
 			if (waybill == null)
@@ -146,12 +150,25 @@
 		}
 
 		/// <summary>
-		/// Добавляет внешний код номенклатуре.
+		/// Получить список всех контрагентов из базы.
+		/// </summary>
+		public List<Counteragent> GetAllCounteragents()
+		{
+			return this.Repository.GetAllCounteragents();
+		}
+
+		/// <summary>
+		/// Добавляет внешний код номенклатуре и удаляет этот внешний код из предыдушей номенклатуры.
 		/// </summary>
 		/// <param name="ware">Номенклатура.</param>
 		/// <param name="exCode">Внешний код.</param>
 		public bool AddNewExCodeToWare(Ware ware, WareExCode exCode)
 		{
+			// todo: эти 2 сроки перенести в модуль сопоставленя
+			this.Repository.GetWareByExCode(exCode.Value, exCode.Counteragent.Code);
+			this.Repository.RemoveExCode(ware.Code, exCode);
+
+
 			this.Repository.AddNewExCode(ware.Code, exCode);
 			ware.ExCodes.Add(exCode);
 			return true;

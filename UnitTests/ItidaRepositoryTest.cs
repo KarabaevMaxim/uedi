@@ -183,6 +183,11 @@
 			Organization organization = this.repository.GetOrganization(Bridge1C.Requisites.Code, "0000001");
 			Counteragent counteragent = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000254");
 			Warehouse warehouse = this.repository.GetWarehouse(Bridge1C.Requisites.Code, "001");
+			Ware ware = this.repository.GetWare(Bridge1C.Requisites.Code, "4414");
+			Ware ware1 = this.repository.GetWare(Bridge1C.Requisites.Code, "24");
+			Ware ware2 = this.repository.GetWare(Bridge1C.Requisites.Code, "1908");
+			Unit unit = this.repository.GetUnit(Bridge1C.Requisites.Code, "шт");
+
 
 			if (organization == null || counteragent == null || warehouse == null)
 				Assert.Fail("Объект не найден в базе");
@@ -195,7 +200,36 @@
 				Supplier = counteragent,
 				Warehouse = warehouse,
 				Shop = null,
-				Positions = new List<WaybillRow>()
+				Positions = new List<WaybillRow>
+				{
+					new WaybillRow
+					{
+						Ware = ware,
+						Unit = unit,
+						Count = 5,
+						Price = 100,
+						TaxAmount = 100,
+						TaxRate = 20
+					},
+					new WaybillRow
+					{
+						Ware = ware1,
+						Unit = unit,
+						Count = 1,
+						Price = 500,
+						TaxAmount = 0,
+						TaxRate = 0
+					},
+					new WaybillRow
+					{
+						Ware = ware2,
+						Unit = unit,
+						Count = 10,
+						Price = 50,
+						TaxAmount = 50,
+						TaxRate = 10
+					},
+				}
 			};
 			var result = this.repository.AddNewWaybill(waybill);
 			Assert.IsTrue(result);

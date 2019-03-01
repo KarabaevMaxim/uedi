@@ -26,7 +26,29 @@
 			string ftpPassword,
 			string ftpRemoteFolder);
 
-		void ConnectToServerBase(string connectionString, string waybillFolder, string archieveFolder);
+		/// <summary>
+		/// Метод подключения к серверной базе.
+		/// </summary>
+		/// <param name="connectionString"></param>
+		/// <param name="waybillFolder"></param>
+		/// <param name="archieveFolder"></param>
+		/// <param name="userName"></param>
+		/// <param name="ftpUri"></param>
+		/// <param name="ftpPassive"></param>
+		/// <param name="ftpTimeout"></param>
+		/// <param name="ftpLogin"></param>
+		/// <param name="ftpPassword"></param>
+		/// <param name="ftpRemoteFolder"></param>
+		void ConnectToServerBase(string connectionString,
+			string waybillFolder,
+			string archieveFolder,
+			string userName,
+			string ftpUri,
+			bool ftpPassive,
+			int ftpTimeout,
+			string ftpLogin,
+			string ftpPassword,
+			string ftpRemoteFolder);
 
 	}
 }

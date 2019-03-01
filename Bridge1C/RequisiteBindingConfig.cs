@@ -15,7 +15,7 @@
     {
         Tax_0,
         Tax_10,
-        Tax_18,
+        Tax_20,
         Tax_None
     }
 
@@ -51,7 +51,7 @@
             {
                 { TaxRates.Tax_0, "0" },
                 { TaxRates.Tax_10, "10" },
-                { TaxRates.Tax_18, "18" },
+                { TaxRates.Tax_20, "20" },
                 { TaxRates.Tax_None, "None" },
             };
         }

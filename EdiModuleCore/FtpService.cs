@@ -64,7 +64,7 @@
 			if (file.Type != FtpEntryType.File)
 				return false;
 
-			using (var stream = ftpClient.Retr(file.Path))
+			using (var stream = ftpClient.Retr(file.Path)) // todo: Не может загрузить накладные с русскими символами
 			{
 				List<byte> byteList = new List<byte>();
 				int curByte;

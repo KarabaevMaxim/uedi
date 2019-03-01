@@ -44,9 +44,23 @@
 		/// <summary>
 		/// Метод подключения к серверной Базе.
 		/// </summary>
-		public void ConnectToServerBase(string connectionString, string waybillFolder, string archieveFolder)
+		public void ConnectToServerBase(string connectionString,
+			string waybillFolder, 
+			string archieveFolder,
+			string userName,
+			string ftpUri,
+			bool ftpPassive,
+			int ftpTimeout,
+			string ftpLogin,
+			string ftpPassword,
+			string ftpRemoteFolder)
 		{
-			
+			EdiModuleCore.CoreInit.ConnectToItida(connectionString);
+			EdiModuleCore.CoreInit.Init();
+			EdiModuleCore.SessionManager.CreateSession(userName, waybillFolder, archieveFolder, ftpUri, ftpPassive,
+														ftpTimeout, ftpLogin, ftpPassword, ftpRemoteFolder);
+			MainWindow window = new MainWindow();
+			window.ShowDialog();
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿namespace Bridge1C.Itida
 {
 	using System;
+	using System.Linq;
 	using System.Collections.Generic;
 	using System.Data.SqlClient;
 	using DomainEntities;
@@ -123,6 +124,45 @@
 		}
 
 		/// <summary>
+		/// Возвращает объект номенклатуры по указанному реквизиту.
+		/// </summary>
+		/// <param name="exCode">Внешний код.</param>
+		/// <param name="counteragentCode">Код контрагента.</param>
+		public Ware GetWareByExCode(string exCode, string counteragentCode)
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				Ware result = null;
+				SqlCommand command = command = new SqlCommand(@"SELECT spr.maincode, spr.shortname, spr.name, spr.ed
+																FROM sprnn AS spr 
+																	LEFT JOIN sprres_clients AS excode ON spr.nn = excode.code 
+																	LEFT JOIN sprclient AS client ON excode.client = client.code 
+																WHERE excode.ex_code = @wareEx AND client.code = @clientCode", conn);
+				command.Parameters.Add(new SqlParameter("@wareEx", exCode));
+				command.Parameters.Add(new SqlParameter("@clientCode", counteragentCode));
+				SqlDataReader reader = command.ExecuteReader();
+
+				if (reader.HasRows)
+				{
+					reader.Read();
+					string wareCode = ((string)reader.GetValue(0)).Trim();
+					result = new Ware
+					{
+						Code = wareCode,
+						Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+						FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
+						Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+						ExCodes = this.GetExCodes(wareCode),
+						BarCodes = this.GetWareBarcodes(wareCode)
+					};
+				}
+
+				return result;
+			}
+		}
+
+		/// <summary>
 		/// Получить ЕИ.
 		/// </summary>
 		/// <param name="propertyName">Реквизит для поиска.</param>
@@ -133,13 +173,15 @@
 			{
 				conn.Open();
 				Unit result = null;
+				SqlCommand command = null;
+				SqlDataReader reader = null;
 
 				switch (propertyName)
 				{
 					case Requisites.Code:
-						SqlCommand command = new SqlCommand("SELECT ex_Code, name FROM spredn WHERE code = @code", conn);
+						command = new SqlCommand("SELECT ex_Code, name FROM spredn WHERE code = @code", conn);
 						command.Parameters.Add(new SqlParameter("@code", value));
-						SqlDataReader reader = command.ExecuteReader();
+						reader = command.ExecuteReader();
 
 						if (reader.HasRows)
 						{
@@ -152,11 +194,26 @@
 								Name = value.Trim()
 							};
 						}
-
 						break;
 					case Requisites.Name:
 						break;
 					case Requisites.InternationalReduction_Unit:
+						command = new SqlCommand("SELECT code, name FROM spredn WHERE ex_Code = @exCode", conn);
+						command.Parameters.Add(new SqlParameter("@exCode", value));
+						reader = command.ExecuteReader();
+
+						if (reader.HasRows)
+						{
+							reader.Read();
+							string code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+							result = new Unit
+							{
+								Code = code,
+								International = value,
+								FullName = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+								Name = code
+							};
+						}
 						break;
 					default:
 						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
@@ -177,13 +234,15 @@
 			{
 				conn.Open();
 				Counteragent result = null;
+				SqlCommand command = null;
+				SqlDataReader reader = null;
 
-				switch(propertyName)
+				switch (propertyName)
 				{
 					case Requisites.Code:
-						SqlCommand command = new SqlCommand("SELECT name, shortname, ex_code FROM sprclient WHERE code = @code", conn);
+						command = new SqlCommand("SELECT name, shortname, ex_code FROM sprclient WHERE code = @code", conn);
 						command.Parameters.Add(new SqlParameter("@code", value));
-						SqlDataReader reader = command.ExecuteReader();
+						reader = command.ExecuteReader();
 
 						if (reader.HasRows)
 						{
@@ -200,9 +259,51 @@
 					case Requisites.Name:
 						break;
 					case Requisites.GLN:
+						command = new SqlCommand("SELECT code, name, shortname FROM sprclient WHERE ex_code = @exCode", conn);
+						command.Parameters.Add(new SqlParameter("@exCode", value));
+						reader = command.ExecuteReader();
+
+						if (reader.HasRows)
+						{
+							reader.Read();
+							result = new Counteragent
+							{
+								Code = ((string)reader.GetValue(0)).Trim(),
+								FullName = ((string)reader.GetValue(1)).Trim(),
+								Name = ((string)reader.GetValue(2)).Trim(),
+								GLN = value
+							};
+						}
 						break;
 					default:
-						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
+						throw new ArgumentOutOfRangeException("Значение propertyName не допустимо");
+				}
+
+				return result;
+			}
+		}
+
+		public List<Counteragent> GetAllCounteragents()
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				List<Counteragent> result = new List<Counteragent>();
+				SqlCommand command = new SqlCommand("SELECT code, name, shortname, ex_code FROM sprclient", conn);
+				SqlDataReader reader = command.ExecuteReader();
+
+				if (reader.HasRows)
+				{
+					while(reader.Read())
+					{
+						result.Add(new Counteragent
+						{
+							Code = ((string)reader.GetValue(0)).Trim(),
+							FullName = ((string)reader.GetValue(1)).Trim(),
+							Name = ((string)reader.GetValue(2)).Trim(),
+							GLN = ((string)reader.GetValue(3)).Trim(),
+						});
+					}
 				}
 
 				return result;
@@ -275,11 +376,12 @@
 						if (reader.HasRows)
 						{
 							reader.Read();
+							string name = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
 							result = new Warehouse
 							{
 								Code = value,
-								Name = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
-								Shop = null
+								Name = name,
+								Shop = new Shop { Code = value, Name = name }
 							};
 						}
 						break;
@@ -293,11 +395,12 @@
 						if (reader.HasRows)
 						{
 							reader.Read();
+							string name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim();
 							result = new Warehouse
 							{
 								Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
-								Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-								Shop = null
+								Name = name,
+								Shop = new Shop { Code = value, Name = name }
 							};
 						}
 						break;
@@ -327,11 +430,13 @@
 
 					while (reader.Read())
 					{
+						string code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+						string name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim();
 						Warehouse warehouse = new Warehouse
 						{
-							Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
-							Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-							Shop = null
+							Code = code,
+							Name = name,
+							Shop = new Shop { Code = code, Name = name }
 						};
 						result.Add(warehouse);
 					}
@@ -534,7 +639,7 @@
 			using (SqlConnection conn = new SqlConnection(connectionString))
 			{
 				conn.Open();
-				SqlCommand command = new SqlCommand("SELECT nn FROM sprnn WHERE maincode = @maincode");
+				SqlCommand command = new SqlCommand("SELECT nn FROM sprnn WHERE maincode = @maincode", conn);
 				command.Parameters.Add(new SqlParameter("@maincode", wareMainCode));
 				SqlDataReader reader = command.ExecuteReader();
 
@@ -542,11 +647,43 @@
 				{
 					reader.Read();
 					string wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+					reader.Close();
 
 					if (string.IsNullOrWhiteSpace(wareCode))
 						return;
 
-					command = new SqlCommand("INSERT INTO sprres_clients (code, client, ex_code) VAlUES (@wareCode, @clientCode, @exCode)", conn);
+					command = new SqlCommand("INSERT INTO sprres_clients (code, client, ex_code) VALUES (@wareCode, @clientCode, @exCode)", conn);
+					command.Parameters.Add(new SqlParameter("@wareCode", wareCode));
+					command.Parameters.Add(new SqlParameter("@clientCode", exCode.Counteragent.Code));
+					command.Parameters.Add(new SqlParameter("@exCode", exCode.Value));
+					command.ExecuteNonQuery();
+				}
+			}
+		}
+
+		public void RemoveExCode(string wareMainCode, WareExCode exCode)
+		{
+			if (string.IsNullOrWhiteSpace(wareMainCode) || exCode == null)
+				throw new ArgumentOutOfRangeException();
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				SqlCommand command = new SqlCommand("SELECT nn FROM sprnn WHERE maincode = @maincode", conn);
+				command.Parameters.Add(new SqlParameter("@maincode", wareMainCode));
+				SqlDataReader reader = command.ExecuteReader();
+
+				if (reader.HasRows)
+				{
+					reader.Read();
+					string wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+					reader.Close();
+
+					if (string.IsNullOrWhiteSpace(wareCode))
+						return;
+
+					command = new SqlCommand(@"	DELETE FROM sprres_clients 
+												WHERE code = @wareCode AND client = @clientCode AND ex_code = @exCode", conn);
 					command.Parameters.Add(new SqlParameter("@wareCode", wareCode));
 					command.Parameters.Add(new SqlParameter("@clientCode", exCode.Counteragent.Code));
 					command.Parameters.Add(new SqlParameter("@exCode", exCode.Value));
@@ -629,7 +766,7 @@
 				command.Parameters.Add(new SqlParameter("@onlyNewNumber", DBNull.Value));
 				command.Parameters.Add(new SqlParameter("@defaultAccount", DBNull.Value));
 				command.Parameters.Add(new SqlParameter("@viewpoint", "0000000001"));
-				//string newNdoc = (string)command.ExecuteScalar();
+				string newNdoc = (string)command.ExecuteScalar();
 
 				command = new SqlCommand("SELECT identity_column FROM spr001 WHERE ndok = @newNdoc ORDER BY identity_column DESC", conn);
 				command.Parameters.Add(new SqlParameter("@newNdoc", waybill.Number));
@@ -640,16 +777,72 @@
 				{
 					reader.Read();
 					newIc = (int)reader.GetValue(0);
+					reader.Close();
+					command = new SqlCommand("UPDATE spr001 SET firm = @orgCode, client = @counterCode, sklad = @whCode, summa = @amount WHERE identity_column = @wbIc", conn);
+					command.Parameters.Add(new SqlParameter("@orgCode", waybill.Organization.Code));
+					command.Parameters.Add(new SqlParameter("@counterCode", waybill.Supplier.Code));
+					command.Parameters.Add(new SqlParameter("@whCode", waybill.Warehouse.Code));
+					command.Parameters.Add(new SqlParameter("@amount", waybill.Positions.Sum(p => (float)p.Price * p.Count)));
+					command.Parameters.Add(new SqlParameter("@wbIc", newIc));
+					command.ExecuteNonQuery();
 
 					foreach (var item in waybill.Positions)
 					{
-						command = new SqlCommand("INSERT INTO spec001 () VALUES ()", conn);
+						// найти внутренний код товара по его главному коду
+						command = new SqlCommand(@"SELECT nn FROM sprnn WHERE maincode = @mainCode", conn);
+						command.Parameters.Add(new SqlParameter("@maincode", item.Ware.Code));
+						reader = command.ExecuteReader();
+						string wareCode = string.Empty;
+
+						if (reader.HasRows)
+						{
+							reader.Read();
+							wareCode = (string)reader.GetValue(0);
+						}
+						
+						reader.Close();
+
+						// найти код списка налогов по величине ставки налога
+						command = new SqlCommand(@"	SELECT list.code 
+													FROM sprkodn AS spr 
+													INNER JOIN speclistkodn AS spec ON spr.code = spec.list 
+													INNER JOIN sprlistkodn AS list ON spec.code = list.code
+													WHERE proc_ = @taxRate", conn);
+						command.Parameters.Add(new SqlParameter("@taxRate", item.TaxRate));
+						reader = command.ExecuteReader();
+						string taxCode = string.Empty;
+
+						if(reader.HasRows)
+						{
+							reader.Read();
+							taxCode = (string)reader.GetValue(0);
+						}
+
+						reader.Close();
+						command = new SqlCommand(@"	INSERT INTO spec001 (ic, nn, ed, kolp, cena, summa, sumnds, kodn, nnname) 
+													VALUES (@wbIc, @wareCode, @ed, @count, @price, @amount, @taxAmount, @taxCode, @wareName)", conn);
+						command.Parameters.Add(new SqlParameter("@wbIc", newIc));
+						command.Parameters.Add(new SqlParameter("@wareCode", wareCode));
+						command.Parameters.Add(new SqlParameter("@ed", item.Unit.Code));
+						command.Parameters.Add(new SqlParameter("@count", item.Count));
+						command.Parameters.Add(new SqlParameter("@price", item.Price));
+						command.Parameters.Add(new SqlParameter("@amount", (float)item.Price * item.Count));
+						command.Parameters.Add(new SqlParameter("@taxAmount", (item.TaxRate == 0 ? 0 : 1.0f / (float)item.TaxRate) * (float)item.Price * item.Count));
+						command.Parameters.Add(new SqlParameter("@taxCode", taxCode));
+						command.Parameters.Add(new SqlParameter("@wareName", item.Ware.Name));
+						int result = command.ExecuteNonQuery();
 					}
+				}
+				else
+				{
+					return false;
 				}
 			}
 
 			return true;
 		}
+
+		 
 
 		#region Закрытые члены класса (потенциально закрытые)
 

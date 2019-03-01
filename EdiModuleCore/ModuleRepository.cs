@@ -25,7 +25,12 @@
 			this.WarehouseReference = CoreInit.RepositoryService.GetAllWarehouses();
 		}
 
-        public async void InitCounteragentReference()
+		public void InitCounteragentReference()
+		{
+			this.CounteragentReference = CoreInit.RepositoryService.GetAllCounteragents();
+		}
+
+		public async void InitCounteragentReferenceAsync()
         {
             this.CounteragentReference = await CoreInit.RepositoryService.GetAllCounteragentsAsync();
         }

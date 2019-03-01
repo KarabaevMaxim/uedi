@@ -41,6 +41,10 @@
 		/// <returns>Список контрагентов.</returns>
 		Task<List<Counteragent>> GetAllCounteragentsAsync();
 		/// <summary>
+		/// Получить список контрагентов.
+		/// </summary>
+		List<Counteragent> GetAllCounteragents();
+		/// <summary>
 		/// Перезаписать у ГЛН контрагента (асинхронная версия). 
 		/// </summary>
 		/// <param name="counteragent">Контрагент, которому необходимо установить ГЛН.</param>
@@ -91,7 +95,7 @@
 		/// </summary>
 		/// <param name="warehouseCode">Код склада.</param>
 		/// <returns>Объект организации.</returns>
-		Organization GetOrganization(string warehouseCode);
+		//Organization GetOrganization(string warehouseCode);
 		/// <summary>
 		/// Получить организацию по реквизиту.
 		/// </summary>

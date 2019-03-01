@@ -132,8 +132,8 @@
 			
 			var cache = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.GLN);
 
-			if(string.IsNullOrWhiteSpace(cache.Code))
-				return null;
+			if(cache == null || string.IsNullOrWhiteSpace(cache.Code))
+				return new MatchedWarehouse{ ExWarehouse = warehouse };
 
 			MatchedWarehouse result = new MatchedWarehouse { ExWarehouse = warehouse, InnerWarehouse = cache };
 			return result;

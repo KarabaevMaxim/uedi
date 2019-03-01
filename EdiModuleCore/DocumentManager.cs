@@ -77,7 +77,7 @@
 				FileName = fileName,
 				Wares = new List<Model.WaybillRow>()
 			};
-			result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.InnerWarehouse.Code);
+			//result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.InnerWarehouse.Code);
 
 			foreach (var item in xWaybill.Header.Positions)
 			{
@@ -128,7 +128,7 @@
 		private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
 		{
 			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.SupplierGln });
-			var supplier =  MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
+			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
 		}
 

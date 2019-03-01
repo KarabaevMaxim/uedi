@@ -245,8 +245,8 @@
                         return this.Connector.Connection.Перечисления.СтавкиНДС.НДС0;
                     case TaxRates.Tax_10:
                         return this.Connector.Connection.Перечисления.СтавкиНДС.НДС10;
-                    case TaxRates.Tax_18:
-                        return this.Connector.Connection.Перечисления.СтавкиНДС.НДС18;
+                    case TaxRates.Tax_20:
+                        return this.Connector.Connection.Перечисления.СтавкиНДС.НДС20;
                     case TaxRates.Tax_None:
                         return this.Connector.Connection.Перечисления.СтавкиНДС.БезНДС;
                     default:

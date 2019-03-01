@@ -208,19 +208,19 @@
             return result;
         }
 
-        public Organization GetOrganization(string warehouseCode)
-        {
-            Organization result = new Organization();
-            var organization = this.Repository.GetOrganization(warehouseCode);
+        //public Organization GetOrganization(string warehouseCode)
+        //{
+        //    Organization result = new Organization();
+        //    var organization = this.Repository.GetOrganization(warehouseCode);
 
-            if (organization == null)
-                return null;
+        //    if (organization == null)
+        //        return null;
 
-            result.Code = organization.Код;
-            result.Name = organization.Наименование;
-            result.GLN = string.Empty; // todo: заглушка, может быть вообще убрать свойство ГЛН у организации
-            return result;
-        }
+        //    result.Code = organization.Код;
+        //    result.Name = organization.Наименование;
+        //    result.GLN = string.Empty; // todo: заглушка, может быть вообще убрать свойство ГЛН у организации
+        //    return result;
+        //}
 
         public bool AddNewWaybill(Waybill waybill)
         {
@@ -297,6 +297,11 @@
         private Repository Repository { get; set; }
 
 		public Organization GetOrganization(Requisites prop, string propValue)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public List<Counteragent> GetAllCounteragents()
 		{
 			throw new System.NotImplementedException();
 		}
