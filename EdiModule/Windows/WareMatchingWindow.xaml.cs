@@ -33,7 +33,9 @@
                 { "ЕИ", "Ware.ExWare.Unit.Name" },
                 { "Количество", "Count" },
                 { "Сумма", "Amount" },
-                { "Внут. код", "Ware.InnerWare.Code" },
+				{ "Налоговая ставка, %", "TaxRate" },
+				{ "Сумма налога", "TaxAmount" },
+				{ "Внут. код", "Ware.InnerWare.Code" },
                 { "Внут. название", "Ware.InnerWare.Name" },
                 { "ШК", "Ware.ExWare.Barcode" }
             };
@@ -45,12 +47,14 @@
                 throw new NotInitializedException("Родительское окно или накладная не инициализированы.");
 
             this.UpdateTablePart();
-            this.WaybillNumberLbl.Text = this.Waybill.Number;
-            this.WaybillDateLbl.Text = this.Waybill.Date.ToString("dd.MM.yyyy");
-            this.SupplierNameLbl.Text = this.Waybill.Supplier?.InnerCounteragent?.Name;
-            this.OrganizationLbl.Text = this.Waybill.Organization?.Name;
-            this.TradeObjectLbl.Text = this.Waybill.Warehouse?.InnerWarehouse?.Name;
-        }
+            this.WaybillNumberLbl.Text = this.Waybill.ToString();
+            this.SupplierNameLbl.Text = "Поставщик: " + this.Waybill.Supplier?.InnerCounteragent?.Name;
+            this.OrganizationLbl.Text = "Организация: " + this.Waybill.Organization?.Name;
+            this.TradeObjectLbl.Text = "Склад: " + this.Waybill.Warehouse?.InnerWarehouse?.Name;
+			this.WbAmountLbl.Text = this.Waybill.Amount.ToString();
+			this.WbAmountTxtWithTaxLbl.Text = this.Waybill.AmountWithTax.ToString();
+			this.TaxAmountLbl.Text = Math.Round(this.Waybill.AmountWithTax - this.Waybill.Amount, 2).ToString();
+		}
 
         public void UpdateTablePart()
         {
@@ -103,8 +107,13 @@
         {
             foreach (var item in this.PositionsTbl.Items)
             {
-                if ((item is WaybillRow row) && (row.Ware != null) && (row.Ware.InnerWare == null) && (row.Ware.ExWare != null))
-                    MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+				int i = 0;
+				if ((item is WaybillRow row) && (row.Ware != null) && (row.Ware.InnerWare == null) && (row.Ware.ExWare != null))
+				{
+					bool res = object.ReferenceEquals(Waybill.Wares[i], row);
+					MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+					i++;
+				}
             }
 
             this.UpdateTablePart();

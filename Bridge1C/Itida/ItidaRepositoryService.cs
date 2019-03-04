@@ -166,11 +166,26 @@
 		{
 			// todo: эти 2 сроки перенести в модуль сопоставленя
 			this.Repository.GetWareByExCode(exCode.Value, exCode.Counteragent.Code);
-			this.Repository.RemoveExCode(ware.Code, exCode);
+			
 
 
 			this.Repository.AddNewExCode(ware.Code, exCode);
 			ware.ExCodes.Add(exCode);
+			return true;
+		}
+
+
+		public bool RemoveExCode(WareExCode exCode)
+		{
+			if (exCode == null)
+				throw new ArgumentNullException();
+
+			Ware ware = this.Repository.GetWareByExCode(exCode.Value, exCode.Counteragent.Code);
+
+			if (ware == null)
+				return false;
+
+			this.Repository.RemoveExCode(ware.Code, exCode);
 			return true;
 		}
 

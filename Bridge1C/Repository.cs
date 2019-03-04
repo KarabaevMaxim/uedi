@@ -235,6 +235,11 @@
                 return result.Организация;
         }
 
+		public dynamic GetOrganization(Requisites propertyName, string propertyValue)
+		{
+			throw new NotImplementedException();
+		}
+
         public dynamic GetTaxRate(TaxRates rate)
         {
             try

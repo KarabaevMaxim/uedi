@@ -208,21 +208,21 @@
             return result;
         }
 
-        //public Organization GetOrganization(string warehouseCode)
-        //{
-        //    Organization result = new Organization();
-        //    var organization = this.Repository.GetOrganization(warehouseCode);
+		public Organization GetOrganization(Requisites prop, string propValue)
+		{
+			Organization result = new Organization();
+			var organization = this.Repository.GetOrganization(prop, propValue);
 
-        //    if (organization == null)
-        //        return null;
+			if (organization == null || string.IsNullOrWhiteSpace(organization.Код))
+				return null;
 
-        //    result.Code = organization.Код;
-        //    result.Name = organization.Наименование;
-        //    result.GLN = string.Empty; // todo: заглушка, может быть вообще убрать свойство ГЛН у организации
-        //    return result;
-        //}
+			result.Code = organization.Код;
+			result.Name = organization.Наименование;
+			result.GLN = organization.ГЛН; // todo: В 1С я еще не добавил реквизит ГЛН организации
+			return result;
+		}
 
-        public bool AddNewWaybill(Waybill waybill)
+		public bool AddNewWaybill(Waybill waybill)
         {
             var supplier = this.Repository.GetCounteragent(Requisites.Code, waybill.Supplier.Code);
             var warehouse = this.Repository.GetWareHouse(Requisites.Code, waybill.Warehouse.Code);
@@ -236,12 +236,17 @@
             return this.Repository.AddNewExCode(ware.Code, exCode.Counteragent.GLN, exCode.Value);
         }
 
-        /// <summary>
-        /// Маппит объект номенклатуры базы данных в доменную номенклатуру и возвращает ее объект.
-        /// </summary>
-        /// <param name="ware">Объект номенклатуры базы данных.</param>
-        /// <returns>Инициализированный объект домееной номенклатуры.</returns>
-        private Ware GetDomainWareFromDbWare(dynamic ware)
+		public bool RemoveExCode(WareExCode exCode) // todo: Не забыть реализовать метод
+		{
+			throw new System.NotImplementedException();
+		}
+
+		/// <summary>
+		/// Маппит объект номенклатуры базы данных в доменную номенклатуру и возвращает ее объект.
+		/// </summary>
+		/// <param name="ware">Объект номенклатуры базы данных.</param>
+		/// <returns>Инициализированный объект домееной номенклатуры.</returns>
+		private Ware GetDomainWareFromDbWare(dynamic ware)
         {
             if (ware == null)
                 return null;
@@ -295,11 +300,6 @@
         }
 
         private Repository Repository { get; set; }
-
-		public Organization GetOrganization(Requisites prop, string propValue)
-		{
-			throw new System.NotImplementedException();
-		}
 
 		public List<Counteragent> GetAllCounteragents()
 		{

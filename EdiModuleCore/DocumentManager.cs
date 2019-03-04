@@ -77,7 +77,7 @@
 				FileName = fileName,
 				Wares = new List<Model.WaybillRow>()
 			};
-			//result.Organization = CoreInit.RepositoryService.GetOrganization(result.Warehouse?.InnerWarehouse.Code);
+			result.Organization = CoreInit.RepositoryService.GetOrganization(Requisites.GLN, xWaybill.Header.BuyerGln);
 
 			foreach (var item in xWaybill.Header.Positions)
 			{
@@ -85,6 +85,9 @@
 				row.Amount = (decimal)item.Amount;
 				row.Price = (decimal)item.Price;
 				row.Count = item.Quantity;
+				row.TaxRate = item.TaxRate;
+				row.TaxAmount = (row.Price * (1.0m / row.TaxRate)) * (decimal)row.Count;
+
 				ExWare exWare = new ExWare
 				{
 					Supplier = result.Supplier,
@@ -122,6 +125,8 @@
 				result.Wares.Add(row);
 			}
 
+			result.Amount = (float)result.Wares.Sum(w => w.Amount);
+			result.AmountWithTax = (float)result.Wares.Sum(w => (w.Amount + w.TaxAmount));
 			return result;
 		}
 
@@ -193,10 +198,29 @@
         /// <returns>true, если успешно, иначе false.</returns>
         public static void ProcessWaybill(Waybill waybill)
         {
-            if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
-                throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
+			if (waybill == null)
+				throw new NotProcessedDocumentException("Ссылка на накладную пустая.");
 
-            if (!CoreInit.ModuleRepository.RemoveUnprocessedWaybill(waybill))
+			if (waybill.Wares == null || !waybill.Wares.Any())
+				throw new NotProcessedDocumentException("Товаров в накладной нет.");
+
+			if (waybill.Wares.Where(w => w.Ware.InnerWare == null).Any())
+				throw new NotProcessedDocumentException("В накладной присутствуют несопоставленные позиции.");
+
+			if (waybill.Organization == null)
+				throw new NotProcessedDocumentException("В накладной не указана организация.");
+
+			if (waybill.Supplier?.InnerCounteragent == null)
+				throw new NotProcessedDocumentException("В накладной не сопоставлен контрагент.");
+
+			if (waybill.Warehouse?.InnerWarehouse == null)
+				throw new NotProcessedDocumentException("В накладной не сопоставлен склад.");
+
+			//todo: не забыть раскомментить
+			//if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
+			//    throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
+
+			if (!CoreInit.ModuleRepository.RemoveUnprocessedWaybill(waybill))
                 throw new NotProcessedDocumentException("Возникла внутренняя ошибка при обработке накладной.");
 
             if (!DocumentManager.SaveWaybillToBase(waybill))

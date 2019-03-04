@@ -91,12 +91,6 @@
 		/// <returns>Объект магазина.</returns>
 		Shop GetShop(string warehouseCode);
 		/// <summary>
-		/// Получить организацию по коду склада.
-		/// </summary>
-		/// <param name="warehouseCode">Код склада.</param>
-		/// <returns>Объект организации.</returns>
-		//Organization GetOrganization(string warehouseCode);
-		/// <summary>
 		/// Получить организацию по реквизиту.
 		/// </summary>
 		/// <param name="propertyName">Реквизит для поиска.</param>
@@ -115,5 +109,7 @@
 		/// <param name="exCode">Внешний код.</param>
 		/// <returns>true в случа успеха, иначе false.</returns>
 		bool AddNewExCodeToWare(Ware ware, WareExCode exCode);
+
+		bool RemoveExCode(WareExCode exCode);
 	}
 }

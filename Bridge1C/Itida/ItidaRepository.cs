@@ -321,13 +321,15 @@
 			{
 				conn.Open();
 				Organization result = null;
+				SqlCommand command = null;
+				SqlDataReader reader = null;
 
 				switch (propertyName)
 				{
 					case Requisites.Code:
-						SqlCommand command = new SqlCommand("SELECT shortname, ex_code FROM sprfirm WHERE code = @code", conn);
+						command = new SqlCommand("SELECT shortname, ex_code FROM sprfirm WHERE code = @code", conn);
 						command.Parameters.Add(new SqlParameter("@code", value));
-						SqlDataReader reader = command.ExecuteReader();
+						reader = command.ExecuteReader();
 
 						if (reader.HasRows)
 						{
@@ -343,6 +345,20 @@
 					case Requisites.Name:
 						break;
 					case Requisites.GLN:
+						command = new SqlCommand("SELECT code, shortname FROM sprfirm WHERE ex_code = @exCode", conn);
+						command.Parameters.Add(new SqlParameter("@exCode", value));
+						reader = command.ExecuteReader();
+
+						if (reader.HasRows)
+						{
+							reader.Read();
+							result = new Organization
+							{
+								Code = ((string)reader.GetValue(0)).Trim(),
+								Name = ((string)reader.GetValue(1)).Trim(),
+								GLN = value
+							};
+						}
 						break;
 					default:
 						throw new ArgumentOutOfRangeException("Значение porpertyName не допустимо");
@@ -583,7 +599,7 @@
 				command.Parameters.Add(new SqlParameter("@ic", identityColumn));
 				int result = command.ExecuteNonQuery(); // todo: касяк - возвращает 2, хотя должна быть задействована всего одна строка
 
-				command = new SqlCommand("SELECT code FROM sprres WHERE identity_column = @ic", conn);
+				command = new SqlCommand("SELECT code, maincode FROM sprres WHERE identity_column = @ic", conn);
 				command.Parameters.Add(new SqlParameter("@ic", identityColumn));
 
 				SqlDataReader reader = command.ExecuteReader();
@@ -592,6 +608,7 @@
 				{
 					reader.Read();
 					string wareIc = reader.GetValue(0) == DBNull.Value ? string.Empty : (string)reader.GetValue(0);
+					ware.Code = reader.GetValue(1) == DBNull.Value ? string.Empty : (string)reader.GetValue(1);
 					this.AddNewBarcodes(wareIc, ware.BarCodes);
 					this.AddNewExCodes(wareIc, ware.ExCodes);
 				}
@@ -782,7 +799,7 @@
 					command.Parameters.Add(new SqlParameter("@orgCode", waybill.Organization.Code));
 					command.Parameters.Add(new SqlParameter("@counterCode", waybill.Supplier.Code));
 					command.Parameters.Add(new SqlParameter("@whCode", waybill.Warehouse.Code));
-					command.Parameters.Add(new SqlParameter("@amount", waybill.Positions.Sum(p => (float)p.Price * p.Count)));
+					command.Parameters.Add(new SqlParameter("@amount", waybill.Positions.Sum(p => (float)p.Price * p.Count + (float)p.TaxAmount)));
 					command.Parameters.Add(new SqlParameter("@wbIc", newIc));
 					command.ExecuteNonQuery();
 
@@ -825,8 +842,8 @@
 						command.Parameters.Add(new SqlParameter("@wareCode", wareCode));
 						command.Parameters.Add(new SqlParameter("@ed", item.Unit.Code));
 						command.Parameters.Add(new SqlParameter("@count", item.Count));
-						command.Parameters.Add(new SqlParameter("@price", item.Price));
-						command.Parameters.Add(new SqlParameter("@amount", (float)item.Price * item.Count));
+						command.Parameters.Add(new SqlParameter("@price", item.Price + (1.0m / item.TaxRate * item.Price)));
+						command.Parameters.Add(new SqlParameter("@amount", item.Price * (decimal)item.Count + (1.0m / item.TaxRate * item.Price * (decimal)item.Count)));
 						command.Parameters.Add(new SqlParameter("@taxAmount", (item.TaxRate == 0 ? 0 : 1.0f / (float)item.TaxRate) * (float)item.Price * item.Count));
 						command.Parameters.Add(new SqlParameter("@taxCode", taxCode));
 						command.Parameters.Add(new SqlParameter("@wareName", item.Ware.Name));
@@ -841,8 +858,6 @@
 
 			return true;
 		}
-
-		 
 
 		#region Закрытые члены класса (потенциально закрытые)
 

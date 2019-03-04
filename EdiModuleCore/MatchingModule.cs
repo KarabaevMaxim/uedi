@@ -18,6 +18,8 @@
             result.InnerWare = ware;
             result.ExWare = new ExWare { Code = exCode, Supplier = supplier, Name = ware.Name };
 
+			CoreInit.RepositoryService.RemoveExCode(new WareExCode { Value = exCode, Counteragent = supplier.InnerCounteragent });
+
             if (!CoreInit.RepositoryService.AddNewExCodeToWare(result.InnerWare,
                                         new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
@@ -34,7 +36,9 @@
             result.InnerWare = ware;
             result.ExWare = exWare;
 
-            if (!CoreInit.RepositoryService.AddNewExCodeToWare(result.InnerWare,
+			CoreInit.RepositoryService.RemoveExCode(new WareExCode { Value = exWare.Code, Counteragent = exWare.Supplier.InnerCounteragent });
+
+			if (!CoreInit.RepositoryService.AddNewExCodeToWare(result.InnerWare,
                                         new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
@@ -53,7 +57,9 @@
 
             matchedWare.InnerWare = ware;
 
-            if (!CoreInit.RepositoryService.AddNewExCodeToWare(matchedWare.InnerWare,
+			CoreInit.RepositoryService.RemoveExCode(new WareExCode { Value = matchedWare.ExWare.Code, Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent });
+
+			if (!CoreInit.RepositoryService.AddNewExCodeToWare(matchedWare.InnerWare,
                                         new WareExCode { Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent, Value = matchedWare.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
         }

@@ -21,8 +21,10 @@
             this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
             this.bindings.Add("Поставщик", "Supplier.InnerCounteragent.Name");
-            this.bindings.Add("Склад", "Warehouse.InnerWarehouse.Name");
-        }
+			this.bindings.Add("Организация", "Organization.Name");
+			this.bindings.Add("Склад", "Warehouse.InnerWarehouse.Name");
+			this.bindings.Add("Сумма с НДС", "AmountWithTax");
+		}
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -130,7 +132,7 @@
         private void UnprocessedWaybillTbl_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
-        }
+		}
 
         private void UpdateWareRefenceBtn_Click(object sender, RoutedEventArgs e)
         {

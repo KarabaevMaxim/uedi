@@ -19,33 +19,21 @@
         </Grid.RowDefinitions>
         <Grid Grid.Column="1" Grid.Row="0" ShowGridLines="true">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="160*"/>
+                <ColumnDefinition Width="99*"/>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="99*"/>
             </Grid.ColumnDefinitions>
             <Viewbox Stretch="Uniform" Grid.Column="0">
-                <TextBlock Grid.Column="0" Name="WbLbl" Text="Накладная:" FontSize="15" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="1">
                 <TextBlock Name="WaybillNumberLbl" Text="Number" FontSize="20" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="2">
-                <TextBlock Grid.Column="2" Name="ByLbl" Text="От:" FontSize="20" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="3">
-                <TextBlock Grid.Column="3" Name="WaybillDateLbl" Text="Date" FontSize="20" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="4">
+            <Viewbox Stretch="Uniform" Grid.Column="1">
                 <TextBlock Grid.Column="4" Name="SupplierNameLbl" Text="Supplier" FontSize="20" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="5">
+            <Viewbox Stretch="Uniform" Grid.Column="2">
                 <TextBlock Grid.Column="5" Name="OrganizationLbl" Text="Organization" FontSize="20" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="6">
+            <Viewbox Stretch="Uniform" Grid.Column="3">
                 <TextBlock Grid.Column="6" Name="TradeObjectLbl" Text="Trade object" FontSize="20" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Viewbox>
         </Grid>
@@ -56,9 +44,14 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Name="ApplyBtn" Margin="20 20 20 20" Content="Обработать накладную" Click="ApplyBtn_Click"/>
-            <GroupBox Header="Создать новую номенклатуру для несопоставленной" BorderBrush="Black" Margin="50 5 5 10">
+        <Grid Grid.Row="2" Grid.Column="1" ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="67*"/>
+                <ColumnDefinition Width="22*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="2" Name="ApplyBtn" Margin="5 20 5 20" Content="Обработать накладную" Click="ApplyBtn_Click"/>
+            <GroupBox Grid.Column="1" Header="Создать новую номенклатуру для несопоставленной" BorderBrush="Black" Margin="5">
                 <Grid ShowGridLines="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -68,6 +61,42 @@
                     <Button Grid.Column="1" Name="AddAllWaresBtn" Margin="10 10 10 10" Content="Для всех строк" Click="AddAllWaresBtn_Click" />
                 </Grid>
             </GroupBox>
-        </StackPanel>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Viewbox Grid.Row="0" Grid.Column="0" Stretch="Uniform">
+                    <TextBlock Text="Сумма"/>
+                </Viewbox>
+                <Viewbox Grid.Row="1" Grid.Column="0" Stretch="Uniform">
+                    <TextBlock Text="Сумма с НДС"/>
+                </Viewbox>
+                <Viewbox Grid.Row="2" Grid.Column="0" Stretch="Uniform">
+                    <TextBlock Text="Сумма НДС"/>
+                </Viewbox>
+                <Viewbox Grid.Row="0" Grid.Column="1" Stretch="Uniform">
+                    <TextBlock Name="WbAmountLbl" Text="Сумма НДС"/>
+                </Viewbox>
+                <Viewbox Grid.Row="1" Grid.Column="1" Stretch="Uniform">
+                    <TextBlock Name="WbAmountTxtWithTaxLbl" Text="Сумма НДС"/>
+                </Viewbox>
+                <Viewbox Grid.Row="2" Grid.Column="1" Stretch="Uniform">
+                    <TextBlock Name="TaxAmountLbl" Text="Сумма НДС"/>
+                </Viewbox>
+            </Grid>
+            <!--<Viewbox Stretch="Uniform">
+                <TextBlock Text="Сумма"/>
+            </Viewbox>
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="Сумма c НДС"/>
+            </Viewbox>
+            <TextBlock Text="Сумма НДС"/>-->
+        </Grid>
     </Grid>
 </Window>

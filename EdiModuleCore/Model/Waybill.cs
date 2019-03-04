@@ -38,8 +38,10 @@
 		/// Имя файла.
 		/// </summary>
         public string FileName { get; set; }
+		public float AmountWithTax { get; set; }
+		public float Amount { get; set; }
 
-        public override bool Equals(object obj)
+		public override bool Equals(object obj)
         {
 			try
 			{
@@ -49,7 +51,9 @@
 							this.Supplier.Equals(waybill.Supplier) &&
 							this.Organization.Equals(waybill.Organization) &&
 							this.Warehouse.Equals(waybill.Warehouse) &&
-							this.Wares.Any(waybill.Wares.Contains);
+							this.Wares.Any(waybill.Wares.Contains) &&
+							this.AmountWithTax == waybill.AmountWithTax &&
+							this.Amount == waybill.Amount;
 				else
 					return false;
 			}
@@ -64,5 +68,10 @@
         {
             return base.GetHashCode();  
         }
-    }
+
+		public override string ToString()
+		{
+			return string.Format("№ {0} от {1}", this.Number, this.Date.ToString("dd.MM.yyyy"));
+		}
+	}
 }
