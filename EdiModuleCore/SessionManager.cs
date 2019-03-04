@@ -8,6 +8,7 @@
 		public static List<Session> Sessions { get; set; } = new List<Session>();
 
 		public static Session CreateSession(string userName, 
+			string whGln,
 			string workFolder, 
 			string archieveFolder, 
 			string ftpUri, 
@@ -21,6 +22,7 @@
 			{
 				Key = Guid.NewGuid(),
 				UserName = userName,
+				WarehouseGln = whGln,
 				ArchieveFolder = archieveFolder,
 				WorkFolder = workFolder,
 				FtpURI = ftpUri,

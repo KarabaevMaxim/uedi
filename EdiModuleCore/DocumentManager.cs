@@ -132,7 +132,7 @@
 
 		private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
 		{
-			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.SupplierGln });
+			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.DeliveryPlace });
 			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
 		}
@@ -145,7 +145,7 @@
 		/// <returns>Объект доменной накладной.</returns>
 		private async static Task<Model.Waybill> ConvertWaybillToDomainAsync(XEntities.Waybill xWaybill, string fileName)
         {
-			var warehouse = await MatchingModule.AutomaticWHMatchingAsync(new ExWarehouse { GLN = xWaybill.Header.SupplierGln });
+			var warehouse = await MatchingModule.AutomaticWHMatchingAsync(new ExWarehouse { GLN = xWaybill.Header.DeliveryPlace });
 			var supplier = await MatchingModule.AutomaticSupMatchingAsync(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 
 			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);

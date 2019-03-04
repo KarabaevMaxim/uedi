@@ -237,7 +237,28 @@
 
 		public dynamic GetOrganization(Requisites propertyName, string propertyValue)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				dynamic organization = null;
+
+				switch (propertyName)
+				{
+					case Requisites.Code:
+						organization = this.Connector.Connection.Справочники.Организации.НайтиПоКоду(propertyValue);
+						break;
+					case Requisites.Name:
+						organization = this.Connector.Connection.Справочники.Организации.НайтиПоНаименованию(propertyValue);
+						break;
+					default:
+						organization = this.Connector.Connection.Справочники.Организации.НайтиПоРеквизиту(RequisiteBindingConfig.RequisiteBingings[propertyName], propertyValue);
+						break;
+				}
+				return organization;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 
         public dynamic GetTaxRate(TaxRates rate)

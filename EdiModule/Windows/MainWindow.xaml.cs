@@ -1,6 +1,7 @@
 ﻿namespace EdiModule.Windows
 {
     using System;
+	using System.Linq;
 	using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Windows;
@@ -80,7 +81,10 @@
 
 			this.UnprocessedWaybillTbl.Items.Clear();
 
-			foreach (var item in CoreInit.ModuleRepository.GetUnprocessedWaybills())
+
+			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => wb.Warehouse.ExWarehouse.GLN == this.CurrentSession.WarehouseGln);
+
+			foreach (var item in waybills)
 				this.UnprocessedWaybillTbl.Items.Add(item);
 		}
 

@@ -89,7 +89,27 @@
             return result;
         }
 
-        public async Task<List<Counteragent>> GetAllCounteragentsAsync()
+		public List<Counteragent> GetAllCounteragents()
+		{
+			List<Counteragent> result = new List<Counteragent>();
+			var list = this.Repository.GetAllCounteragents();
+
+			foreach (var item in list)
+			{
+				Counteragent counteragent = new Counteragent
+				{
+					Code = item.Код,
+					Name = item.Наименование,
+					FullName = item.НаименованиеПолное,
+					GLN = item.ГЛН
+				};
+				result.Add(counteragent);
+			}
+
+			return result;
+		}
+
+		public async Task<List<Counteragent>> GetAllCounteragentsAsync()
         {
             List<Counteragent> result = new List<Counteragent>();
 			var list = await Task.Run(() => this.Repository.GetAllCounteragents());
@@ -300,10 +320,5 @@
         }
 
         private Repository Repository { get; set; }
-
-		public List<Counteragent> GetAllCounteragents()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

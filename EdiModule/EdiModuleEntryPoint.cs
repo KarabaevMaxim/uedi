@@ -22,6 +22,7 @@
 		/// <param name="ftpPassword"></param>
 		/// <param name="ftpRemoteFolder"></param>
 		public void ConnectToFileBase(string userName, 
+			string whGln,
 			string userPassword, 
 			string dbPath, 
 			string waybillFolder, 
@@ -35,7 +36,7 @@
 		{
 			EdiModuleCore.CoreInit.Connect(userName, userPassword, dbPath);
 			EdiModuleCore.CoreInit.Init();
-			EdiModuleCore.SessionManager.CreateSession(userName, waybillFolder, archieveFolder, ftpUri, ftpPassive, 
+			EdiModuleCore.SessionManager.CreateSession(userName, whGln, waybillFolder, archieveFolder, ftpUri, ftpPassive, 
 														ftpTimeout, ftpLogin, ftpPassword, ftpRemoteFolder);
 			MainWindow window = new MainWindow();
 			window.ShowDialog();
@@ -45,6 +46,7 @@
 		/// Метод подключения к серверной Базе.
 		/// </summary>
 		public void ConnectToServerBase(string connectionString,
+			string whGln,
 			string waybillFolder, 
 			string archieveFolder,
 			string userName,
@@ -57,7 +59,7 @@
 		{
 			EdiModuleCore.CoreInit.ConnectToItida(connectionString);
 			EdiModuleCore.CoreInit.Init();
-			EdiModuleCore.SessionManager.CreateSession(userName, waybillFolder, archieveFolder, ftpUri, ftpPassive,
+			EdiModuleCore.SessionManager.CreateSession(userName, whGln, waybillFolder, archieveFolder, ftpUri, ftpPassive,
 														ftpTimeout, ftpLogin, ftpPassword, ftpRemoteFolder);
 			MainWindow window = new MainWindow();
 			window.ShowDialog();

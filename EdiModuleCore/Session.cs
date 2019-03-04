@@ -12,6 +12,7 @@
 		public string FtpPassword { get; set; }
 		public string FtpRemoteFolder { get; set; }
 		public string UserName { get; set; }
+		public string WarehouseGln { get; set; }
 		public string WorkFolder { get; set; }
 		public string ArchieveFolder { get; set; }
 
