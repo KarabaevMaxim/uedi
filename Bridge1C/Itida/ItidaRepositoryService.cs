@@ -96,6 +96,14 @@
 		}
 
 		/// <summary>
+		/// Получить склады, на которых активный пользователь является ответственным.
+		/// </summary>
+		public List<Warehouse> GetWarehousesByActiveUser()
+		{
+			return this.Repository.GetWarehousesByActiveUser();
+		}
+
+		/// <summary>
 		/// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть контрагент с ex_code gln 
 		/// </summary>
 		/// <param name="warehouseCode">Код склада для инициализации.</param>
@@ -116,16 +124,6 @@
 		{
 			throw new NotImplementedException();
 		}
-
-		/// <summary>
-		/// Нереализуемый метод.
-		/// </summary>
-		/// <param name="warehouseCode"></param>
-		/// <returns></returns>
-		//public Organization GetOrganization(string warehouseCode)
-		//{
-		//	throw new NotImplementedException();
-		//}
 
 		/// <summary>
 		/// Получить организацию.
@@ -155,6 +153,14 @@
 		public List<Counteragent> GetAllCounteragents()
 		{
 			return this.Repository.GetAllCounteragents();
+		}
+
+		/// <summary>
+		/// Получить авторизованного ползователя.
+		/// </summary>
+		public User GetCurrentUser()
+		{
+			return this.Repository.GetCurrentUser();
 		}
 
 		/// <summary>

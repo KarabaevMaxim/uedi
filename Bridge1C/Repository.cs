@@ -171,6 +171,14 @@
 		}
 
 		/// <summary>
+		/// Получить склады, на которых активный пользователь является ответственным.
+		/// </summary>
+		public List<dynamic> GetWarehousesByActiveUser()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Изменить ГЛН склада. Если с ГЛН gln уже был склад в базе, то ГНЛ того склада удаляется.
 		/// </summary>
 		/// <param name="warehouseCode">Код склада.</param>
@@ -434,6 +442,11 @@
 
             return result;
         }
+
+		public dynamic GetCurrentUser()
+		{
+			throw new NotImplementedException();
+		}
 
         public bool UpdateWareExCode(string innerCode, string exCode, string supplierCode)
         {

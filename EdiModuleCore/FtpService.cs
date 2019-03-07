@@ -1,18 +1,17 @@
 ﻿namespace EdiModuleCore
 {
+	using ArxOne.Ftp;
+	using ArxOne.Ftp.Exceptions;
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using ArxOne.Ftp;
-	using System.Net;
 	using System.IO;
-	using ArxOne.Ftp.Exceptions;
+	using System.Linq;
+	using System.Net;
+	using System.Threading.Tasks;
 
 	public static class FtpService
 	{
-		public static bool DownloadDocuments(string serverURI, bool passiveMode, int timeoutSec,  string login, string password, string remoteFolder, string localFolder)
+		public static bool DownloadDocuments(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
 		{
 			NetworkCredential networkCredential = new NetworkCredential(login, password);
 			TimeSpan timeout = new TimeSpan(0, 0, timeoutSec);
@@ -45,6 +44,31 @@
 			}
 
 			return true;
+		}
+
+		public static void DownloadDocuments1(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
+		{
+			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(serverURI + "/" + remoteFolder);
+			ftpWebRequest.Credentials = new NetworkCredential(login, password);
+			ftpWebRequest.UseBinary = true;
+			ftpWebRequest.UsePassive = passiveMode;
+			ftpWebRequest.KeepAlive = true;
+			ftpWebRequest.Method = WebRequestMethods.Ftp.ListDirectory;
+			FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
+			Stream ftpStream = ftpWebResponse.GetResponseStream();
+			StreamReader ftpReader = new StreamReader(ftpStream);
+
+			List<string> result = new List<string>();
+
+			while (ftpReader.Peek() != -1)
+			{
+				result.Add(ftpReader.ReadLine());
+			}
+
+			ftpReader.Close();
+			ftpStream.Close();
+			ftpWebResponse.Close();
+			ftpWebRequest = null;
 		}
 
 		public async static Task<bool> DownloadDocumentsAsync(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)

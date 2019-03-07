@@ -6,7 +6,27 @@
 	[Guid("4E38FF4C-391E-448F-92F8-241D1BE55408"), ClassInterface(ClassInterfaceType.None), ComSourceInterfaces(typeof(IEvents))]
     public class EdiModuleEntryPoint : IEntryPoint
     {
- 
+		/// <summary>
+		/// Метод подключения к серверной Базе.
+		/// </summary>
+		public void ConnectToServerBase(string connectionString,
+			string waybillFolder,
+			string archieveFolder,
+			string ftpUri,
+			bool ftpPassive,
+			int ftpTimeout,
+			string ftpLogin,
+			string ftpPassword,
+			string ftpRemoteFolder)
+		{
+			EdiModuleCore.CoreInit.ConnectToItida(connectionString);
+			EdiModuleCore.CoreInit.Init();
+			EdiModuleCore.SessionManager.CreateSession(waybillFolder, archieveFolder, ftpUri, ftpPassive,
+														ftpTimeout, ftpLogin, ftpPassword, ftpRemoteFolder);
+			MainWindow window = new MainWindow();
+			window.ShowDialog();
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -22,7 +42,6 @@
 		/// <param name="ftpPassword"></param>
 		/// <param name="ftpRemoteFolder"></param>
 		public void ConnectToFileBase(string userName, 
-			string whGln,
 			string userPassword, 
 			string dbPath, 
 			string waybillFolder, 
@@ -36,33 +55,11 @@
 		{
 			EdiModuleCore.CoreInit.Connect(userName, userPassword, dbPath);
 			EdiModuleCore.CoreInit.Init();
-			EdiModuleCore.SessionManager.CreateSession(userName, whGln, waybillFolder, archieveFolder, ftpUri, ftpPassive, 
+			EdiModuleCore.SessionManager.CreateSession(waybillFolder, archieveFolder, ftpUri, ftpPassive, 
 														ftpTimeout, ftpLogin, ftpPassword, ftpRemoteFolder);
 			MainWindow window = new MainWindow();
 			window.ShowDialog();
 		}
 
-		/// <summary>
-		/// Метод подключения к серверной Базе.
-		/// </summary>
-		public void ConnectToServerBase(string connectionString,
-			string whGln,
-			string waybillFolder, 
-			string archieveFolder,
-			string userName,
-			string ftpUri,
-			bool ftpPassive,
-			int ftpTimeout,
-			string ftpLogin,
-			string ftpPassword,
-			string ftpRemoteFolder)
-		{
-			EdiModuleCore.CoreInit.ConnectToItida(connectionString);
-			EdiModuleCore.CoreInit.Init();
-			EdiModuleCore.SessionManager.CreateSession(userName, whGln, waybillFolder, archieveFolder, ftpUri, ftpPassive,
-														ftpTimeout, ftpLogin, ftpPassword, ftpRemoteFolder);
-			MainWindow window = new MainWindow();
-			window.ShowDialog();
-		}
 	}
 }

@@ -86,7 +86,7 @@
 				row.Price = (decimal)item.Price;
 				row.Count = item.Quantity;
 				row.TaxRate = item.TaxRate;
-				row.TaxAmount = (row.Price * (1.0m / row.TaxRate)) * (decimal)row.Count;
+				row.TaxAmount = Math.Round((row.Price * (1.0m / row.TaxRate)) * (decimal)row.Count, 2);
 
 				ExWare exWare = new ExWare
 				{

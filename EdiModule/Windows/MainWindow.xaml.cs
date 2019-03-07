@@ -32,7 +32,7 @@
 			this.GetSession();
 			this.DownloadDocuments();
 			this.UpdateTablePart();
-			UserNameTxt.Text = CurrentSession.UserName;
+			UserNameTxt.Text = CoreInit.RepositoryService.GetCurrentUser().Name;
 		}
 
 		private void GetSession()
@@ -81,8 +81,7 @@
 
 			this.UnprocessedWaybillTbl.Items.Clear();
 
-
-			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => wb.Warehouse.ExWarehouse.GLN == this.CurrentSession.WarehouseGln);
+			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => CoreInit.RepositoryService.GetWarehousesByActiveUser().Contains(wb.Warehouse.InnerWarehouse));
 
 			foreach (var item in waybills)
 				this.UnprocessedWaybillTbl.Items.Add(item);

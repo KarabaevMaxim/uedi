@@ -66,6 +66,10 @@
 		/// <returns>Объект единицы измерения.</returns>
 		Unit GetUnit(Requisites prop, string propValue);
 		/// <summary>
+		/// Получить авторизованного пользователя.
+		/// </summary>
+		User GetCurrentUser();
+		/// <summary>
 		/// Получить склад из базы данных по реквизиту.
 		/// </summary>
 		/// <param name="prop">Реквизит поиска.</param>
@@ -77,6 +81,10 @@
 		/// </summary>
 		/// <returns>Список складов.</returns>
 		List<Warehouse> GetAllWarehouses();
+		/// <summary>
+		/// Получить склады, на которых активный пользователь является ответственным.
+		/// </summary>
+		List<Warehouse> GetWarehousesByActiveUser();
 		/// <summary>
 		/// Перезаписать ГЛН склада.
 		/// </summary>

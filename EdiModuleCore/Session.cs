@@ -1,6 +1,7 @@
 ﻿namespace EdiModuleCore
 {
 	using System;
+	using Bridge1C.DomainEntities;
 
 	public class Session 
 	{
@@ -11,10 +12,8 @@
 		public string FtpLogin { get; set; }
 		public string FtpPassword { get; set; }
 		public string FtpRemoteFolder { get; set; }
-		public string UserName { get; set; }
-		public string WarehouseGln { get; set; }
 		public string WorkFolder { get; set; }
 		public string ArchieveFolder { get; set; }
-
+		public User User { get; set; }
 	}
 }

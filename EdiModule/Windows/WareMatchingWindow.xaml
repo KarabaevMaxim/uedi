@@ -72,31 +72,24 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Viewbox Grid.Row="0" Grid.Column="0" Stretch="Uniform">
-                    <TextBlock Text="Сумма"/>
+                    <TextBlock Text="Сумма, руб" TextAlignment="Right"/>
                 </Viewbox>
                 <Viewbox Grid.Row="1" Grid.Column="0" Stretch="Uniform">
-                    <TextBlock Text="Сумма с НДС"/>
+                    <TextBlock Text="Сумма с НДС, руб" TextAlignment="Right"/>
                 </Viewbox>
                 <Viewbox Grid.Row="2" Grid.Column="0" Stretch="Uniform">
-                    <TextBlock Text="Сумма НДС"/>
+                    <TextBlock Text="Сумма НДС, руб" TextAlignment="Right"/>
                 </Viewbox>
                 <Viewbox Grid.Row="0" Grid.Column="1" Stretch="Uniform">
-                    <TextBlock Name="WbAmountLbl" Text="Сумма НДС"/>
+                    <TextBlock Name="WbAmountLbl" Text="Сумма НДС" TextAlignment="Left"/>
                 </Viewbox>
                 <Viewbox Grid.Row="1" Grid.Column="1" Stretch="Uniform">
-                    <TextBlock Name="WbAmountTxtWithTaxLbl" Text="Сумма НДС"/>
+                    <TextBlock Name="WbAmountTxtWithTaxLbl" Text="Сумма НДС" TextAlignment="Left"/>
                 </Viewbox>
                 <Viewbox Grid.Row="2" Grid.Column="1" Stretch="Uniform">
-                    <TextBlock Name="TaxAmountLbl" Text="Сумма НДС"/>
+                    <TextBlock Name="TaxAmountLbl" Text="Сумма НДС" TextAlignment="Left"/>
                 </Viewbox>
             </Grid>
-            <!--<Viewbox Stretch="Uniform">
-                <TextBlock Text="Сумма"/>
-            </Viewbox>
-            <Viewbox Stretch="Uniform">
-                <TextBlock Text="Сумма c НДС"/>
-            </Viewbox>
-            <TextBlock Text="Сумма НДС"/>-->
         </Grid>
     </Grid>
 </Window>

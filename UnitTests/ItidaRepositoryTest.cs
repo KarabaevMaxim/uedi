@@ -15,7 +15,7 @@
 		[TestInitialize]
 		public void TestInit()
 		{
-			this.repository = new ItidaRepository(@"Data Source = (local); Initial Catalog = Поликон; User ID = sa; Password = itida");
+			this.repository = new ItidaRepository(@"Data Source = (local); Initial Catalog = Поликон; User ID = idleadmin; Password = itida");
 		}
 
 		[TestMethod]
@@ -233,6 +233,13 @@
 			};
 			var result = this.repository.AddNewWaybill(waybill);
 			Assert.IsTrue(result);
+		}
+
+		[TestMethod]
+		public void GetWarehousesByActiveUserTest()
+		{
+			var warehouses = this.repository.GetWarehousesByActiveUser();
+			Assert.IsTrue(warehouses.Any());
 		}
 	}
 }

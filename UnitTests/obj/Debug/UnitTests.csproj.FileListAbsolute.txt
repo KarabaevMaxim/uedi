@@ -38,7 +38,6 @@ C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\Bridge1C.pdb
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\EdiModuleCore.pdb
-C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\EdiModule.pdb
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\obj\Debug\UnitTests.csprojAssemblyReference.cache
@@ -48,3 +47,4 @@ C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\obj
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\obj\Debug\UnitTests.pdb
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\ArxOne.Ftp.dll
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\ArxOne.Ftp.xml
+C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\EdiModule.pdb

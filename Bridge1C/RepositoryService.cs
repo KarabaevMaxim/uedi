@@ -210,6 +210,11 @@
 			return result;
 		}
 
+		public List<Warehouse> GetWarehousesByActiveUser()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public bool RematchingWarehouse(string warehouseCode, string gln)
 		{
 			return this.Repository.UpdateWarehouseGLN(warehouseCode, gln);
@@ -240,6 +245,11 @@
 			result.Name = organization.Наименование;
 			result.GLN = organization.ГЛН; // todo: В 1С я еще не добавил реквизит ГЛН организации
 			return result;
+		}
+
+		public User GetCurrentUser()
+		{
+			throw new System.NotImplementedException();
 		}
 
 		public bool AddNewWaybill(Waybill waybill)

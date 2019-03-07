@@ -81,6 +81,7 @@
     <Compile Include="DomainEntities\Organization.cs" />
     <Compile Include="DomainEntities\Shop.cs" />
     <Compile Include="DomainEntities\Unit.cs" />
+    <Compile Include="DomainEntities\User.cs" />
     <Compile Include="DomainEntities\WareExCode.cs" />
     <Compile Include="DomainEntities\Warehouse.cs" />
     <Compile Include="DomainEntities\Waybill.cs" />

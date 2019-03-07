@@ -397,7 +397,8 @@
 							{
 								Code = value,
 								Name = name,
-								Shop = new Shop { Code = value, Name = name }
+								Shop = new Shop { Code = value, Name = name },
+								User = this.GetUserByWarehouseCode(value)
 							};
 						}
 						break;
@@ -411,12 +412,14 @@
 						if (reader.HasRows)
 						{
 							reader.Read();
+							string code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
 							string name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim();
 							result = new Warehouse
 							{
-								Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
+								Code = code,
 								Name = name,
-								Shop = new Shop { Code = value, Name = name }
+								Shop = new Shop { Code = code, Name = name },
+								User = this.GetUserByWarehouseCode(code)
 							};
 						}
 						break;
@@ -452,7 +455,50 @@
 						{
 							Code = code,
 							Name = name,
-							Shop = new Shop { Code = code, Name = name }
+							Shop = new Shop { Code = code, Name = name },
+							User = this.GetUserByWarehouseCode(code)
+						};
+						result.Add(warehouse);
+					}
+				}
+
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// Получить склады, на которых активный пользователь является ответственным.
+		/// </summary>
+		public List<Warehouse> GetWarehousesByActiveUser()
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				List<Warehouse> result = new List<Warehouse>();
+				SqlCommand command = new SqlCommand(@"	SELECT spr.code, spr.name, spr.ex_code 
+														FROM spranalit_ex AS analit 
+															JOIN sprskl AS spr ON analit.code = spr.code
+														WHERE analit.sprcode = 'S32' 
+															AND txt = (SELECT SUSER_SNAME())
+															AND parameter = 'ОтветственныйСклада'", conn);
+				SqlDataReader reader = command.ExecuteReader();
+
+				if(reader.HasRows)
+				{
+					while(reader.Read())
+					{
+						string code = (string)reader.GetValue(0);
+						string name = (string)reader.GetValue(1);
+						Warehouse warehouse = new Warehouse
+						{
+							Code = code,
+							Name = name,
+							Shop = new Shop
+							{
+								Code = code,
+								Name = name
+							},
+							User = this.GetUserByWarehouseCode(code)
 						};
 						result.Add(warehouse);
 					}
@@ -570,6 +616,31 @@
 						};
 						wb.Positions = new List<WaybillRow>();
 						result.Add(wb);
+					}
+				}
+
+				return result;
+			}
+		}
+
+		public User GetCurrentUser()
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				User result = null;
+				SqlCommand command = new SqlCommand("SELECT code, name FROM username WHERE code = (SELECT SUSER_SNAME())", conn);
+				SqlDataReader reader = command.ExecuteReader();
+
+				if(reader.HasRows)
+				{
+					if(reader.Read())
+					{
+						result = new User
+						{
+							Code = (string)reader.GetValue(0),
+							Name = (string)reader.GetValue(1)
+						};
 					}
 				}
 
@@ -1022,6 +1093,35 @@
 
 						result.Add(exCode);
 					}
+				}
+
+				return result;
+			}
+		}
+
+		private User GetUserByWarehouseCode(string warehouseCode)
+		{
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				conn.Open();
+				User result = null;
+				SqlCommand command = new SqlCommand(@"	SELECT users.code, users.name
+														FROM spranalit_ex AS analit
+															JOIN username AS users ON analit.txt = users.code
+														WHERE analit.parameter = 'ОтветственныйСклада' 
+															AND analit.sprcode = 'S32' 
+															AND analit.code = @whCode", conn);
+				command.Parameters.Add(new SqlParameter("whCode", warehouseCode));
+				SqlDataReader reader = command.ExecuteReader();
+
+				if(reader.HasRows)
+				{
+					reader.Read();
+					result = new User
+					{
+						Code = (string)reader.GetValue(0),
+						Name = (string)reader.GetValue(1)
+					};
 				}
 
 				return result;

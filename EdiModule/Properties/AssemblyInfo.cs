@@ -20,7 +20,7 @@ using System.Windows;
 // для компонентов COM. Если необходимо обратиться к типу в этой сборке через
 // COM, задайте атрибуту ComVisible значение TRUE для этого типа.
 [assembly: ComVisible(true)]
-
+//[assembly: AssemblyKeyFile("EDiModule.snk")]
 //Чтобы начать создание локализуемых приложений, задайте
 //<UICulture>CultureYouAreCodingWith</UICulture> в файле .csproj
 //внутри <PropertyGroup>.  Например, если используется английский США

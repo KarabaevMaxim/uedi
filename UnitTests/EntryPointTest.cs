@@ -12,7 +12,6 @@ namespace UnitTests
 		{
 			IEntryPoint ediModuleEntryPoint = new EdiModuleEntryPoint();
 			ediModuleEntryPoint.ConnectToFileBase("Админ",
-				"987654321",
 				"123",
                 @"C:\Базы данных\1С\Розница для тестов ЕДИ модуля",
                 @"C:\Базы данных\1С\Розница для тестов ЕДИ модуля\Рабочая папка",
@@ -29,11 +28,9 @@ namespace UnitTests
 		public void EdiModuleEntryPointConnectToServerBase()
 		{
 			IEntryPoint ediModuleEntryPoint = new EdiModuleEntryPoint();
-			ediModuleEntryPoint.ConnectToServerBase(@"Data Source = (local); Initial Catalog = Поликон; User ID = sa; Password = itida",
-				"987654321",
+			ediModuleEntryPoint.ConnectToServerBase(@"Data Source = (local); Initial Catalog = Поликон; User ID = idleadmin; Password = itida",
 				@"C:\Базы данных\1С\Розница для тестов ЕДИ модуля\Рабочая папка",
 				@"C:\Базы данных\1С\Розница для тестов ЕДИ модуля\Архивная папка", 
-				"Хер",
 				"ftp://192.168.5.5",
 				false,
 				10,
