@@ -46,34 +46,123 @@
 			return true;
 		}
 
-		public static void DownloadDocuments1(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
+		public static void DownloadDocumentsNative(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
 		{
-			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(serverURI + "/" + remoteFolder);
-			ftpWebRequest.Credentials = new NetworkCredential(login, password);
+			NetworkCredential credential = new NetworkCredential(login, password);
+			string folderPath = string.Format("{0}/{1}", serverURI, remoteFolder);
+			List<string> fileNames = FtpService.GetFileList(passiveMode, timeoutSec, credential, folderPath);
+
+			foreach (var item in fileNames)
+			{
+				if(FtpService.DownloadFile(passiveMode, timeoutSec, credential, folderPath, item, localFolder))
+				{
+					FtpService.RemoveFile(passiveMode, timeoutSec, credential, folderPath, item);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Получает список файлой на FTP-сервере по указанному пути.
+		/// </summary>
+		/// <param name="passiveMode">Пассивный режим сервера.</param>
+		/// <param name="timeoutSec">Таймаут ответа от сервера.</param>
+		/// <param name="credentials">Параметры авторизации на сервере.</param>
+		/// <param name="directoryPath">Путь до папки на сервере.</param>
+		/// <returns>Список строк с именами файлов.</returns>
+		public static List<string> GetFileList(bool passiveMode, int timeoutSec, NetworkCredential credentials, string directoryPath)
+		{
+			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(directoryPath);
+			ftpWebRequest.Credentials = credentials;
 			ftpWebRequest.UseBinary = true;
 			ftpWebRequest.UsePassive = passiveMode;
 			ftpWebRequest.KeepAlive = true;
 			ftpWebRequest.Method = WebRequestMethods.Ftp.ListDirectory;
-			FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
-			Stream ftpStream = ftpWebResponse.GetResponseStream();
-			StreamReader ftpReader = new StreamReader(ftpStream);
-
 			List<string> result = new List<string>();
 
-			while (ftpReader.Peek() != -1)
+			using (FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse())
 			{
-				result.Add(ftpReader.ReadLine());
+				using (Stream ftpStream = ftpWebResponse.GetResponseStream())
+				{
+					using (StreamReader ftpReader = new StreamReader(ftpStream))
+					{	
+						while (ftpReader.Peek() != -1)
+							result.Add(ftpReader.ReadLine());
+					}
+				}
 			}
 
-			ftpReader.Close();
-			ftpStream.Close();
-			ftpWebResponse.Close();
-			ftpWebRequest = null;
+			return result;
 		}
 
-		public async static Task<bool> DownloadDocumentsAsync(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
+		/// <summary>
+		/// Загружает файл с FTP-сервера на компьютер.
+		/// </summary>
+		/// <param name="passiveMode">Пассивный режим сервера.</param>
+		/// <param name="timeoutSec">Таймаут ответа от сервера.</param>
+		/// <param name="credentials">Параметры авторизации на сервере.</param>
+		/// <param name="directoryPath">Путь до папки с файлом на сервере.</param>
+		/// <param name="fileName">Имя файла.</param>
+		/// <param name="localPath">Путь до папки, куда будет загружен файл.</param>
+		/// <returns>true в случае успеха, иначе false.</returns>
+		public static bool DownloadFile(bool passiveMode, int timeoutSec, NetworkCredential credentials, string directoryPath, string fileName, string localPath)
 		{
-			return await Task.Run(() => DownloadDocuments(serverURI, passiveMode, timeoutSec, login, password, remoteFolder, localFolder));
+			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(directoryPath + "/" + fileName);
+			ftpWebRequest.UsePassive = passiveMode;
+			ftpWebRequest.UseBinary = true;
+			ftpWebRequest.KeepAlive = true;
+			ftpWebRequest.Credentials = credentials;
+			ftpWebRequest.Method = WebRequestMethods.Ftp.DownloadFile;
+
+			try
+			{
+				using (FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse())
+				{
+					using (Stream ftpStream = ftpWebResponse.GetResponseStream())
+					{
+						List<byte> byteList = new List<byte>();
+						int curByte;
+
+						while ((curByte = ftpStream.ReadByte()) != -1)
+							byteList.Add((byte)curByte);
+
+						FileService.WriteBytesToFile(Path.Combine(localPath, fileName), byteList);
+						return true;
+					}
+				}
+			}
+			catch(WebException)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Удаляет файл с FTP-сервера.
+		/// </summary>
+		/// <param name="passiveMode">Пассивный режим сервера.</param>
+		/// <param name="timeoutSec">Таймаут ответа от сервера.</param>
+		/// <param name="credentials">Параметры авторизации на сервере.</param>
+		/// <param name="directoryPath">Путь до папки с файлом на сервере.</param>
+		/// <param name="fileName">Имя файла.</param>
+		/// <returns>true в случае успеха, иначе false.</returns>
+		public static bool RemoveFile(bool passiveMode, int timeoutSec, NetworkCredential credentials, string directoryPath, string fileName)
+		{
+			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(directoryPath + "/" + fileName);
+			ftpWebRequest.UsePassive = passiveMode;
+			ftpWebRequest.UseBinary = true;
+			ftpWebRequest.KeepAlive = true;
+			ftpWebRequest.Credentials = credentials;
+			ftpWebRequest.Method = WebRequestMethods.Ftp.DeleteFile;
+
+			try
+			{
+				using (FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse())
+					return ftpWebResponse.StatusCode == FtpStatusCode.FileActionOK;
+			}
+			catch (WebException)
+			{
+				return false;
+			}
 		}
 
 		/// <summary>

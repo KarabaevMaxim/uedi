@@ -118,7 +118,14 @@
 
 		public static void WriteBytesToFile(string fileName, IEnumerable<byte> bytes)
 		{
-			File.WriteAllBytes(fileName, bytes.ToArray());
+			try
+			{
+				File.WriteAllBytes(fileName, bytes.ToArray());
+			}
+			catch (DirectoryNotFoundException ex)
+			{
+				throw ex;
+			}
 		}
 
         private static readonly Encoding defaultEncoding;

@@ -40,36 +40,16 @@
 			 this.CurrentSession = SessionManager.Sessions[0];
 		}
 
-		private bool DownloadDocuments()
+		private void DownloadDocuments()
 		{
-			var result = FtpService.DownloadDocuments(this.CurrentSession.FtpURI,
+			FtpService.DownloadDocumentsNative(this.CurrentSession.FtpURI,
 			this.CurrentSession.FtpPassive,
 			this.CurrentSession.FtpTimeout,
 			this.CurrentSession.FtpLogin,
 			this.CurrentSession.FtpPassword,
 			this.CurrentSession.FtpRemoteFolder,
 			this.CurrentSession.WorkFolder);
-
-			if (result)
-				return DocumentManager.DownloadWaybills(this.CurrentSession.WorkFolder);
-			else
-				return false;
-		}
-
-		private async Task<bool> DownloadDocumentsAsync()
-		{
-			var result = await FtpService.DownloadDocumentsAsync(this.CurrentSession.FtpURI,
-				this.CurrentSession.FtpPassive,
-				this.CurrentSession.FtpTimeout,
-				this.CurrentSession.FtpLogin,
-				this.CurrentSession.FtpPassword,
-				this.CurrentSession.FtpRemoteFolder,
-				this.CurrentSession.WorkFolder);
-
-			if (result)
-				return await DocumentManager.DownloadWaybillsAsync(this.CurrentSession.WorkFolder);
-			else
-				return false;
+			DocumentManager.DownloadWaybills(this.CurrentSession.WorkFolder);
 		}
 
 		public void UpdateTablePart()
@@ -90,11 +70,11 @@
 		/// <summary>
 		/// Загрузить накладные.
 		/// </summary>
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-				await this.DownloadDocumentsAsync();
+				this.DownloadDocuments();
 				this.UpdateTablePart();
             }
             catch(Exception ex)
