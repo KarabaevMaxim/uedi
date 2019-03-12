@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using Model;
 	using System.Threading.Tasks;
+	using Comparators;
 
     public class ModuleRepository
     {
@@ -94,7 +95,7 @@
 
         public void AddMatchedWare(MatchedWare ware)
         {
-            if (!this.MatchedWares.Contains(ware))
+            if (!this.MatchedWares.Contains(ware, new MatchedWareComparator()))
                 this.MatchedWares.Add(ware);
         }
 
@@ -115,7 +116,7 @@
 
 		public void AddWarehouse(MatchedWarehouse warehouse)
 		{
-			if (!this.Warehouses.Contains(warehouse))
+			if (!this.Warehouses.Contains(warehouse, new MatchedWarehouseComparator()))
 				this.Warehouses.Add(warehouse);
 		}
 
@@ -126,7 +127,7 @@
 
 		public void AddCounteragent(MatchedCounteragent counteragent)
 		{
-			if (!this.Counteragents.Contains(counteragent))
+			if (!this.Counteragents.Contains(counteragent, new MatchedCounteragentComparator()))
 				this.Counteragents.Add(counteragent);
 		}
 

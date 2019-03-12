@@ -326,193 +326,205 @@ namespace UnitTests
 		//        Assert.IsTrue(ware1.Equals(ware2));
 		//    }
 
-		//    [TestMethod]
-		//    public void ModelWaybillEqualTest()
-		//    {
-		//        EdiModuleCore.Model.Waybill waybill1 = new EdiModuleCore.Model.Waybill
-		//        {
-		//            Date = new DateTime(2000, 1, 1),
-		//            Number = "123",
-		//            Organization = new Organization
-		//            {
-		//                Code = "12345",
-		//                GLN = "12345",
-		//                Name = "123456"
-		//            },
-		//            Supplier = new Counteragent
-		//            {
-		//                Code = "1234",
-		//                Name = "12345",
-		//                FullName = "1234567890",
-		//                GLN = "1234567"
-		//            },
-		//            Warehouse = new Warehouse
-		//            {
-		//                Code = "1234",
-		//                Name = "12345",
-		//                GLN = "1234567"
-		//            },
-		//            Wares = new List<EdiModuleCore.Model.WaybillRow>
-		//            {
-		//                new EdiModuleCore.Model.WaybillRow
-		//                {
-		//                     Amount = 1,
-		//                     Count = 4,
-		//                     Price = 10,
-		//                     TaxAmount = 10,
-		//                     TaxRate = 14,
-		//                     Ware = new MatchedWare
-		//                     {
-		//                         ExWare = new ExWare
-		//                         {
-		//                             Code = "1234",
-		//                             Barcode = "123456",
-		//                             Name = "123456",
-		//                             Supplier = new Counteragent
-		//                             {
-		//                                Code = "1234",
-		//                                Name = "12345",
-		//                                FullName = "1234567890",
-		//                                GLN = "1234567"
-		//                             },
-		//                             Unit = new Unit
-		//                             {
-		//                                 Name = "12345",
-		//                                 Code = "12345",
-		//                                 FullName = "12345",
-		//                                 International = "PCE"
-		//                             }
-		//                         },
-		//                         InnerWare = new Ware
-		//                         {
-		//                             Code = "12345",
-		//                             Name = "12345",
-		//                             FullName = "12345",
-		//                             Unit = new Unit
-		//                             {
-		//                                 Name = "12345",
-		//                                 Code = "12345",
-		//                                 FullName = "12345",
-		//                                 International = "PCE"
-		//                             },
-		//                             BarCodes = new List<string>
-		//                             {
-		//                                 "12345",
-		//                                 "1234568"
-		//                             },
-		//                             ExCodes = new List<WareExCode>
-		//                             {
-		//                                 new WareExCode
-		//                                 {
-		//                                     Counteragent = new Counteragent
-		//                                     {
-		//                                        Code = "1234",
-		//                                        Name = "12345",
-		//                                        FullName = "1234567890",
-		//                                        GLN = "1234567"
-		//                                     },
-		//                                     Value = "123456"
-		//                                 }
-		//                             }
-		//                         }
-		//                     }
-		//                }
-		//            }
-		//        };
+		[TestMethod]
+		public void ModelWaybillEqualsTest()
+		{
+			string number = "001";
+			DateTime date = DateTime.Now;
+			MatchedCounteragent counteragent = new MatchedCounteragent
+			{
+				ExCounteragent = new ExCounteragent
+				{
+					GLN = "12345"
+				},
+				InnerCounteragent = new Counteragent
+				{
+					Code = "001",
+					Name = "Sup",
+					FullName = "Supplier",
+					GLN = "12345"
+				}
+			};
+			Organization organization = new Organization
+			{
+				Code = "001",
+				GLN = "54321",
+				Name = "Org"
+			};
+			MatchedWarehouse warehouse = new MatchedWarehouse
+			{
+				ExWarehouse = new ExWarehouse
+				{
+					GLN = "987654321"
+				},
+				InnerWarehouse = new Warehouse
+				{
+					Code = "001",
+					Name = "Wh",
+					Shop = new Shop
+					{
+						Code = "001",
+						Name = "Shop"
+					},
+					User = new User
+					{
+						Code = "001",
+						Name = "Max"
+					}
+				}
+			};
+			List<EdiModuleCore.Model.WaybillRow> rows = new List<EdiModuleCore.Model.WaybillRow>();
+			string fileName = "File.txt";
+			float amountWithTax = 499.5f;
+			float amount = 450;
 
-		//        EdiModuleCore.Model.Waybill waybill2 = new EdiModuleCore.Model.Waybill
-		//        {
-		//            Date = new DateTime(2000, 1, 1),
-		//            Number = "123",
-		//            Organization = new Organization
-		//            {
-		//                Code = "12345",
-		//                GLN = "12345",
-		//                Name = "123456"
-		//            },
-		//            Supplier = new Counteragent
-		//            {
-		//                Code = "1234",
-		//                Name = "12345",
-		//                FullName = "1234567890",
-		//                GLN = "1234567"
-		//            },
-		//            Warehouse = new Warehouse
-		//            {
-		//                Code = "1234",
-		//                Name = "12345",
-		//                GLN = "1234567"
-		//            },
-		//            Wares = new List<EdiModuleCore.Model.WaybillRow>
-		//            {
-		//                new EdiModuleCore.Model.WaybillRow
-		//                {
-		//                     Amount = 1,
-		//                     Count = 4,
-		//                     Price = 10,
-		//                     TaxAmount = 10,
-		//                     TaxRate = 14,
-		//                     Ware = new MatchedWare
-		//                     {
-		//                         ExWare = new ExWare
-		//                         {
-		//                             Code = "1234",
-		//                             Barcode = "123456",
-		//                             Name = "123456",
-		//                             Supplier = new Counteragent
-		//                             {
-		//                                Code = "1234",
-		//                                Name = "12345",
-		//                                FullName = "1234567890",
-		//                                GLN = "1234567"
-		//                             },
-		//                             Unit = new Unit
-		//                             {
-		//                                 Name = "12345",
-		//                                 Code = "12345",
-		//                                 FullName = "12345",
-		//                                 International = "PCE"
-		//                             }
-		//                         },
-		//                         InnerWare = new Ware
-		//                         {
-		//                             Code = "12345",
-		//                             Name = "12345",
-		//                             FullName = "12345",
-		//                             Unit = new Unit
-		//                             {
-		//                                 Name = "12345",
-		//                                 Code = "12345",
-		//                                 FullName = "12345",
-		//                                 International = "PCE"
-		//                             },
-		//                             BarCodes = new List<string>
-		//                             {
-		//                                 "12345",
-		//                                 "1234568"
-		//                             },
-		//                             ExCodes = new List<WareExCode>
-		//                             {
-		//                                 new WareExCode
-		//                                 {
-		//                                     Counteragent = new Counteragent
-		//                                     {
-		//                                        Code = "1234",
-		//                                        Name = "12345",
-		//                                        FullName = "1234567890",
-		//                                        GLN = "1234567"
-		//                                     },
-		//                                     Value = "123456"
-		//                                 }
-		//                             }
-		//                         }
-		//                     }
-		//                }
-		//            }
-		//        };
+			EdiModuleCore.Model.Waybill waybill1 = new EdiModuleCore.Model.Waybill
+			{
+				Number = number,
+				Date = date,
+				Amount = amount,
+				AmountWithTax = amountWithTax,
+				FileName = fileName,
+				Organization = organization,
+				Supplier = counteragent,
+				Warehouse = warehouse,
+				Wares = rows
+			};
 
-		//        Assert.IsTrue(waybill1.Equals(waybill2));
-		//    }
-		//}
+			EdiModuleCore.Model.Waybill waybill2 = new EdiModuleCore.Model.Waybill
+			{
+				Number = number,
+				Date = date,
+				Amount = amount,
+				AmountWithTax = amountWithTax,
+				FileName = fileName,
+				Organization = organization,
+				Supplier = counteragent,
+				Warehouse = warehouse,
+				Wares = rows
+			};
+
+			Assert.IsTrue(waybill1.Equals(waybill2));
+		}
+
+		[TestMethod]
+		public void ModelWaybillEqualsWithNullPropertyTest()
+		{
+			string number = "001";
+			DateTime date = DateTime.Now;
+			List<EdiModuleCore.Model.WaybillRow> rows = new List<EdiModuleCore.Model.WaybillRow>();
+			string fileName = "File.txt";
+			float amountWithTax = 499.5f;
+			float amount = 450;
+
+			EdiModuleCore.Model.Waybill waybill1 = new EdiModuleCore.Model.Waybill
+			{
+				Number = number,
+				Date = date,
+				Amount = amount,
+				AmountWithTax = amountWithTax,
+				FileName = fileName,
+				Organization = null,
+				Supplier = null,
+				Warehouse = null,
+				Wares = rows
+			};
+
+			EdiModuleCore.Model.Waybill waybill2 = new EdiModuleCore.Model.Waybill
+			{
+				Number = number,
+				Date = date,
+				Amount = amount,
+				AmountWithTax = amountWithTax,
+				FileName = fileName,
+				Organization = null,
+				Supplier = null,
+				Warehouse = null,
+				Wares = rows
+			};
+
+			Assert.IsTrue(waybill1.Equals(waybill2));
+		}
+
+		[TestMethod]
+		public void ModelWaybillEqualsWithNullPropertyAtOneWaybillTest()
+		{
+			string number = "001";
+			DateTime date = DateTime.Now;
+			MatchedCounteragent counteragent = new MatchedCounteragent
+			{
+				ExCounteragent = new ExCounteragent
+				{
+					GLN = "12345"
+				},
+				InnerCounteragent = new Counteragent
+				{
+					Code = "001",
+					Name = "Sup",
+					FullName = "Supplier",
+					GLN = "12345"
+				}
+			};
+			Organization organization = new Organization
+			{
+				Code = "001",
+				GLN = "54321",
+				Name = "Org"
+			};
+			MatchedWarehouse warehouse = new MatchedWarehouse
+			{
+				ExWarehouse = new ExWarehouse
+				{
+					GLN = "987654321"
+				},
+				InnerWarehouse = new Warehouse
+				{
+					Code = "001",
+					Name = "Wh",
+					Shop = new Shop
+					{
+						Code = "001",
+						Name = "Shop"
+					},
+					User = new User
+					{
+						Code = "001",
+						Name = "Max"
+					}
+				}
+			};
+			List<EdiModuleCore.Model.WaybillRow> rows = new List<EdiModuleCore.Model.WaybillRow>();
+			string fileName = "File.txt";
+			float amountWithTax = 499.5f;
+			float amount = 450;
+
+			EdiModuleCore.Model.Waybill waybill1 = new EdiModuleCore.Model.Waybill
+			{
+				Number = number,
+				Date = date,
+				Amount = amount,
+				AmountWithTax = amountWithTax,
+				FileName = fileName,
+				Organization = organization,
+				Supplier = counteragent,
+				Warehouse = null,
+				Wares = rows
+			};
+
+			EdiModuleCore.Model.Waybill waybill2 = new EdiModuleCore.Model.Waybill
+			{
+				Number = number,
+				Date = date,
+				Amount = amount,
+				AmountWithTax = amountWithTax,
+				FileName = fileName,
+				Organization = organization,
+				Supplier = counteragent,
+				Warehouse = warehouse,
+				Wares = rows
+			};
+
+			Assert.IsFalse(waybill1.Equals(waybill2));
+		}
 	}
 }

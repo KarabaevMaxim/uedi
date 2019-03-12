@@ -24,15 +24,19 @@
 
 		public override bool Equals(object obj)
 		{
-			if(obj is MatchedCounteragent other)
+			if (obj is MatchedCounteragent other)
 			{
-				try
+				bool result = this.ExCounteragent.Equals(other.ExCounteragent);
+
+				if (this.InnerCounteragent == null && other.InnerCounteragent == null)
+					return result;
+				else
 				{
-					return this.InnerCounteragent.Equals(other.InnerCounteragent) &&
-						this.ExCounteragent.Equals(other.ExCounteragent);
+					if (this.InnerCounteragent == null && other.InnerCounteragent != null)
+						return false;
+					else
+						return result && this.InnerCounteragent.Equals(other.InnerCounteragent);
 				}
-				catch(NullReferenceException)
-				{}
 			}
 
 			return false;

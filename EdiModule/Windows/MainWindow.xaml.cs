@@ -33,6 +33,7 @@
 			this.DownloadDocuments();
 			this.UpdateTablePart();
 			UserNameTxt.Text = CoreInit.RepositoryService.GetCurrentUser().Name;
+			TotalLbl.Text = "Всего накладных: " + CoreInit.ModuleRepository.GetUnprocessedWaybills().Count;
 		}
 
 		private void GetSession()

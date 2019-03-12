@@ -42,29 +42,21 @@
 		public float Amount { get; set; }
 
 		public override bool Equals(object obj)
-        {
-			try
-			{
-				if (obj is Waybill waybill)
-					return this.Number == waybill.Number &&
-							this.Date == waybill.Date &&
-							this.Supplier.Equals(waybill.Supplier) &&
-							this.Organization.Equals(waybill.Organization) &&
-							this.Warehouse.Equals(waybill.Warehouse) &&
-							this.Wares.Any(waybill.Wares.Contains) &&
-							this.AmountWithTax == waybill.AmountWithTax &&
-							this.Amount == waybill.Amount;
-				else
-					return false;
-			}
-			catch(NullReferenceException)
-			{
+		{ 
+			if (obj is Waybill waybill)
+				return this.Number == waybill.Number &&
+						this.Date == waybill.Date &&
+						this.Supplier.Equals(waybill.Supplier) &&
+						((this.Organization == null && waybill.Organization == null) || this.Organization.Equals(waybill.Organization)) &&
+						((this.Warehouse == null && waybill.Warehouse == null) || this.Warehouse.Equals(waybill.Warehouse)) &&
+						((!this.Wares.Any() && !waybill.Wares.Any()) || this.Wares.Any(waybill.Wares.Contains)) &&
+						this.AmountWithTax == waybill.AmountWithTax &&
+						this.Amount == waybill.Amount;
+			else
 				return false;
-			}
-            
-        }
+		}
 
-        public override int GetHashCode()
+		public override int GetHashCode()
         {
             return base.GetHashCode();  
         }

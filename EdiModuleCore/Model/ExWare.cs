@@ -31,11 +31,14 @@
         public override bool Equals(object obj)
         {
             if ((obj != null) && (obj is ExWare ware))
-                return  this.Code == ware.Code &&
-                        this.Name == ware.Name &&
-                        this.Barcode == ware.Barcode &&
-                        this.Unit.Equals(ware.Unit) &&
-                        this.Supplier.Equals(ware.Supplier);
+			{
+				return this.Code == ware.Code &&
+					   this.Name == ware.Name &&
+					   this.Barcode == ware.Barcode &&
+					   this.Unit.Equals(ware.Unit) &&
+					   this.Supplier.Equals(ware.Supplier);
+			}
+               
 
             return false;
         }

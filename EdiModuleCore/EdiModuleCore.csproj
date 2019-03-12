@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparators\MatchedWareComparator.cs" />
+    <Compile Include="Comparators\MatchedWarehouseComparator.cs" />
+    <Compile Include="Comparators\MatchedCounteragentComparator.cs" />
     <Compile Include="Exceptions\NotProcessedDocumentException.cs" />
     <Compile Include="Exceptions\NotMatchedException.cs" />
     <Compile Include="FtpService.cs" />
