@@ -90,12 +90,19 @@
             {
                 if (row.DataContext is WaybillRow wbRow)
                 {
-                    ProductReferenceWindow prodWindow = new ProductReferenceWindow
-                    {
-                        Ware = wbRow.Ware,
-                        ParentWindow = this
-                    };
-                    prodWindow.ShowDialog();
+					if (wbRow.Ware.ExWare.Supplier?.InnerCounteragent == null)
+					{
+						ProductReferenceWindow prodWindow = new ProductReferenceWindow
+						{
+							Ware = wbRow.Ware,
+							ParentWindow = this
+						};
+						prodWindow.ShowDialog();
+					}
+					else
+					{
+						MessageBox.Show("Невозможно выполнить операцию, поставщик не указан.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
                 }
             }
         }
@@ -110,9 +117,17 @@
 				int i = 0;
 				if ((item is WaybillRow row) && (row.Ware != null) && (row.Ware.InnerWare == null) && (row.Ware.ExWare != null))
 				{
-					bool res = object.ReferenceEquals(Waybill.Wares[i], row);
-					MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
-					i++;
+					try
+					{
+						bool res = object.ReferenceEquals(Waybill.Wares[i], row);
+						MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+						i++;
+					}
+					catch(NotMatchedException ex)
+					{
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+					
 				}
             }
 
@@ -126,8 +141,17 @@
         {
             foreach (var item in this.PositionsTbl.SelectedItems)
             {
-                if ((item is WaybillRow row) && (row.Ware != null) && (row.Ware.InnerWare == null) && (row.Ware.ExWare != null))
-                    MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+				if ((item is WaybillRow row) && (row.Ware != null) && (row.Ware.InnerWare == null) && (row.Ware.ExWare != null))
+				{
+					try
+					{
+						MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+					}
+					catch (NotMatchedException ex)
+					{
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+				}
             }
 
             this.UpdateTablePart();

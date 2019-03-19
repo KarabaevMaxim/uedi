@@ -48,3 +48,5 @@ C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\obj
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\ArxOne.Ftp.dll
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\ArxOne.Ftp.xml
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\EdiModule.pdb
+C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\FontAwesome.WPF.dll
+C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\FontAwesome.WPF.xml

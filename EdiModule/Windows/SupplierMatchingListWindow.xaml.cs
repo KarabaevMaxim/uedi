@@ -49,31 +49,6 @@
 			e.Row.Header = (e.Row.GetIndex() + 1).ToString();
 		}
 
-        /// <summary>
-        /// Нажание на кнопку "Создать для всех строк".
-        /// </summary>
-        private void AddAllWarehousesBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //foreach (var item in this.WarehousesTbl.Items)
-            //{
-            //    if ((item is MatchedWare ware) && (ware.ExWare != null) && (ware.InnerWare == null))
-            //        MatchingModule.CreateNewInnerWareAndMatch(ware);
-            //}
-
-            this.UpdateTablePart();
-        }
-
-        private void AddSelectedBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //foreach (var item in this.WarehousesTbl.SelectedItems)
-            //{
-            //    if ((item is MatchedWare ware) && (ware.ExWare != null) && (ware.InnerWare == null))
-            //        MatchingModule.CreateNewInnerWareAndMatch(ware);
-            //}
-
-            this.UpdateTablePart();
-        }
-
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is DataGridRow row)

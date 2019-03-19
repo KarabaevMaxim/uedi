@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdiModule.Windows"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Сопоставление номенклатуры" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid ShowGridLines="True">
@@ -15,8 +16,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="325*"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="30
+                           "/>
         </Grid.RowDefinitions>
+        <fa:ImageAwesome Name="WaitAnim" Grid.Column="0" Grid.Row="0" Icon="Asterisk" Spin="True" SpinDuration="3" />
         <DataGrid Grid.Column="1" Grid.Row="1" Name="WaresTbl" IsReadOnly="True" AutoGenerateColumns="False" LoadingRow="WaresTbl_LoadingRow">
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
@@ -24,13 +27,5 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <GroupBox Header="Создать номенклатуру для несоп-ных строк" BorderBrush="Black" Margin="6" FontSize="8">
-                <StackPanel  Orientation="Horizontal" FlowDirection ="LeftToRight">
-                    <Button Grid.Column="0" Name="AddAllWaresBtn" Content="Для всех строк" Margin="2 2 5 2" Click="AddAllWaresBtn_Click"/>
-                    <Button Grid.Column="1" Name="AddSelectedBtn" Content="Для выделенных строк" Margin="10 2 2 2" Click="AddSelectedBtn_Click"/>
-                </StackPanel>
-            </GroupBox>
-        </StackPanel>
     </Grid>
 </Window>

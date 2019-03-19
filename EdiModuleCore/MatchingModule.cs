@@ -84,7 +84,7 @@
         }
 
         /// <summary>
-        /// Создает наменклатуру в базе и выполняет с ней сопоставление.
+        /// Создает номенклатуру в базе и выполняет с ней сопоставление.
         /// </summary>
         /// <param name="matchedWare">Объект, где должно быть выполнено сопоставление.</param>
         public static void CreateNewInnerWareAndMatch(MatchedWare matchedWare)
@@ -92,6 +92,9 @@
             if(matchedWare.ExWare == null || matchedWare.InnerWare != null)
                 throw new NotMatchedException("Автоматическое добавление номенклатуры не выполнено, внешний товар не инициализирован или " +
                     "инициализирован внутренний.");
+
+			if (matchedWare.ExWare.Supplier?.InnerCounteragent == null)
+				throw new NotMatchedException("Автоматическое добавление номенклатуры не выполнено, поставщик не указан");
 
             Ware newInnerWare = new Ware();
             newInnerWare.Name = matchedWare.ExWare.Name;

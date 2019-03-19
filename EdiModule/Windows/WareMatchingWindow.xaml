@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EdiModule.Windows"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Проверка накладной" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid ShowGridLines="True">
@@ -17,6 +18,7 @@
             <RowDefinition Height="305*"/>
             <RowDefinition Height="84"/>
         </Grid.RowDefinitions>
+        <fa:ImageAwesome Name="WaitAnim" Grid.Column="0" Grid.Row="0" Icon="Asterisk" Spin="True" SpinDuration="3" />
         <Grid Grid.Column="1" Grid.Row="0" ShowGridLines="true">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="160*"/>

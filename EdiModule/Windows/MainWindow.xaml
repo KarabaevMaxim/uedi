@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:local="clr-namespace:EdiModule.Windows"
         mc:Ignorable="d"
         Title="Необработанные накладные" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
@@ -15,13 +16,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
             <RowDefinition/>
-            <RowDefinition Height="54"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" FlowDirection="LeftToRight">
             <TextBlock Text="Пользователь:" FontSize="15" Margin="5" TextAlignment="Center"/>
             <TextBlock Name="UserNameTxt" Text="Пользователь" FontSize="15" Margin="5" TextAlignment="Center"/>
         </StackPanel>
-        <DataGrid Grid.Column="1" Grid.Row="1" Name="UnprocessedWaybillTbl" Background="Aqua" AutoGenerateColumns="False" 
+        <DataGrid Grid.Column="1" Grid.Row="1" Name="UnprocessedWaybillTbl" Background="SeaGreen" AutoGenerateColumns="False" 
                       CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
@@ -29,16 +30,17 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
+        <fa:ImageAwesome Name="WaitAnim" Grid.Column="0" Grid.Row="0" Icon="Asterisk" Spin="True" SpinDuration="3" />
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="170"/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="170"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="3" Content="Загрузить накладные" Margin="10,10,10,10" Click="Button_Click"/>
             <Viewbox Grid.Column="0" Stretch="Uniform">
-                <TextBlock Name="TotalLbl" Text="Всего накладных: 22" TextAlignment="Right"/>
+                <TextBlock Name="TotalLbl" Text="Всего накладных: 22" TextAlignment="Right" Margin="10"/>
             </Viewbox>
         </Grid>
         <StackPanel Grid.Column="2" Grid.Row="1">
@@ -61,6 +63,11 @@
             <Button Grid.Row="2" Name="UpdateWareRefenceBtn" Margin="5" Click="UpdateWareRefenceBtn_Click">
                 <ContentControl>
                     <TextBlock Text="Обновить справочник" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </ContentControl>
+            </Button>
+            <Button Grid.Row="2" Name="ShowWhListBtn" Margin="5" Click="ShowWhListBtn_Click">
+                <ContentControl>
+                    <TextBlock Text="Список ваших складов" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </ContentControl>
             </Button>
         </StackPanel>

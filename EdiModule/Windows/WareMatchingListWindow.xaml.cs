@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
-namespace EdiModule.Windows
+﻿namespace EdiModule.Windows
 {
-    using EdiModuleCore;
-    using EdiModuleCore.Model;
-    /// <summary>
-    /// Логика взаимодействия для WareMatchingListWindow.xaml
-    /// </summary>
-    public partial class WareMatchingListWindow : Window, ITableWindow
+	using System.Collections.Generic;
+	using System.Windows;
+	using System.Windows.Controls;
+	using System.Windows.Data;
+	using System.Windows.Input;
+	using EdiModuleCore;
+	using EdiModuleCore.Model;
+
+	/// <summary>
+	/// Логика взаимодействия для WareMatchingListWindow.xaml
+	/// </summary>
+	public partial class WareMatchingListWindow : Window, ITableWindow
     {
         public WareMatchingListWindow()
         {
@@ -89,12 +81,19 @@ namespace EdiModule.Windows
             {
                 if (row.DataContext is MatchedWare ware)
                 {
-                    ProductReferenceWindow prodWindow = new ProductReferenceWindow
-                    {
-                        Ware = ware,
-                        ParentWindow = this
-                    };
-                    prodWindow.ShowDialog();
+					if(ware.ExWare.Supplier?.InnerCounteragent != null)
+					{
+						ProductReferenceWindow prodWindow = new ProductReferenceWindow
+						{
+							Ware = ware,
+							ParentWindow = this
+						};
+						prodWindow.ShowDialog();
+					}
+					else
+					{
+						MessageBox.Show("Невозможно выполнить операцию, поставщик не указан.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
                 }
             }
         }

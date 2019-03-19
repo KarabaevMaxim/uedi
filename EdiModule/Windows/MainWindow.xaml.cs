@@ -18,8 +18,9 @@
     {
         public MainWindow()
         {
-            InitializeComponent();
-            this.bindings.Add("Номер накладной", "Number");
+			InitializeComponent();
+			WaitAnim.Visibility = Visibility.Visible;
+			this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
             this.bindings.Add("Поставщик", "Supplier.InnerCounteragent.Name");
 			this.bindings.Add("Организация", "Organization.Name");
@@ -73,7 +74,7 @@
 		/// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            try
+			try
             {
 				this.DownloadDocuments();
 				this.UpdateTablePart();
@@ -82,7 +83,7 @@
             {
                 MessageBox.Show(ex.Message + " " + ex.StackTrace);
             }
-        }
+		}
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -135,6 +136,12 @@
 			SupplierMatchingListWindow window = new SupplierMatchingListWindow();
 			window.ParentWindow = this;
 			window.ShowDialog();
+		}
+
+		private void ShowWhListBtn_Click(object sender, RoutedEventArgs e)
+		{
+			string whNames = CoreInit.ModuleRepository.GetWarehouses().Where(wh => wh.InnerWarehouse.User.Name);
+			MessageBox.Show("", "", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
 		private Dictionary<string, string> bindings = new Dictionary<string, string>();
