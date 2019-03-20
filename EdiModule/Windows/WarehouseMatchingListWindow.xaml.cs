@@ -38,6 +38,15 @@ namespace EdiModule.Windows
             foreach (var item in this.bindings)
                 this.WarehousesTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
 
+			var wareHouses = CoreInit.ModuleRepository.GetWarehouses();
+			List<MatchedWarehouse> result = new List<MatchedWarehouse>();
+
+			foreach (var item in wareHouses)
+			{
+				result.Add(MatchingModule.AutomaticWHMatching(item.ExWarehouse));
+			}
+			
+
             this.WarehousesTbl.ItemsSource = CoreInit.ModuleRepository.GetWarehouses();
         }
 

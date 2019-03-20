@@ -93,7 +93,19 @@
             return this.GeneralWaybillList;
         }
 
-        public void AddMatchedWare(MatchedWare ware)
+		public void UpdateWarehouses()
+		{
+			this.InitWarehouseReference();
+			MatchingModule.UpdateWHMatching(this.Warehouses);
+		}
+
+		public void UpdateCounteragents()
+		{
+			this.InitCounteragentReference();
+			MatchingModule.UpdateSupMatching(this.Counteragents);
+		}
+
+		public void AddMatchedWare(MatchedWare ware)
         {
             if (!this.MatchedWares.Contains(ware, new MatchedWareComparator()))
                 this.MatchedWares.Add(ware);
@@ -108,6 +120,11 @@
         {
             return this.UnprocessedWaybills;
         }
+
+		public void ClearUnprocessedWaybills()
+		{
+			this.UnprocessedWaybills.Clear();
+		}
 
 		public List<MatchedWarehouse> GetWarehouses()
 		{

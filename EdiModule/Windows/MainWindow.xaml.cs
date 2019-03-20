@@ -19,7 +19,7 @@
         public MainWindow()
         {
 			InitializeComponent();
-			WaitAnim.Visibility = Visibility.Visible;
+			//WaitAnim.Visibility = Visibility.Visible;
 			this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
             this.bindings.Add("Поставщик", "Supplier.InnerCounteragent.Name");
@@ -30,6 +30,11 @@
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+			this.Initialize();
+		}
+
+		private void Initialize()
+		{
 			this.GetSession();
 			this.DownloadDocuments();
 			this.UpdateTablePart();
@@ -51,7 +56,7 @@
 			this.CurrentSession.FtpPassword,
 			this.CurrentSession.FtpRemoteFolder,
 			this.CurrentSession.WorkFolder);
-			DocumentManager.DownloadWaybills(this.CurrentSession.WorkFolder);
+			DocumentManager.ReloadWaybills(this.CurrentSession.WorkFolder);
 		}
 
 		public void UpdateTablePart()
@@ -76,9 +81,8 @@
         {
 			try
             {
-				this.DownloadDocuments();
-				this.UpdateTablePart();
-            }
+				this.Initialize();
+			}
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message + " " + ex.StackTrace);
@@ -140,8 +144,10 @@
 
 		private void ShowWhListBtn_Click(object sender, RoutedEventArgs e)
 		{
-			string whNames = CoreInit.ModuleRepository.GetWarehouses().Where(wh => wh.InnerWarehouse.User.Name);
-			MessageBox.Show("", "", MessageBoxButton.OK, MessageBoxImage.Information);
+			var whNames = CoreInit.ModuleRepository.GetWarehouses().Where(wh => wh.InnerWarehouse?.User?.Code == CoreInit.RepositoryService.GetCurrentUser().Code).Select(wh => string.Format("{0} {1}", wh.InnerWarehouse.Name, wh.ExWarehouse.GLN));
+			string result = whNames.Any() ? string.Join("\n", whNames) : "Список складов пуст, возможно у вас есть несопоставленные склады.";
+
+			MessageBox.Show(result, "Ваши склады", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
 		private Dictionary<string, string> bindings = new Dictionary<string, string>();

@@ -14,6 +14,6 @@
 		public string FtpRemoteFolder { get; set; }
 		public string WorkFolder { get; set; }
 		public string ArchieveFolder { get; set; }
-		public User User { get; set; }
+	//	public User User { get; set; }
 	}
 }

@@ -61,9 +61,10 @@
 			return true;
         }
 
-		public async static Task<bool> DownloadWaybillsAsync(string workFolder)
+		public static void ReloadWaybills(string workFolder)
 		{
-			return await Task.Run(() => DocumentManager.DownloadWaybills(workFolder));
+			CoreInit.ModuleRepository.ClearUnprocessedWaybills();
+			DocumentManager.DownloadWaybills(workFolder);
 		}
 
 		private static Model.Waybill RaiseWaybill(XEntities.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)

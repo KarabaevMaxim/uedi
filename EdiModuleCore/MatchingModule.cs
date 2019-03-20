@@ -1,5 +1,6 @@
 ﻿namespace EdiModuleCore
 {
+	using System;
     using System.Collections.Generic;
 	using System.Threading.Tasks;
     using Bridge1C;
@@ -158,6 +159,25 @@
 			return await Task.Run(() => AutomaticWHMatching(warehouse));
 		}
 
+		public static void UpdateWHMatching(MatchedWarehouse warehouse)
+		{
+			if (warehouse == null || string.IsNullOrWhiteSpace(warehouse.ExWarehouse?.GLN))
+				throw new ArgumentNullException("Передан пустой параметр");
+
+			var cache = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.ExWarehouse?.GLN);
+
+			if (cache == null || string.IsNullOrWhiteSpace(cache.Code))
+				warehouse.InnerWarehouse = null;
+
+			warehouse.InnerWarehouse = cache;
+		}
+
+		public static void UpdateWHMatching(IEnumerable<MatchedWarehouse> warehouse)
+		{
+			foreach (var item in warehouse)
+				MatchingModule.UpdateWHMatching(item);
+		}
+
 		/// <summary>
 		/// Выполняет сопоставление склада matchedWarehouse с warehouse.
 		/// </summary>
@@ -204,6 +224,25 @@
 
 			result.InnerCounteragent = innerCount;
 			return result;
+		}
+
+		public static void UpdateSupMatching(MatchedCounteragent counteragent)
+		{
+			if (counteragent == null || string.IsNullOrWhiteSpace(counteragent.ExCounteragent?.GLN))
+				throw new ArgumentNullException("Передан пустой параметр");
+
+			var cache = CoreInit.RepositoryService.GetCounteragent(Requisites.GLN, counteragent.ExCounteragent?.GLN);
+
+			if (cache == null || string.IsNullOrWhiteSpace(cache.Code))
+				counteragent.InnerCounteragent = null;
+
+			counteragent.InnerCounteragent = cache;
+		}
+
+		public static void UpdateSupMatching(IEnumerable<MatchedCounteragent> counteragents)
+		{
+			foreach (var item in counteragents)
+				MatchingModule.UpdateSupMatching(item);
 		}
 
 		public async static Task<MatchedCounteragent> AutomaticSupMatchingAsync(ExCounteragent counteragent)

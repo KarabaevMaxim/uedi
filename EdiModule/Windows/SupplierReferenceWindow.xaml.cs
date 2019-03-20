@@ -54,7 +54,9 @@
                     {
 						if(!(MatchingModule.ManualSupMatching(this.CurrentCounteragent, innerCounteragent)))
 							MessageBox.Show("При сопоставлении произошла ошибка.", "Не удалось сопоставить поставщика.");
-                    }
+
+						CoreInit.ModuleRepository.UpdateCounteragents();
+					}
                     catch(NotMatchedException ex)
                     {
                         MessageBox.Show(ex.Message, "Не удалось сопоставить поставщика.");
