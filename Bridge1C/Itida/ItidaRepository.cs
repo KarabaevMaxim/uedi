@@ -17,7 +17,7 @@
 				throw new ArgumentNullException("Передан пустой параметр");
 
 			this.connectionString = connectionString;
-			this.logger.Info("Инициализация объекта репозитория Айтида");
+			this.logger.Info("Инициализация объекта репозитория Айтида завершена");
 		}
 
 		/// <summary>
@@ -345,7 +345,6 @@
 							break;
 						case Requisites.Name:
 							throw new NotImplementedException("Поиск по наименованию не реализован");
-							break;
 						case Requisites.GLN:
 							this.logger.Info("по ГЛН {0}", value);
 							command = new SqlCommand("SELECT code, name, shortname FROM sprclient WHERE ex_code = @exCode", conn);

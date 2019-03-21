@@ -50,3 +50,6 @@ C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\EdiModule.pdb
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\FontAwesome.WPF.dll
 C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\FontAwesome.WPF.xml
+C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\NLog.config
+C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\NLog.dll
+C:\Доработки\УниверсальныеЕдиМодуль\UnitTests\bin\Debug\NLog.xml

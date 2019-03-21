@@ -22,3 +22,6 @@ C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore
 C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\obj\Debug\EdiModuleCore.csprojAssemblyReference.cache
 C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\ArxOne.Ftp.dll
 C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\ArxOne.Ftp.xml
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\NLog.config
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\NLog.dll
+C:\Доработки\УниверсальныеЕдиМодуль\EdiModuleCore\bin\Debug\NLog.xml

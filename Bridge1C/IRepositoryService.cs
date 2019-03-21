@@ -36,21 +36,9 @@
 		/// <returns>Объект контрагента.</returns>
 		Counteragent GetCounteragent(Requisites prop, string propValue);
 		/// <summary>
-		/// Получить список контрагентов из базы данных (асинхронная версия).
-		/// </summary>
-		/// <returns>Список контрагентов.</returns>
-		Task<List<Counteragent>> GetAllCounteragentsAsync();
-		/// <summary>
 		/// Получить список контрагентов.
 		/// </summary>
 		List<Counteragent> GetAllCounteragents();
-		/// <summary>
-		/// Перезаписать у ГЛН контрагента (асинхронная версия). 
-		/// </summary>
-		/// <param name="counteragent">Контрагент, которому необходимо установить ГЛН.</param>
-		/// <param name="gln">ГНЛ для записи.</param>
-		/// <returns>true в случа успеха, иначе false.</returns>
-		Task<bool> RematchingCounteragentAsync(Counteragent counteragent, string gln);
 		/// <summary>
 		/// Перезаписать у ГЛН контрагента
 		/// </summary>

@@ -31,11 +31,6 @@
 			this.CounteragentReference = CoreInit.RepositoryService.GetAllCounteragents();
 		}
 
-		public async void InitCounteragentReferenceAsync()
-        {
-            this.CounteragentReference = await CoreInit.RepositoryService.GetAllCounteragentsAsync();
-        }
-
         /// <summary>
         /// Добавить накладную в общий список.
         /// </summary>

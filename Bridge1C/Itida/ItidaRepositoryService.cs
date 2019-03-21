@@ -195,16 +195,6 @@
 			return true;
 		}
 
-		public Task<List<Counteragent>> GetAllCounteragentsAsync()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> RematchingCounteragentAsync(Counteragent counteragent, string gln)
-		{
-			throw new NotImplementedException();
-		}
-
 		private ItidaRepository Repository { get; set; }
 	}
 }

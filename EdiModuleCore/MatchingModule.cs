@@ -250,19 +250,6 @@
 			return await Task.Run(() => AutomaticSupMatching(counteragent));
 		}
 
-		public async static Task<bool> ManualSupMatchingAsync(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
-		{
-			if (matchedCounteragent == null || counteragent == null)
-				return false;
-
-			if(!await CoreInit.RepositoryService.RematchingCounteragentAsync(counteragent, matchedCounteragent.ExCounteragent.GLN))
-				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
-
-			counteragent.GLN = matchedCounteragent.ExCounteragent.GLN;
-			matchedCounteragent.InnerCounteragent = counteragent;
-			return true;
-		}
-
 		public static bool ManualSupMatching(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
 		{
 			if (matchedCounteragent == null || counteragent == null)

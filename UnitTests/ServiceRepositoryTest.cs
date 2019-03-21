@@ -80,19 +80,5 @@
 
 		}
 
-		[TestMethod]
-		public async Task GetAllCounteragentsTest()
-		{
-			var list = await CoreInit.RepositoryService.GetAllCounteragentsAsync();
-			Assert.IsTrue(list.Any());
-		}
-
-		[TestMethod]
-		public async Task RematchingCounteragentAsyncTest()
-		{
-			Counteragent counter = new Counteragent { Code = "00001", Name = "Поликон", FullName = "ООО Поликон" };
-			var list = await CoreInit.RepositoryService.RematchingCounteragentAsync(counter, "12345");
-
-		}
 	}
 }
