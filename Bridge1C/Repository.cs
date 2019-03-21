@@ -5,7 +5,6 @@
     using System.Linq;
 	using NLog;
 
-
     public class Repository
     {
         /// <summary>
@@ -127,7 +126,6 @@
 					this.logger.Info("ГНЛ у старого контрагента удален");
 				}
 					
-
 				dynamic newCounteragent = this.GetCounteragent(Requisites.Code, counteragentCode);
 
 				if (newCounteragent == null || string.IsNullOrWhiteSpace(newCounteragent.Код))
@@ -151,7 +149,7 @@
 
 		public dynamic GetWareHouse(Requisites propertyName, string propertyValue)
         {
-			this.logger.Info("Запрос склада");
+			this.logger.Info("Получение склада");
 
 			try
             {
@@ -175,7 +173,7 @@
 
 				if(string.IsNullOrWhiteSpace(warehouse.Код))
 				{
-					this.logger.Info("Склад не найден");
+					this.logger.Warn("Склад не найден");
 					return null;
 				}
 
@@ -195,7 +193,7 @@
 		/// <returns>Справочник складов.</returns>
 		public List<dynamic> GetAllWarehouses()
 		{
-			this.logger.Info("Запрос всех складов");
+			this.logger.Info("Получение всех складов");
 
 			try
 			{
@@ -338,9 +336,11 @@
 
 				if(string.IsNullOrWhiteSpace(organization.Код))
 				{
-					this.logger.Warn("Склад не найден");
+					this.logger.Warn("Организация не найдена");
 					return null;
 				}
+
+				this.logger.Info("Получена организация Код {0}", organization.Код);
 				return organization;
 			}
 			catch (Exception ex)
@@ -470,7 +470,7 @@
 
 				if(string.IsNullOrWhiteSpace(ware.Код))
 				{
-					this.logger.Warn("Номеклатура не найдена");
+					this.logger.Warn("Номенклатура не найдена");
 					return null;
 				}
 
@@ -559,6 +559,7 @@
         public List<dynamic> GetAllWares()
         {
 			this.logger.Info("Получение всей номенклатуры");
+
             try
             {
                 List<dynamic> result = new List<dynamic>();
@@ -677,7 +678,7 @@
                 foreach (var item in barCodes)
                     this.AddNewBarcode(товар, item);
 
-				this.logger.Info("Номенклатуры добавлена {0}", name);
+				this.logger.Info("Номенклатура добавлена {0}", name);
 				return товар.Код;
             }
             catch (Exception ex)
@@ -807,7 +808,6 @@
 					return false;
 				}
                     
-
                 for (int i = 0; i < values.Count; i++)
                     this.AddNewExCode(ware, counteragentGlns[i], values[i]);
 
