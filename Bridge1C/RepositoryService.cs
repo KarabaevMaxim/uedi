@@ -83,7 +83,7 @@
 			}
 			else
 			{
-				this.logger.Warn("Номенклатура найдена {0}", ware.Наменование);
+				this.logger.Info("Номенклатура найдена {0}", ware.Наменование);
 				return this.GetDomainWareFromDbWare(ware);
 			}
         }
@@ -163,7 +163,7 @@
 		/// <param name="gln">ГЛН.</param>
 		public bool RematchingCounteragent(Counteragent counteragent, string gln)
 		{
-			this.logger.Info("Пересопоставление контрагента");
+			this.logger.Info("Пересопоставление контрагента код {0} с ГЛН {1}", counteragent?.Code, gln);
 
 			if (counteragent == null || string.IsNullOrWhiteSpace(gln))
 				throw new ArgumentNullException("Передан пустой параметр");
@@ -174,6 +174,7 @@
 				this.logger.Info("Пересопоставление контрагента завершено");
 			else
 				this.logger.Warn("Пересопоставление не выполнено");
+
 			return result;
 		}
 
@@ -375,7 +376,7 @@
 
         public bool AddNewExCodeToWare(Ware ware, WareExCode exCode)
         {
-			this.logger.Info("Добавление нового внешнего кода {0} к номенклатуре Код {1}", exCode.Value, ware.Code);
+			this.logger.Info("Добавление нового внешнего кода {0} к номенклатуре Код {1}", exCode?.Value, ware?.Code);
 
 			if (ware == null || exCode == null)
 				throw new ArgumentNullException("Передан пустой параметр");

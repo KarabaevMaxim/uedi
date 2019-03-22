@@ -1015,7 +1015,7 @@
 			}
 		}
 
-		public void RemoveExCode(string wareMainCode, WareExCode exCode)
+		public bool RemoveExCode(string wareMainCode, WareExCode exCode)
 		{
 			this.logger.Info("Удаление внешнего кода {0} номенклатуры Код", exCode.Value, wareMainCode);
 
@@ -1038,7 +1038,10 @@
 						reader.Close();
 
 						if (string.IsNullOrWhiteSpace(wareCode))
-							return;
+						{
+							this.logger.Warn("Номенклатура с кодом в главной базе {0} не найдена", wareMainCode);
+							return false;
+						}
 
 						command = new SqlCommand(@"	DELETE FROM sprres_clients 
 												WHERE code = @wareCode AND client = @clientCode AND ex_code = @exCode", conn);
@@ -1049,11 +1052,13 @@
 					}
 
 					this.logger.Info("Внешний код удален");
+					return true;
 				}
 			}
 			catch(Exception ex)
 			{
 				this.logger.Error(ex, "Не удалось удалить внешний код");
+				return false;
 			}
 		}
 
