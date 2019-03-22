@@ -197,7 +197,7 @@
 		/// </summary>
 		public List<Warehouse> GetWarehousesByActiveUser()
 		{
-			this.logger.Info("Получение активного пользователя");
+			this.logger.Info("Получение складов активного пользователя");
 			var result = this.Repository.GetWarehousesByActiveUser();
 
 			if(result == null)
@@ -207,7 +207,7 @@
 			}
 			else
 			{
-				this.logger.Info("Склады активного получены");
+				this.logger.Info("Склады активного пользователя получены Количество {0}", result);
 				return result;
 			}
 		}

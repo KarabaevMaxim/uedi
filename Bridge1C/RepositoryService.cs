@@ -230,6 +230,11 @@
 				result.Code = warehouse.Код;
 				result.Name = warehouse.Наименование;
 				result.Shop = new Shop { Code = warehouse.Магазин.Код, Name = warehouse.Магазин.Наименование };
+				result.User = new User
+				{
+					Code = this.Repository.GuidToString(warehouse.Ответственный.ИдентификаторПользователяИБ),
+					Name = warehouse.Ответственный.Наименование
+				};
 				this.logger.Info("Склад получен Наименование {0}", result.Name);
 				return result;
 			}
@@ -241,6 +246,7 @@
 			List<Warehouse> result = new List<Warehouse>();
 
 			foreach (var item in Repository.GetAllWarehouses())
+			{
 				result.Add(new Warehouse
 				{
 					Code = item.Код,
@@ -249,8 +255,14 @@
 					{
 						Code = item.Магазин.Код,
 						Name = item.Магазин.Наименование
+					},
+					User = new User
+					{
+						Code = this.Repository.GuidToString(item.Ответственный.ИдентификаторПользователяИБ),
+						Name = item.Ответственный.Наименование
 					}
 				});
+			}
 
 			this.logger.Info("Склады получены Количество {0}", result.Count);
 			return result;
@@ -258,7 +270,39 @@
 
 		public List<Warehouse> GetWarehousesByActiveUser() // todo: надо реализовать
 		{
-			throw new System.NotImplementedException();
+			this.logger.Info("Получение активного пользователя");
+			var warehouses = this.Repository.GetWarehousesByActiveUser();
+			List<Warehouse> result = new List<Warehouse>();
+
+			if (warehouses == null)
+			{
+				this.logger.Warn("Склады активного пользователя не найдены");
+				return null;
+			}
+			else
+			{
+				foreach (var item in warehouses)
+				{
+					result.Add(new Warehouse
+					{
+						Code = item.Код,
+						Name = item.Наименование,
+						Shop = new Shop
+						{
+							Code = item.Магазин.Код,
+							Name = item.Магазин.Наименование
+						},
+						User = new User
+						{
+							Code = this.Repository.GuidToString(item.Ответственный.ИдентификаторПользователяИБ),
+							Name = item.Ответственный.Наименование
+						}
+					});
+				}
+
+				this.logger.Info("Склады активного получены Количество {0}", result.Count);
+				return result;
+			}
 		}
 
 		public bool RematchingWarehouse(string warehouseCode, string gln)
@@ -321,15 +365,32 @@
 			{
 				result.Code = organization.Код;
 				result.Name = organization.Наименование;
-				result.GLN = organization.ГЛН; // todo: В 1С я еще не добавил реквизит ГЛН организации
+				result.GLN = organization.ГЛН;
 				this.logger.Info("Организация найдена Наименование {0}", result.Name);
 				return result;
 			}
 		}
 
-		public User GetCurrentUser() // todo: надо реализовать
+		public User GetCurrentUser()
 		{
-			throw new System.NotImplementedException();
+			this.logger.Info("Получение активного пользователя");
+			var user = this.Repository.GetCurrentUser();
+
+			if (user == null)
+			{
+				this.logger.Warn("Активный пользователь не получен");
+				return null;
+			}
+			else
+			{
+				User result = new User
+				{
+					Code = this.Repository.GuidToString(user.ИдентификаторПользователяИБ),
+					Name = user.Наименование
+				};
+				this.logger.Info("Активный пользователь получен Код {0}", result.Name);
+				return result;
+			}
 		}
 
 		public bool AddNewWaybill(Waybill waybill)

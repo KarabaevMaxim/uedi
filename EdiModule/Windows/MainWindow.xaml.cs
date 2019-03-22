@@ -67,8 +67,15 @@
 				this.UnprocessedWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
 
 			this.UnprocessedWaybillTbl.Items.Clear();
+			var warehouses = CoreInit.RepositoryService.GetWarehousesByActiveUser();
 
-			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => CoreInit.RepositoryService.GetWarehousesByActiveUser().Contains(wb.Warehouse.InnerWarehouse));
+			if(warehouses == null)
+			{
+				MessageBox.Show("Произошла ошибка при загрузке складов. Подробности в файле логов.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+
+			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => warehouses.Contains(wb.Warehouse.InnerWarehouse));
 
 			foreach (var item in waybills)
 				this.UnprocessedWaybillTbl.Items.Add(item);

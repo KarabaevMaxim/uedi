@@ -59,7 +59,7 @@
 					return null;
 				}
 
-				this.logger.Info("Контрагент получен Код ", counteragent.Код);
+				this.logger.Info("Контрагент получен Код {0}", counteragent.Код);
 				return counteragent;
             }
             catch(Exception ex)
@@ -223,8 +223,66 @@
 		/// </summary>
 		public List<dynamic> GetWarehousesByActiveUser() // todo: надо реализовать метод
 		{
-			throw new NotImplementedException();
+			this.logger.Info("Получение складов активного пользователя");
+
+			try
+			{
+				List<dynamic> result = new List<dynamic>();
+				var пользователь = this.GetCurrentUser();
+
+				if(пользователь == null)
+				{
+					this.logger.Warn("Не найден активный пользователь");
+					return null;
+				}
+				else
+				{
+					dynamic запрос = this.Connector.Connection.NewObject("Запрос");
+					запрос.Текст = @"ВЫБРАТЬ
+										Склады.Ссылка Как Ссылка
+                                     ИЗ
+										Справочник.Склады Как Склады
+                                     ГДЕ
+                                        Склады.Ответственный = &СсылкаПользователь";
+
+					запрос.УстановитьПараметр("СсылкаПользователь", пользователь);
+					dynamic выборка = запрос.Выполнить().Выбрать();
+
+					while(выборка.Следующий())
+					{
+						result.Add(выборка.Ссылка);
+					}
+				}
+
+				this.logger.Info("Склады получены Кличество {0}", result.Count);
+				return result;
+			}
+			catch(Exception ex)
+			{
+				this.logger.Error(ex, "Не удалось получить склады активного пользователя");
+				return null;
+			}
+			
 		}
+
+		//public dynamic GetUserByWarehouse(string warehouseCode)
+		//{
+		//	if (string.IsNullOrWhiteSpace(warehouseCode))
+		//		throw new ArgumentNullException("Передан пустой параметр");
+
+
+		//	dynamic warehouse = this.GetWareHouse(Requisites.Code, warehouseCode);
+
+		//	if(warehouse == null)
+		//	{
+		//		this.logger.Warn("Не найден склад");
+		//		return null;
+		//	}
+		//	else
+		//	{
+		//		return warehouse.Ответственный;
+		//	}
+		//}
 
 		/// <summary>
 		/// Изменить ГЛН склада. Если с ГЛН gln уже был склад в базе, то ГНЛ того склада удаляется.
@@ -612,9 +670,66 @@
            
         }
 
-		public dynamic GetCurrentUser() // todo: надо реализовать этот метод
+		public string GuidToString(dynamic guid)
 		{
-			throw new NotImplementedException();
+			this.logger.Info("Конвертация guid в строку", guid);
+
+			try
+			{
+				string result = this.Connector.Connection.КонвертерГУИДВСтроку.ПолучитьСтрокуИзГУИД(guid);
+
+				if (!string.IsNullOrWhiteSpace(result))
+				{
+					this.logger.Info("guid коныертирован в строку {0}", result);
+					return result;
+				}
+				else
+				{
+					this.logger.Error("Не удалось конвертировать guid в строку");
+					return null;
+				}
+
+				
+			}
+			catch(Exception ex)
+			{
+				this.logger.Error(ex, "Ошибка конвертации guid в строку");
+				return null;
+			}
+		}
+
+		public dynamic GetCurrentUser()
+		{
+			this.logger.Info("Получение активного пользователя");
+
+			try
+			{
+				dynamic result = null;
+				dynamic guid = this.Connector.Connection.ПользователиИнформационнойБазы.ТекущийПользователь().УникальныйИдентификатор;
+				dynamic запрос = this.Connector.Connection.NewObject("Запрос");
+				запрос.Текст = @"	ВЫБРАТЬ
+									Пользователи.Ссылка КАК Ссылка	
+								ИЗ
+									Справочник.Пользователи КАК Пользователи
+								ГДЕ
+									Пользователи.ИдентификаторПользователяИБ = &ИдентификаторПользователяИБ";
+				запрос.УстановитьПараметр("ИдентификаторПользователяИБ", guid);
+				dynamic выборка = запрос.Выполнить().Выбрать();
+
+				if (выборка.Следующий())
+					result = выборка.Ссылка;
+				else
+					result = null;
+
+				this.logger.Info("Активный пользователь получен {0}", this.GuidToString(result.ИдентификаторПользователяИБ));
+				return result;
+			}
+			catch(Exception ex)
+			{
+				this.logger.Error(ex, "Не удалось получить активного пользователя");
+				return null;
+			}
+
 		}
 
         public bool UpdateWareExCode(string innerCode, string exCode, string supplierCode)
