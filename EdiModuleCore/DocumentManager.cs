@@ -7,6 +7,8 @@
     using Bridge1C;
     using Model;
     using Exceptions;
+	using NLog;
+	using Newtonsoft.Json;
 
     public enum DocumentTypes
     {
@@ -24,12 +26,33 @@
         /// <param name="fileContent">Содержимое файла XML.</param>
         /// <param name="expectedDocType">Ожидаемый тип документа.</param>
         /// <returns>Объект полученной накладной.</returns>
-        public static XEntities.Waybill DownloadDocument(string fileContent, DocumentTypes expectedDocType)
+        public static XEntities.IXEntity DownloadDocument(string fileContent, DocumentTypes expectedDocType)
         {
-            if (expectedDocType.ToString() != Parser.GetDocumentTypeName(fileContent))
-                return null;
+			DocumentManager.logger.Info("Сериализация строки {0} в документ с типом {1}", fileContent, expectedDocType);
 
-            return Parser.GetWaybill(fileContent);
+			if (string.IsNullOrWhiteSpace(fileContent))
+				throw new ArgumentNullException("fileContent");
+
+			XEntities.IXEntity result = null;
+
+			switch (expectedDocType)
+			{
+				case DocumentTypes.DESADV:
+					if (expectedDocType.ToString() != Parser.GetDocumentTypeName(fileContent))
+						throw new ArgumentOutOfRangeException("Ожидаемый тип документа expectedDocType не совпадает с содержимым XML fileContent");
+
+					result = Parser.GetWaybill(fileContent);
+					break;
+				default:
+					break;
+			}
+
+			if(result == null)
+				DocumentManager.logger.Error("Не удалось десериализовать документ");
+			else
+				DocumentManager.logger.Info("Документ с номером {0} от {1} десериализован", result.Number, result.Date);
+
+			return result;
         }
 
         /// <summary>
@@ -39,36 +62,64 @@
         /// <returns>true, если успешно, иначе false.</returns>
         public static void DownloadWaybill(string fileContent, string fileName)
         {
-            XEntities.Waybill waybill = DocumentManager.DownloadDocument(fileContent, DocumentTypes.DESADV);
+			DocumentManager.logger.Info("Загрузка накладной из файла {0}", fileName);
 
-            if (waybill == null)
-                return;
+			if (string.IsNullOrWhiteSpace(fileContent) || string.IsNullOrWhiteSpace(fileName))
+				throw new ArgumentNullException("fileContent или fileName");
+
+            XEntities.Waybill waybill = (XEntities.Waybill)DocumentManager.DownloadDocument(fileContent, DocumentTypes.DESADV);
 
 			Waybill domainWaybill = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
 			CoreInit.ModuleRepository.AddWaybill(domainWaybill);
-        }
+			DocumentManager.logger.Info("Загрузка накладной завершена");
+		}
 
         /// <summary>
         /// Загрузить все накладные из указанной в настройках папки.
         /// </summary>
-        public static bool DownloadWaybills(string workFolder)
-		{ 
+        public static void DownloadWaybills(string workFolder)
+		{
+			DocumentManager.logger.Info("Загрузка всех накладных из папки {0}", workFolder);
+
+			if (string.IsNullOrWhiteSpace(workFolder))
+				throw new ArgumentNullException("workFolder");
+
             string[] fileNames = FileService.GetFileList(workFolder);
 
             foreach (var item in fileNames)
                 DocumentManager.DownloadWaybill(FileService.ReadTextFile(item), item);
 
-			return true;
-        }
+			DocumentManager.logger.Info("Загрузка всех накладных завершена", workFolder);
+		}
 
 		public static void ReloadWaybills(string workFolder)
 		{
+			DocumentManager.logger.Info("Перезагрузка всех накладных из папки {0}", workFolder);
+
+			if (string.IsNullOrWhiteSpace(workFolder))
+				throw new ArgumentNullException("workFolder");
+
 			CoreInit.ModuleRepository.ClearUnprocessedWaybills();
 			DocumentManager.DownloadWaybills(workFolder);
+			DocumentManager.logger.Info("Перезагрузка завершена");
 		}
 
 		private static Model.Waybill RaiseWaybill(XEntities.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)
 		{
+			DocumentManager.logger.Info("Заполнение реквизитов доменной накладной");
+
+			if (xWaybill == null)
+				throw new ArgumentNullException("xWaybill");
+
+			if(string.IsNullOrWhiteSpace(fileName))
+				throw new ArgumentNullException("fileName");
+
+			if (matchedWarehouse == null)
+				throw new ArgumentNullException("matchedWarehouse");
+
+			if (matchedCounteragent == null)
+				throw new ArgumentNullException("matchedCounteragent");
+
 			Model.Waybill result = new Model.Waybill
 			{
 				Number = xWaybill.Number,
@@ -82,6 +133,7 @@
 
 			foreach (var item in xWaybill.Header.Positions)
 			{
+				DocumentManager.logger.Info("Добавление строки {0} в накладную", JsonConvert.SerializeObject(item));
 				Model.WaybillRow row = new Model.WaybillRow();
 				row.Amount = (decimal)item.Amount;
 				row.Price = (decimal)item.Price;
@@ -124,33 +176,35 @@
 				}
 
 				result.Wares.Add(row);
+				DocumentManager.logger.Info("Строка добавлена в накладную");
 			}
 
 			result.Amount = (float)result.Wares.Sum(w => w.Amount);
 			result.AmountWithTax = (float)result.Wares.Sum(w => (w.Amount + w.TaxAmount));
+			DocumentManager.logger.Info("Заполнение реквизитов доменной накладной завершено");
 			return result;
 		}
 
 		private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
 		{
+			DocumentManager.logger.Info("Конвертация файловой накладной {0} в доменную", JsonConvert.SerializeObject(xWaybill));
+
+			if (xWaybill == null)
+				throw new ArgumentNullException("xWaybill");
+
+			if (string.IsNullOrWhiteSpace(fileName))
+				throw new ArgumentNullException("fileName");
+
 			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.DeliveryPlace });
 			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
-			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
+			Model.Waybill result = DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
+			
+			if(result == null)
+				DocumentManager.logger.Error("Конвертация файловой накладной в доменную не проведена");
+			else
+				DocumentManager.logger.Info("Конвертация файловой накладной в доменную завершена");
+			return result;
 		}
-
-		/// <summary>
-		/// Конвертирует загруженную из XML накладную в доменную накладную.
-		/// </summary>
-		/// <param name="xWaybill">Загруженная накладная.</param>
-		/// <param name="fileName">Имя файла накладной.</param>
-		/// <returns>Объект доменной накладной.</returns>
-		private async static Task<Model.Waybill> ConvertWaybillToDomainAsync(XEntities.Waybill xWaybill, string fileName)
-        {
-			var warehouse = await MatchingModule.AutomaticWHMatchingAsync(new ExWarehouse { GLN = xWaybill.Header.DeliveryPlace });
-			var supplier = await MatchingModule.AutomaticSupMatchingAsync(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
-
-			return DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
-        }
 
 		/// <summary>
 		/// Сохраняет в базу данных накладную.
@@ -158,11 +212,13 @@
 		/// <returns>true, если успешно, иначе false.</returns>
 		private static bool SaveWaybillToBase(Waybill waybill)
         {
-            try
-            {
-                if (waybill == null)
-                    return false;
+			DocumentManager.logger.Info("Сохранение накладной {0} в базу данных", JsonConvert.SerializeObject(waybill));
 
+			if (waybill == null)
+				throw new ArgumentNullException("waybill");
+
+			try
+            {
                 Bridge1C.DomainEntities.Waybill domainWaybill = new Bridge1C.DomainEntities.Waybill();
                 domainWaybill.Number = waybill.Number;
                 domainWaybill.Date = waybill.Date;
@@ -184,14 +240,21 @@
                     });
                 }
 
-                return CoreInit.RepositoryService.AddNewWaybill(domainWaybill);
-            }
-            catch(Exception)
-            {
-                return false;
-            }
+				bool result = CoreInit.RepositoryService.AddNewWaybill(domainWaybill);
 
-        }
+				if(result == false)
+					DocumentManager.logger.Warn("Накладная не загружена в базу");
+				else
+					DocumentManager.logger.Info("Накладная загружена в базу");
+
+				return result;
+            }
+            catch(Exception ex)
+            {
+				DocumentManager.logger.Error(ex, "Накладная не загружена в базу");
+				throw ex;
+            }
+		}
 
         /// <summary>
         /// Обработать накладную (записать в базу и удалить из необработанных).
@@ -199,33 +262,64 @@
         /// <returns>true, если успешно, иначе false.</returns>
         public static void ProcessWaybill(Waybill waybill)
         {
+			DocumentManager.logger.Info("Обработка накладной");
+
 			if (waybill == null)
-				throw new NotProcessedDocumentException("Ссылка на накладную пустая.");
+				throw new ArgumentNullException("waybill");
 
 			if (waybill.Wares == null || !waybill.Wares.Any())
-				throw new NotProcessedDocumentException("Товаров в накладной нет.");
-
+			{
+				DocumentManager.logger.Error("В накладной нет строк товара. Накладная не загружена.");
+				throw new NotProcessedDocumentException("В накладной нет строк товара");
+			}
+				
 			if (waybill.Wares.Where(w => w.Ware.InnerWare == null).Any())
+			{
+				DocumentManager.logger.Error("В накладной присутствуют несопоставленные позиции. Накладная не загружена.");
 				throw new NotProcessedDocumentException("В накладной присутствуют несопоставленные позиции.");
+			}
+
 
 			if (waybill.Organization == null)
+			{
+				DocumentManager.logger.Error("В накладной не указана организация. Накладная не загружена.");
 				throw new NotProcessedDocumentException("В накладной не указана организация.");
+			}
 
 			if (waybill.Supplier?.InnerCounteragent == null)
+			{
+				DocumentManager.logger.Error("В накладной не сопоставлен контрагент. Накладная не загружена.");
 				throw new NotProcessedDocumentException("В накладной не сопоставлен контрагент.");
+			}
 
 			if (waybill.Warehouse?.InnerWarehouse == null)
+			{
+				DocumentManager.logger.Error("В накладной не сопоставлен склад. Накладная не загружена.");
 				throw new NotProcessedDocumentException("В накладной не сопоставлен склад.");
+			}
 
 			//todo: не забыть раскомментить
-			//if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
-			//    throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
+			if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
+			{
+				DocumentManager.logger.Error("Не удалось переместить файл накладной в архив. Накладная не загружена.");
+				throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
+			}
 
 			if (!CoreInit.ModuleRepository.RemoveUnprocessedWaybill(waybill))
-                throw new NotProcessedDocumentException("Возникла внутренняя ошибка при обработке накладной.");
+			{
+				DocumentManager.logger.Error("Возникла внутренняя ошибка при обработке накладной. Накладная не загружена.");
+				throw new NotProcessedDocumentException("Возникла внутренняя ошибка при обработке накладной.");
+			}
 
-            if (!DocumentManager.SaveWaybillToBase(waybill))
-                throw new NotProcessedDocumentException("Не удалось загрузить накладную в базу.");
-        }
-    }
+			if (!DocumentManager.SaveWaybillToBase(waybill))
+			{
+				DocumentManager.logger.Error("Не удалось загрузить накладную в базу. Накладная не загружена.");
+				throw new NotProcessedDocumentException("Не удалось загрузить накладную в базу.");
+			}
+
+			DocumentManager.logger.Info("Обработка накладной завершена");
+		}
+
+		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+	}
 }

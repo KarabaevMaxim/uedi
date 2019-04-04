@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class Waybill
+    public class Waybill : IXEntity
     {
         /// <summary>
         /// NUMBER
