@@ -509,7 +509,7 @@
 					result.Add(wec);
 				}
 
-				this.logger.Warn("Внешние коды найдены количество {0}", result.Count);
+				this.logger.Info("Внешние коды найдены количество {0}", result.Count);
 				return result;
 			}
         }

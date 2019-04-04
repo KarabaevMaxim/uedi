@@ -526,7 +526,7 @@
 						throw new ArgumentOutOfRangeException("Передано неверное имя реквизита");
                 }
 
-				if(string.IsNullOrWhiteSpace(ware.Код))
+				if(ware == null || string.IsNullOrWhiteSpace(ware.Код))
 				{
 					this.logger.Warn("Номенклатура не найдена");
 					return null;
