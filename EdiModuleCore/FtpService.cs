@@ -1,53 +1,36 @@
 ﻿namespace EdiModuleCore
 {
 	using ArxOne.Ftp;
-	using ArxOne.Ftp.Exceptions;
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Net;
 	using System.Threading.Tasks;
+	using NLog;
+	using Newtonsoft.Json;
 
 	public static class FtpService
 	{
-		public static bool DownloadDocuments(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
-		{
-			NetworkCredential networkCredential = new NetworkCredential(login, password);
-			TimeSpan timeout = new TimeSpan(0, 0, timeoutSec);
-			FtpClientParameters parametres = new FtpClientParameters
-			{
-				ConnectTimeout = timeout,
-				ReadWriteTimeout = timeout,
-				Passive = passiveMode
-			};
-			Uri uri = new Uri(serverURI);
-			FtpPath ftpPath = new FtpPath(remoteFolder);
-
-			using (var ftpClient = new FtpClient(uri, networkCredential, parametres))
-			{
-				try
-				{
-					var files = ftpClient.ListEntries(ftpPath).Where(en => en.Type == FtpEntryType.File);
-
-					foreach (var item in files)
-						FtpService.DownloadFile(ftpClient, item, localFolder);
-				}
-				catch(FtpAuthenticationException)
-				{
-					return false;
-				}
-				catch(FtpTransportException)
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
 		public static void DownloadDocumentsNative(string serverURI, bool passiveMode, int timeoutSec, string login, string password, string remoteFolder, string localFolder)
 		{
+			FtpService.logger.Info("Загрузка документов с фтп сервера по пути {0}/{1}", serverURI, remoteFolder);
+
+			if (string.IsNullOrWhiteSpace(serverURI))
+				throw new ArgumentNullException("serverURI");
+
+			if (string.IsNullOrWhiteSpace(login))
+				throw new ArgumentNullException("login");
+
+			if (string.IsNullOrWhiteSpace(password))
+				throw new ArgumentNullException("password");
+
+			if (string.IsNullOrWhiteSpace(remoteFolder))
+				throw new ArgumentNullException("remoteFolder");
+
+			if (string.IsNullOrWhiteSpace(localFolder))
+				throw new ArgumentNullException("localFolder");
+
 			NetworkCredential credential = new NetworkCredential(login, password);
 			string folderPath = string.Format("{0}/{1}", serverURI, remoteFolder);
 			List<string> fileNames = FtpService.GetFileList(passiveMode, timeoutSec, credential, folderPath);
@@ -55,10 +38,10 @@
 			foreach (var item in fileNames)
 			{
 				if(FtpService.DownloadFile(passiveMode, timeoutSec, credential, folderPath, item, localFolder))
-				{
 					FtpService.RemoveFile(passiveMode, timeoutSec, credential, folderPath, item);
-				}
 			}
+
+			FtpService.logger.Info("Загрузка документов завершена");
 		}
 
 		/// <summary>
@@ -91,6 +74,7 @@
 				}
 			}
 
+			FtpService.logger.Info("Получен список файлов. Список: {0}", JsonConvert.SerializeObject(result));
 			return result;
 		}
 
@@ -106,6 +90,10 @@
 		/// <returns>true в случае успеха, иначе false.</returns>
 		public static bool DownloadFile(bool passiveMode, int timeoutSec, NetworkCredential credentials, string directoryPath, string fileName, string localPath)
 		{
+			FtpService.logger.Info("Загрузка файла {0}/{1}", directoryPath, fileName);
+			if (credentials == null || string.IsNullOrWhiteSpace(directoryPath) || string.IsNullOrWhiteSpace(fileName) || string.IsNullOrWhiteSpace(localPath))
+				throw new ArgumentNullException("credentials, directoryPath, fileName или localPath");
+
 			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(directoryPath + "/" + fileName);
 			ftpWebRequest.UsePassive = passiveMode;
 			ftpWebRequest.UseBinary = true;
@@ -126,13 +114,15 @@
 							byteList.Add((byte)curByte);
 
 						FileService.WriteBytesToFile(Path.Combine(localPath, fileName), byteList);
+						FtpService.logger.Info("Файл {0}/{1} загружен в папку {2}", directoryPath, fileName, localPath);
 						return true;
 					}
 				}
 			}
-			catch(WebException)
+			catch(WebException ex)
 			{
-				return false;
+				FtpService.logger.Error(ex, "Ошибка при загрузке файла {0}/{1}", directoryPath, fileName);
+				throw ex;
 			}
 		}
 
@@ -147,6 +137,7 @@
 		/// <returns>true в случае успеха, иначе false.</returns>
 		public static bool RemoveFile(bool passiveMode, int timeoutSec, NetworkCredential credentials, string directoryPath, string fileName)
 		{
+			FtpService.logger.Info("Удаление файла {0}/{1}", directoryPath, fileName);
 			FtpWebRequest ftpWebRequest = (FtpWebRequest)FtpWebRequest.Create(directoryPath + "/" + fileName);
 			ftpWebRequest.UsePassive = passiveMode;
 			ftpWebRequest.UseBinary = true;
@@ -157,42 +148,24 @@
 			try
 			{
 				using (FtpWebResponse ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse())
-					return ftpWebResponse.StatusCode == FtpStatusCode.FileActionOK;
+				{
+					bool result = ftpWebResponse.StatusCode == FtpStatusCode.FileActionOK;
+
+					if(result)
+						FtpService.logger.Info("Файл {0}/{1} удален", directoryPath, fileName);
+					else
+						FtpService.logger.Warn("Файл {0}/{1} не удален. Причина: {2}", directoryPath, fileName, ftpWebResponse.StatusDescription);
+
+					return result;
+				}
 			}
-			catch (WebException)
+			catch (WebException ex)
 			{
+				FtpService.logger.Error(ex, "Ошибка при удалении файла {0}/{1}", directoryPath, fileName);
 				return false;
 			}
 		}
 
-		/// <summary>
-		/// Загрузить файл с ФТП сервера.
-		/// </summary>
-		/// <param name="ftpClient">Объект ФТП клиента для соединения с сервером.</param>
-		/// <param name="file">Объет файла на сервере.</param>
-		/// <param name="localPath"></param>
-		/// <returns></returns>
-		private static bool DownloadFile(FtpClient ftpClient, FtpEntry file, string localPath)
-		{
-			if (file.Type != FtpEntryType.File)
-				return false;
-
-			using (var stream = ftpClient.Retr(file.Path)) // todo: Не может загрузить накладные с русскими символами
-			{
-				List<byte> byteList = new List<byte>();
-				int curByte;
-
-				while ((curByte = stream.ReadByte()) != -1)
-					byteList.Add((byte)curByte);
-
-				string newFileName = string.Empty;
-				FileService.WriteBytesToFile(Path.Combine(localPath, file.Name), byteList);
-
-				if (ftpClient.Dele(file.Path))
-					return true;
-				else
-					return false;
-			}
-		}
+		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 	}
 }
