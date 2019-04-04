@@ -7,15 +7,23 @@
     using Bridge1C.DomainEntities;
     using Model;
     using Exceptions;
+	using NLog;
+	using Newtonsoft.Json;
 
     public static class MatchingModule
     {
         public static MatchedWare ManualMatching(Ware ware, string exCode, MatchedCounteragent supplier)
         {
-            if (ware == null || supplier == null || string.IsNullOrWhiteSpace(exCode))
-                 throw new NotMatchedException("Сопоставление не выполнено, внутренний или внешний товар не указан.");
+			if (ware == null)
+				throw new ArgumentNullException("ware");
 
-            MatchedWare result = new MatchedWare();
+			if (string.IsNullOrWhiteSpace(exCode))
+				throw new ArgumentNullException("exCode");
+
+			if (supplier == null)
+				throw new ArgumentNullException("supplier");
+
+			MatchedWare result = new MatchedWare();
             result.InnerWare = ware;
             result.ExWare = new ExWare { Code = exCode, Supplier = supplier, Name = ware.Name };
 
@@ -25,15 +33,25 @@
                                         new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
+			MatchingModule.logger.Info("Сопоставление номенклатуры {0} с внешним кодом {1} поставщика {2} выполнено", ware.Code, exCode, supplier.InnerCounteragent.Code);
             return result;
         }
 
         public static MatchedWare ManualMatching(Ware ware, ExWare exWare)
         {
-            if (ware == null || exWare == null)
-                throw new NotMatchedException("Сопоставление не выполнено, внутренний или внешний товар не указан.");
+            if (ware == null)
+                throw new ArgumentNullException("ware");
 
-            MatchedWare result = new MatchedWare();
+			if (exWare == null)
+				throw new ArgumentNullException("exWare");
+
+			if (exWare.Supplier == null)
+				throw new ArgumentNullException("exWare.Supplier");
+
+			if (string.IsNullOrWhiteSpace(exWare.Code))
+				throw new ArgumentNullException("exWare.Code");
+
+			MatchedWare result = new MatchedWare();
             result.InnerWare = ware;
             result.ExWare = exWare;
 
@@ -43,7 +61,8 @@
                                         new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
-            return result;
+			MatchingModule.logger.Info("Сопоставление номенклатуры {0} с внешним кодом {1} поставщика {2} выполнено", ware.Code, exWare.Code, exWare.Supplier.InnerCounteragent.Code);
+			return result;
         }
 
         /// <summary>
@@ -53,35 +72,44 @@
         /// <param name="matchedWare">Объект, где должно быть выполнено сопоставление.</param>
         public static void ManualMatching(Ware ware, MatchedWare matchedWare)
         {
-            if (ware == null || string.IsNullOrWhiteSpace(ware.Code) || matchedWare == null)
-                throw new NotMatchedException("Сопоставление не выполнено, внутренний или товар для сопоставления не указан.");
+			if (ware == null)
+				throw new ArgumentNullException("ware");
 
-            matchedWare.InnerWare = ware;
+			if (matchedWare == null)
+				throw new ArgumentNullException("matchedWare");
 
+			if(string.IsNullOrWhiteSpace(ware.Code))
+				throw new ArgumentNullException("ware.Code");
+
+			matchedWare.InnerWare = ware;
 			CoreInit.RepositoryService.RemoveExCode(new WareExCode { Value = matchedWare.ExWare.Code, Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent });
 
 			if (!CoreInit.RepositoryService.AddNewExCodeToWare(matchedWare.InnerWare,
-                                        new WareExCode { Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent, Value = matchedWare.ExWare.Code }))
-                throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
-        }
+										new WareExCode { Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent, Value = matchedWare.ExWare.Code }))
+				throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
-        /// <summary>
-        /// Выполняет поиск номенклатуры в базе по внешнему коду и сопоставляет с ней, если найдена.
-        /// </summary>
-        /// <param name="exWare">Объект внешней номенклатуры.</param>
-        public static MatchedWare AutomaticMatching(ExWare exWare)
+			MatchingModule.logger.Info("Сопоставление номенклатуры {0} с внешним кодом {1} поставщика {2} выполнено", ware.Code, matchedWare.ExWare.Code, matchedWare.ExWare.Supplier.InnerCounteragent.Code);
+		}
+
+		/// <summary>
+		/// Выполняет поиск номенклатуры в базе по внешнему коду и сопоставляет с ней, если найдена.
+		/// </summary>
+		/// <param name="exWare">Объект внешней номенклатуры.</param>
+		public static MatchedWare AutomaticMatching(ExWare exWare)
         {
-            if (exWare == null)
-                return null;
+			if (exWare == null)
+				throw new ArgumentNullException("exWare");
 
             MatchedWare result = new MatchedWare();
             result.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, exWare.Code, exWare.Supplier?.ExCounteragent?.GLN); //todo: Валится исключение, если не найден поставщик
 
             if(result.InnerWare == null)
-                throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
+                throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена");
 
             result.ExWare = exWare;
-            return result;
+
+			MatchingModule.logger.Info("Для номенклатуры с внешним кодом {0} поставщика {1} найдена номенклатура в базе с кодом {2}", exWare.Code, exWare.Supplier.InnerCounteragent.Code, result.InnerWare.Code);
+			return result;
         }
 
         /// <summary>
@@ -262,5 +290,7 @@
 			matchedCounteragent.InnerCounteragent = counteragent;
 			return true;
 		}
+
+		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 	}
 }
