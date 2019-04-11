@@ -61,6 +61,7 @@
     <Compile Include="FtpServiceTest.cs" />
     <Compile Include="MatchingModuleTest.cs" />
     <Compile Include="ItidaRepositoryTest.cs" />
+    <Compile Include="ModuleRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

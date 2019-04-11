@@ -33,7 +33,6 @@
                                         new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
-			MatchingModule.logger.Info("Сопоставление номенклатуры {0} с внешним кодом {1} поставщика {2} выполнено", ware.Code, exCode, supplier.InnerCounteragent.Code);
             return result;
         }
 
@@ -61,7 +60,6 @@
                                         new WareExCode { Counteragent = result.ExWare.Supplier.InnerCounteragent, Value = result.ExWare.Code }))
                 throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
 
-			MatchingModule.logger.Info("Сопоставление номенклатуры {0} с внешним кодом {1} поставщика {2} выполнено", ware.Code, exWare.Code, exWare.Supplier.InnerCounteragent.Code);
 			return result;
         }
 
@@ -87,8 +85,6 @@
 			if (!CoreInit.RepositoryService.AddNewExCodeToWare(matchedWare.InnerWare,
 										new WareExCode { Counteragent = matchedWare.ExWare.Supplier.InnerCounteragent, Value = matchedWare.ExWare.Code }))
 				throw new NotMatchedException("Сопоставление не выполнено, не удалось добавить внешний код в базу.");
-
-			MatchingModule.logger.Info("Сопоставление номенклатуры {0} с внешним кодом {1} поставщика {2} выполнено", ware.Code, matchedWare.ExWare.Code, matchedWare.ExWare.Supplier.InnerCounteragent.Code);
 		}
 
 		/// <summary>
@@ -108,7 +104,6 @@
 
             result.ExWare = exWare;
 
-			MatchingModule.logger.Info("Для номенклатуры с внешним кодом {0} поставщика {1} найдена номенклатура в базе с кодом {2}", exWare.Code, exWare.Supplier.InnerCounteragent.Code, result.InnerWare.Code);
 			return result;
         }
 
@@ -118,9 +113,14 @@
         /// <param name="matchedWare">Объект, где должно быть выполнено сопоставление.</param>
         public static void CreateNewInnerWareAndMatch(MatchedWare matchedWare)
         {
-            if(matchedWare.ExWare == null || matchedWare.InnerWare != null)
-                throw new NotMatchedException("Автоматическое добавление номенклатуры не выполнено, внешний товар не инициализирован или " +
-                    "инициализирован внутренний.");
+			if (matchedWare == null)
+				throw new ArgumentNullException("matchedWare");
+
+			if(matchedWare.ExWare == null)
+				throw new ArgumentNullException("matchedWare.ExWare");
+
+			if(matchedWare.InnerWare != null)
+				throw new ArgumentNullException("matchedWare.InnerWare");
 
 			if (matchedWare.ExWare.Supplier?.InnerCounteragent == null)
 				throw new NotMatchedException("Автоматическое добавление номенклатуры не выполнено, поставщик не указан");
@@ -148,10 +148,13 @@
 
         public static void UpdateMatching(MatchedWare matchedWare)
         {
-            if (matchedWare == null || matchedWare.ExWare == null)
-                return;
+			if (matchedWare == null)
+				throw new ArgumentNullException("matchedWare");
 
-            matchedWare.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, matchedWare.ExWare.Code, matchedWare.ExWare.Supplier.InnerCounteragent.Code);
+			if(matchedWare.ExWare == null)
+				throw new ArgumentNullException("matchedWare.ExWare");
+
+			matchedWare.InnerWare = CoreInit.RepositoryService.GetWare(Requisites.ExCode_Ware, matchedWare.ExWare.Code, matchedWare.ExWare.Supplier.InnerCounteragent.Code);
 
             if(matchedWare.InnerWare == null)
                 throw new NotMatchedException("Автоматическое сопоставление не выполнено, по внешнему коду номенклатура не найдена.");
@@ -165,37 +168,27 @@
 		public static MatchedWarehouse AutomaticWHMatching(ExWarehouse warehouse)
 		{
 			if (warehouse == null || string.IsNullOrWhiteSpace(warehouse.GLN))
-				return null;
+				throw new ArgumentNullException("warehouse");
 
-			
+			if (string.IsNullOrWhiteSpace(warehouse.GLN))
+				throw new ArgumentNullException("warehouse.GLN");
+
 			var cache = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.GLN);
-
-			if(cache == null || string.IsNullOrWhiteSpace(cache.Code))
-				return new MatchedWarehouse{ ExWarehouse = warehouse };
 
 			MatchedWarehouse result = new MatchedWarehouse { ExWarehouse = warehouse, InnerWarehouse = cache };
 			return result;
 		}
 
-		/// <summary>
-		/// Асинхронная версия автоматического сопоставления складов по ГЛН.
-		/// </summary>
-		/// <param name="warehouse">Склад, который нужно сопоставить.</param>
-		/// <returns>Объект сопоставленного склада.</returns>
-		public async static Task<MatchedWarehouse> AutomaticWHMatchingAsync(ExWarehouse warehouse)
-		{
-			return await Task.Run(() => AutomaticWHMatching(warehouse));
-		}
-
 		public static void UpdateWHMatching(MatchedWarehouse warehouse)
 		{
 			if (warehouse == null || string.IsNullOrWhiteSpace(warehouse.ExWarehouse?.GLN))
-				throw new ArgumentNullException("Передан пустой параметр");
+				throw new ArgumentNullException("warehouse");
+
+			if (string.IsNullOrWhiteSpace(warehouse.ExWarehouse?.GLN))
+				throw new ArgumentNullException("warehouse.ExWarehouse?.GLN");
 
 			var cache = CoreInit.RepositoryService.GetWarehouse(Requisites.GLN, warehouse.ExWarehouse?.GLN);
 
-			if (cache == null || string.IsNullOrWhiteSpace(cache.Code))
-				warehouse.InnerWarehouse = null;
 
 			warehouse.InnerWarehouse = cache;
 		}
@@ -213,10 +206,13 @@
 		/// <param name="warehouse">Объекта склада из базы данных.</param>
 		public static bool ManualWHMatching(MatchedWarehouse matchedWarehouse, Warehouse warehouse)
 		{
-			if (matchedWarehouse == null || warehouse == null)
-				return false;
+			if (warehouse == null)
+				throw new ArgumentNullException("matchedWarehouse");
 
-			if(!CoreInit.RepositoryService.RematchingWarehouse(warehouse.Code, matchedWarehouse.ExWarehouse.GLN))
+			if (warehouse == null)
+				throw new ArgumentNullException("warehouse");
+
+			if (!CoreInit.RepositoryService.RematchingWarehouse(warehouse.Code, matchedWarehouse.ExWarehouse.GLN))
 				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
 
 			matchedWarehouse.InnerWarehouse = warehouse;
@@ -280,8 +276,11 @@
 
 		public static bool ManualSupMatching(MatchedCounteragent matchedCounteragent, Counteragent counteragent)
 		{
-			if (matchedCounteragent == null || counteragent == null)
-				return false;
+			if (matchedCounteragent == null)
+				throw new ArgumentNullException("matchedCounteragent");
+
+			if (counteragent == null)
+				throw new ArgumentNullException("counteragent");
 
 			if(!CoreInit.RepositoryService.RematchingCounteragent(counteragent, matchedCounteragent.ExCounteragent.GLN))
 				throw new NotMatchedException("Сопоставление не выполнено, не удалось записать ГЛН в базу.");
@@ -290,7 +289,5 @@
 			matchedCounteragent.InnerCounteragent = counteragent;
 			return true;
 		}
-
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 	}
 }

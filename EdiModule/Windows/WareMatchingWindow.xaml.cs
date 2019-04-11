@@ -16,6 +16,8 @@
     using EdiModuleCore;
     using EdiModuleCore.Model;
     using EdiModuleCore.Exceptions;
+	using NLog;
+	using Newtonsoft.Json;
 
     /// <summary>
     /// Логика взаимодействия для WareMatchingWindow.xaml
@@ -121,13 +123,14 @@
 					{
 						bool res = object.ReferenceEquals(Waybill.Wares[i], row);
 						MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+						this.logger.Info("Номенклатура создана, сопоставление проведено. Результат: {0}", row.Ware);
 						i++;
 					}
 					catch(NotMatchedException ex)
 					{
+						this.logger.Error(ex, "Не удалось создать номенклатуру и выполнить сопоставление. Результат: {0}", row.Ware);
 						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
 					}
-					
 				}
             }
 
@@ -146,9 +149,11 @@
 					try
 					{
 						MatchingModule.CreateNewInnerWareAndMatch(row.Ware);
+						this.logger.Info("Номенклатура создана, сопоставление проведено. Результат: {0}", row.Ware);
 					}
 					catch (NotMatchedException ex)
 					{
+						this.logger.Error(ex, "Не удалось создать номенклатуру и выполнить сопоставление. Результат: {0}", row.Ware);
 						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
 					}
 				}
@@ -166,6 +171,7 @@
         public Waybill Waybill { get; set; }
 
         private Dictionary<string, string> bindings;
+		private readonly Logger logger = LogManager.GetCurrentClassLogger();
     }
         
 }

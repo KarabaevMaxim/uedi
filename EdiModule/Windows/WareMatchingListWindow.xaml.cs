@@ -7,6 +7,9 @@
 	using System.Windows.Input;
 	using EdiModuleCore;
 	using EdiModuleCore.Model;
+	using EdiModuleCore.Exceptions;
+	using NLog;
+	using Newtonsoft.Json;
 
 	/// <summary>
 	/// Логика взаимодействия для WareMatchingListWindow.xaml
@@ -58,7 +61,18 @@
             foreach (var item in this.WaresTbl.Items)
             {
                 if ((item is MatchedWare ware) && (ware.ExWare != null) && (ware.InnerWare == null))
-                    MatchingModule.CreateNewInnerWareAndMatch(ware);
+				{
+					try
+					{
+						MatchingModule.CreateNewInnerWareAndMatch(ware);
+						this.logger.Info("Номенклатура создана, сопоставление проведено. Результат: {0}", ware);
+					}
+					catch(NotMatchedException ex)
+					{
+						this.logger.Error(ex, "Не удалось создать номенклатуру и выполнить сопоставление. Результат: {0}", ware);
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+				}
             }
 
             this.UpdateTablePart();
@@ -68,8 +82,19 @@
         {
             foreach (var item in this.WaresTbl.SelectedItems)
             {
-                if ((item is MatchedWare ware) && (ware.ExWare != null) && (ware.InnerWare == null))
-                    MatchingModule.CreateNewInnerWareAndMatch(ware);
+				if ((item is MatchedWare ware) && (ware.ExWare != null) && (ware.InnerWare == null))
+				{
+					try
+					{
+						MatchingModule.CreateNewInnerWareAndMatch(ware);
+						this.logger.Info("Номенклатура создана, сопоставление проведено. Результат: {0}", ware);
+					}
+					catch (NotMatchedException ex)
+					{
+						this.logger.Error(ex, "Не удалось создать номенклатуру и выполнить сопоставление. Результат: {0}", ware);
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+				}
             }
 
             this.UpdateTablePart();
@@ -99,5 +124,6 @@
         }
 
         private Dictionary<string, string> bindings;
-    }
+		private readonly Logger logger = LogManager.GetCurrentClassLogger();
+	}
 }

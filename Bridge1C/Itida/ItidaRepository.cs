@@ -1549,7 +1549,6 @@
 				this.logger.Error(ex, "Не удалось получить пользователя по коду склада");
 				return null;
 			}
-			
 		}
 
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();

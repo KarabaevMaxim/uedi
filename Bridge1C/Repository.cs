@@ -254,7 +254,7 @@
 					}
 				}
 
-				this.logger.Info("Склады получены Кличество {0}", result.Count);
+				this.logger.Info("Склады получены Количество {0}", result.Count);
 				return result;
 			}
 			catch(Exception ex)
@@ -680,7 +680,7 @@
 
 				if (!string.IsNullOrWhiteSpace(result))
 				{
-					this.logger.Info("guid коныертирован в строку {0}", result);
+					this.logger.Info("guid конвертирован в строку {0}", result);
 					return result;
 				}
 				else

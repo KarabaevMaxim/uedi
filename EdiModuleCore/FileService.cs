@@ -135,7 +135,7 @@
             try
             {
 				string[] result = Directory.GetFiles(folderName);
-				FileService.logger.Info("Получен список файлов папки {0}", folderName, String.Join(", ", result));
+				FileService.logger.Info("Получен список файлов папки {0} Количество {1} Список {2}", folderName, result.Length, String.Join(", ", result));
 				return result;
 			}
             catch(ArgumentNullException ex)

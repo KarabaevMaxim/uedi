@@ -1,5 +1,4 @@
-﻿
-namespace EdiModule.Windows
+﻿namespace EdiModule.Windows
 {
 	using System.Collections.Generic;
 	using System.Windows;
@@ -8,6 +7,8 @@ namespace EdiModule.Windows
 	using System.Windows.Input;
 	using EdiModuleCore;
     using EdiModuleCore.Model;
+	using NLog;
+	using Newtonsoft.Json;
 
     /// <summary>
     /// Логика взаимодействия для WareMatchingListWindow.xaml
@@ -43,7 +44,14 @@ namespace EdiModule.Windows
 
 			foreach (var item in wareHouses)
 			{
-				result.Add(MatchingModule.AutomaticWHMatching(item.ExWarehouse));
+				MatchedWarehouse mw = MatchingModule.AutomaticWHMatching(item.ExWarehouse);
+
+				if (mw.InnerWarehouse == null)
+					this.logger.Warn("Автоматическое сопоставление складов не выполнено. Результат: {0}", JsonConvert.SerializeObject(mw));
+				else
+					this.logger.Info("Автоматическое сопоставление складов выполнено. Результат: {0}", JsonConvert.SerializeObject(mw));
+
+				result.Add(mw);
 			}
 			
 
@@ -83,6 +91,7 @@ namespace EdiModule.Windows
 		}
 
 		private Dictionary<string, string> bindings;
+		private readonly Logger logger = LogManager.GetCurrentClassLogger();
 		public ITableWindow ParentWindow { get; set; }
 
 

@@ -118,6 +118,14 @@
 			this.logger.Info("Обновление справочника складов");
 			this.InitWarehouseReference();
 			MatchingModule.UpdateWHMatching(this.Warehouses);
+
+			var warehouse = this.Warehouses.FirstOrDefault(wh => wh.InnerWarehouse == null);
+
+			if (warehouse == null)
+				this.logger.Warn("Не удалось найти сопоставленный склад. Результат: {0}", JsonConvert.SerializeObject(warehouse));
+			else
+				this.logger.Info("Найден сопоставленный склад. Результат: {0}", JsonConvert.SerializeObject(warehouse));
+
 			this.logger.Info("Справочник складов обновлен. Список: {0}", JsonConvert.SerializeObject(this.Warehouses));
 		}
 

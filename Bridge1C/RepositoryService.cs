@@ -268,7 +268,7 @@
 			return result;
 		}
 
-		public List<Warehouse> GetWarehousesByActiveUser() // todo: надо реализовать
+		public List<Warehouse> GetWarehousesByActiveUser()
 		{
 			this.logger.Info("Получение активного пользователя");
 			var warehouses = this.Repository.GetWarehousesByActiveUser();
@@ -300,7 +300,7 @@
 					});
 				}
 
-				this.logger.Info("Склады активного получены Количество {0}", result.Count);
+				this.logger.Info("Склады активного пользователя получены Количество {0}", result.Count);
 				return result;
 			}
 		}

@@ -9,6 +9,8 @@
     using EdiModuleCore;
     using EdiModuleCore.Exceptions;
     using EdiModuleCore.Model;
+	using NLog;
+	using Newtonsoft.Json;
 
     /// <summary>
     /// Логика взаимодействия для ProductReference.xaml
@@ -51,9 +53,11 @@
                     try
                     {
                         MatchingModule.ManualMatching(wareItem, this.Ware);
+						this.logger.Info("Сопоставление номенклатуры выполнено. Результат: {0}", JsonConvert.SerializeObject(this.Ware));
                     }
                     catch(NotMatchedException ex)
                     {
+						this.logger.Error(ex, "Не удалось сопоставить номенклатуру");
                         MessageBox.Show(ex.Message, "Не удалось сопоставить номенклатуру.");
                     }
                 }
@@ -68,7 +72,7 @@
         public MatchedWare Ware { get; set; }
         private List<Ware> Wares { get; set; }
         private Dictionary<string, string> bindings;
-
+		private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     }
 }

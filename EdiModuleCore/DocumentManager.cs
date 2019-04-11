@@ -154,9 +154,11 @@
 				try
 				{
 					ware = MatchingModule.AutomaticMatching(exWare);
+					DocumentManager.logger.Info("Автоматическое сопоставление выполнено. Результат: {0}", JsonConvert.SerializeObject(ware));
 				}
-				catch (NotMatchedException)
+				catch (NotMatchedException ex)
 				{
+					DocumentManager.logger.Warn(ex, "Автоматическое сопоставление не выполнено");
 					ware = new MatchedWare
 					{
 						ExWare = exWare
@@ -196,6 +198,12 @@
 				throw new ArgumentNullException("fileName");
 
 			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.DeliveryPlace });
+
+			if(warehouse.InnerWarehouse == null)
+				DocumentManager.logger.Warn("Автоматическое складов сопоставление не выполнено. Результат: {0}", JsonConvert.SerializeObject(warehouse));
+			else
+				DocumentManager.logger.Info("Автоматическое сопоставление складов выполнено. Результат: {0}", JsonConvert.SerializeObject(warehouse));
+
 			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 			Model.Waybill result = DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
 			
@@ -279,7 +287,6 @@
 				throw new NotProcessedDocumentException("В накладной присутствуют несопоставленные позиции.");
 			}
 
-
 			if (waybill.Organization == null)
 			{
 				DocumentManager.logger.Error("В накладной не указана организация. Накладная не загружена.");
@@ -299,11 +306,11 @@
 			}
 
 			//todo: не забыть раскомментить
-			if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
-			{
-				DocumentManager.logger.Error("Не удалось переместить файл накладной в архив. Накладная не загружена.");
-				throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
-			}
+			//if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
+			//{
+			//	DocumentManager.logger.Error("Не удалось переместить файл накладной в архив. Накладная не загружена.");
+			//	throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
+			//}
 
 			if (!CoreInit.ModuleRepository.RemoveUnprocessedWaybill(waybill))
 			{
