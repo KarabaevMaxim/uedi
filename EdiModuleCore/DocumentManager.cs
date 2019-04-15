@@ -306,11 +306,11 @@
 			}
 
 			//todo: не забыть раскомментить
-			//if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
-			//{
-			//	DocumentManager.logger.Error("Не удалось переместить файл накладной в архив. Накладная не загружена.");
-			//	throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
-			//}
+			if (!FileService.MoveFile(waybill.FileName, System.IO.Path.GetFullPath(SessionManager.Sessions[0].ArchieveFolder)))
+			{
+				DocumentManager.logger.Error("Не удалось переместить файл накладной в архив. Накладная не загружена.");
+				throw new NotProcessedDocumentException("Не удалось переместить файл накладной в архив.");
+			}
 
 			if (!CoreInit.ModuleRepository.RemoveUnprocessedWaybill(waybill))
 			{

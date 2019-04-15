@@ -542,7 +542,7 @@
             }
         }
 
-        public dynamic GetBarCodeType(BarcodeTypes type)
+		public dynamic GetBarCodeType(BarcodeTypes type)
         {
 			this.logger.Info("Получение типа штрихкода {0}", type);
 

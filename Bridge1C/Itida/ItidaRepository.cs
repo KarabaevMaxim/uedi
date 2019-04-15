@@ -1144,8 +1144,9 @@
 					command = new SqlCommand("UPDATE sprskl SET ex_code = @gln WHERE code = @code", conn);
 					command.Parameters.Add(new SqlParameter("@gln", gln));
 					command.Parameters.Add(new SqlParameter("@code", warehouseCode));
+                    result = command.ExecuteNonQuery();
 
-					if (result > 0)
+                    if (result > 0)
 					{
 						this.logger.Info("Новый ГЛН записан складу Код {0}", warehouseCode);
 						return true;

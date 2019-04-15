@@ -81,6 +81,7 @@
     <Compile Include="SessionManager.cs" />
     <Compile Include="XEntities\Header.cs" />
     <Compile Include="XEntities\IXEntity.cs" />
+    <Compile Include="XEntities\Order.cs" />
     <Compile Include="XEntities\WarePosition.cs" />
     <Compile Include="XEntities\Waybill.cs" />
   </ItemGroup>

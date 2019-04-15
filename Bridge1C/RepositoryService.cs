@@ -83,7 +83,7 @@
 			}
 			else
 			{
-				this.logger.Info("Номенклатура найдена {0}", ware.Наменование);
+				this.logger.Info("Номенклатура найдена {0}", ware.Наименование);
 				return this.GetDomainWareFromDbWare(ware);
 			}
         }
@@ -453,8 +453,31 @@
 			return result;
 		}
 
-		public bool RemoveExCode(WareExCode exCode) // todo: Не забыть реализовать метод
+		public bool RemoveExCode(WareExCode exCode)
 		{
+			this.logger.Info("(Метод заглушка) Удаление внешнего кода {0} поставщика {1}", exCode?.Value, exCode.Counteragent?.Name);
+
+			if (exCode == null)
+				throw new ArgumentNullException();
+
+			var ware = this.Repository.GetWare(Requisites.ExCode_Ware, exCode.Value, exCode.Counteragent.GLN);
+
+			if (ware == null)
+			{
+				this.logger.Info("Номенклатура по внешнему коду не найдена");
+				return false;
+			}
+			else
+			{
+				var result = true;
+
+				if (result)
+					this.logger.Info("Внешний код удален (заглушка)");
+
+				return result;
+			}
+
+
 			throw new System.NotImplementedException();
 		}
 

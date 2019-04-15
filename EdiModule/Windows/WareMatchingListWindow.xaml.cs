@@ -22,9 +22,11 @@
 
             this.bindings = new Dictionary<string, string>
             {
-                { "Название поставщика", "ExWare.Name" },
-                { "Код поставщика", "ExWare.Code" },
-                { "ШК", "ExWare.Barcode" },
+                { "Внеш. название", "ExWare.Name" },
+                { "Внеш. код", "ExWare.Code" },
+				{ "ГЛН поставщика", "ExWare.Supplier.ExCounteragent.GLN" },
+				{ "Наим. поставщика", "ExWare.Supplier.InnerCounteragent.Name" },
+				{ "ШК", "ExWare.Barcode" },
                 { "Внут. код", "InnerWare.Code" },
                 { "Внут. название", "InnerWare.Name" }
             };

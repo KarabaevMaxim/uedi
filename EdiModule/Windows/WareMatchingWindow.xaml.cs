@@ -92,7 +92,7 @@
             {
                 if (row.DataContext is WaybillRow wbRow)
                 {
-					if (wbRow.Ware.ExWare.Supplier?.InnerCounteragent == null)
+					if (wbRow.Ware.ExWare.Supplier?.InnerCounteragent != null)
 					{
 						ProductReferenceWindow prodWindow = new ProductReferenceWindow
 						{
