@@ -83,7 +83,7 @@
 				throw new ArgumentNullException("waybill");
 
 			this.AddWaybillToGeneralList(waybill);
-            this.AddUnprocessedWaybill(this.GeneralWaybillList.Last());
+            this.AddUnprocessedWaybill(this.GeneralWaybillList.Last()); // тут баг 
 			this.AddWarehouse(waybill.Warehouse);
 			this.AddCounteragent(waybill.Supplier);
         }
@@ -161,10 +161,21 @@
             return this.UnprocessedWaybills;
         }
 
+        public void ClearWaybillLists()
+        {
+            this.ClearUnprocessedWaybills();
+            this.ClearWaybillsGeneralList();
+        }
+
 		public void ClearUnprocessedWaybills()
 		{
 			this.UnprocessedWaybills.Clear();
 		}
+
+        public void ClearWaybillsGeneralList()
+        {
+            this.GeneralWaybillList.Clear();
+        }
 
 		public List<MatchedWarehouse> GetWarehouses()
 		{

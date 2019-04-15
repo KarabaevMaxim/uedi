@@ -99,7 +99,7 @@
 			if (string.IsNullOrWhiteSpace(workFolder))
 				throw new ArgumentNullException("workFolder");
 
-			CoreInit.ModuleRepository.ClearUnprocessedWaybills();
+			CoreInit.ModuleRepository.ClearWaybillLists();
 			DocumentManager.DownloadWaybills(workFolder);
 			DocumentManager.logger.Info("Перезагрузка завершена");
 		}

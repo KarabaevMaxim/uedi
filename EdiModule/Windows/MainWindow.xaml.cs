@@ -86,8 +86,15 @@
 				return;
 			}
 
-			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => warehouses.Contains(wb.Warehouse.InnerWarehouse));
-            //this.UnprocessedWaybillTbl.ItemsSource = waybills;
+            //	var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => warehouses.Contains(wb.Warehouse.InnerWarehouse));
+
+            var waybills = new List<Waybill>();
+
+            foreach (var item in CoreInit.ModuleRepository.GetUnprocessedWaybills())
+            {
+                if (item.Warehouse.InnerWarehouse.Equals(warehouses[0]) || item.Warehouse.Equals(warehouses[1]))
+                    waybills.Add(item);
+            }
 
             foreach (var item in waybills)
             	this.UnprocessedWaybillTbl.Items.Add(item);
