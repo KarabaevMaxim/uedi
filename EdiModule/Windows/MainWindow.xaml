@@ -22,14 +22,24 @@
             <TextBlock Text="Пользователь:" FontSize="15" Margin="5" TextAlignment="Center"/>
             <TextBlock Name="UserNameTxt" Text="Пользователь" FontSize="15" Margin="5" TextAlignment="Center"/>
         </StackPanel>
-        <DataGrid Grid.Column="1" Grid.Row="1" Name="UnprocessedWaybillTbl" Background="SeaGreen" AutoGenerateColumns="False" 
+        <TabControl Grid.Column="1" Grid.Row="1">
+            <TabItem Header="Накладные, требующие внимания">
+                <DataGrid Name="UnprocessedWaybillTbl" Background="SeaGreen" AutoGenerateColumns="False" 
                       CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
-            <DataGrid.Resources>
-                <Style TargetType="DataGridRow">
-                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
-                </Style>
-            </DataGrid.Resources>
-        </DataGrid>
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridRow">
+                            <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                        </Style>
+                    </DataGrid.Resources>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Все накладные">
+                <DataGrid Name="AllWaybillTbl" Background="Orchid" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+        
         <fa:ImageAwesome Name="WaitAnim" Grid.Column="0" Grid.Row="0" Icon="Asterisk" Spin="True" SpinDuration="3" />
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.ColumnDefinitions>

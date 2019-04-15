@@ -87,11 +87,23 @@
 			}
 
 			var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => warehouses.Contains(wb.Warehouse.InnerWarehouse));
+            //this.UnprocessedWaybillTbl.ItemsSource = waybills;
 
-			foreach (var item in waybills)
-				this.UnprocessedWaybillTbl.Items.Add(item);
+            foreach (var item in waybills)
+            	this.UnprocessedWaybillTbl.Items.Add(item);
 
-			this.logger.Trace("Конец MainWindow.UpdateTablePart");
+            this.AllWaybillTbl.Columns.Clear();
+            foreach (var item in this.bindings)
+                this.AllWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
+
+            waybills = CoreInit.ModuleRepository.GetGeneralWaybillList();
+
+            this.AllWaybillTbl.ItemsSource = waybills;
+            //foreach (var item in waybills)
+            //    this.AllWaybillTbl.Items.Add(item);
+
+
+            this.logger.Trace("Конец MainWindow.UpdateTablePart");
 		}
 
 		/// <summary>
@@ -177,8 +189,8 @@
 		private void ShowWhListBtn_Click(object sender, RoutedEventArgs e)
 		{
 			this.logger.Trace("MainWindow.ShowWhListBtn_Click");
-			var whNames = CoreInit.ModuleRepository.GetWarehouses().Where(wh => wh.InnerWarehouse?.User?.Code == CoreInit.RepositoryService.GetCurrentUser().Code).Select(wh => string.Format("{0} {1}", wh.InnerWarehouse.Name, wh.ExWarehouse.GLN));
-			string result = whNames.Any() ? string.Join("\n", whNames) : "Список складов пуст, возможно у вас есть несопоставленные склады.";
+            var whNames = CoreInit.RepositoryService.GetWarehousesByActiveUser().Select(wh => wh.Name);
+            string result = whNames.Any() ? string.Join("\r\n", whNames) : "Список складов пуст, возможно у вас есть несопоставленные склады.";
 			MessageBox.Show(result, "Ваши склады", MessageBoxButton.OK, MessageBoxImage.Information);
 			this.logger.Trace("Конец MainWindow.ShowWhListBtn_Click");
 		}
