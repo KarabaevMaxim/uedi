@@ -1116,7 +1116,7 @@
 		}
 
 		/// <summary>
-		/// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть контрагент с ex_code gln 
+		/// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть склад с ex_code gln, то он будет перезаписан.
 		/// </summary>
 		/// <param name="warehouseCode">Код склада для инициализации.</param>
 		/// <param name="gln">ГЛН.</param>

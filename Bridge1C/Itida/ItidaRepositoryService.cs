@@ -212,12 +212,12 @@
 			}
 		}
 
-		/// <summary>
-		/// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть контрагент с ex_code gln 
-		/// </summary>
-		/// <param name="warehouseCode">Код склада для инициализации.</param>
-		/// <param name="gln">ГЛН.</param>
-		public bool RematchingWarehouse(string warehouseCode, string gln)
+        /// <summary>
+        /// Инициализирует поле ex_code склада warehouse значением gln, если в базе есть склад с ex_code gln, то он будет перезаписан.
+        /// </summary>
+        /// <param name="warehouseCode">Код склада для инициализации.</param>
+        /// <param name="gln">ГЛН.</param>
+        public bool RematchingWarehouse(string warehouseCode, string gln)
 		{
 			this.logger.Info("Пересопоставление склада {0} с ГЛН {1}", warehouseCode, gln);
 
