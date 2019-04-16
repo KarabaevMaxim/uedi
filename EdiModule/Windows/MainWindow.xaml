@@ -69,7 +69,6 @@
                     <TextBlock Text="Сопоставление поставщиков" TextWrapping="Wrap" FontSize="10"/>
                 </ContentControl>
             </Button>
-            <Button Grid.Row="4" Name="btn" Content="Настройки" Margin="5" Click="btn_Click"/>
             <Button Grid.Row="2" Name="UpdateWareRefenceBtn" Margin="5" Click="UpdateWareRefenceBtn_Click">
                 <ContentControl>
                     <TextBlock Text="Обновить справочник" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>

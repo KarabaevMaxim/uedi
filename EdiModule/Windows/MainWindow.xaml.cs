@@ -145,12 +145,6 @@
 			this.logger.Trace("Конец MainWindow.ShowMatchingWindowBtn_Click");
 		}
 
-        private void btn_Click(object sender, RoutedEventArgs e) // TODO: удалить 
-        {
-            SettingsWindow window = new SettingsWindow();
-            window.ShowDialog();
-        }
-
         /// <summary>
         /// Автонумерация строк таблицы.
         /// </summary>
