@@ -4,13 +4,15 @@
     using System.Linq;
     using System.Collections.Generic;
     using Model;
-	using System.Threading.Tasks;
 	using Comparators;
 	using Newtonsoft.Json;
 	using NLog;
 
     public class ModuleRepository
     {
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
 		public ModuleRepository()
         {
 			this.logger.Info("Инициализация объекта ModuleRepository..");
@@ -20,43 +22,31 @@
 			this.logger.Info("Инициализация объекта ModuleRepository завершена");
 		}
 
+        /// <summary>
+        /// Инициализация справочника товаров.
+        /// </summary>
         public void InitProductReference()
         {
             this.ProductReference = CoreInit.RepositoryService.GetAllWares();
         }
 
+        /// <summary>
+        /// Инициализация справочника складов.
+        /// </summary>
 		public void InitWarehouseReference()
 		{
 			this.WarehouseReference = CoreInit.RepositoryService.GetAllWarehouses();
 		}
 
+        /// <summary>
+        /// Инициализация справочника контрагентов.
+        /// </summary>
 		public void InitCounteragentReference()
 		{
 			this.CounteragentReference = CoreInit.RepositoryService.GetAllCounteragents();
 		}
 
-        /// <summary>
-        /// Добавить накладную в общий список.
-        /// </summary>
-        private void AddWaybillToGeneralList(Waybill waybill)
-        {
-			if (waybill == null)
-				throw new ArgumentNullException("waybill");
 
-			this.logger.Info("Проверка необходимости загрузки накладной {0} в главный список", JsonConvert.SerializeObject(waybill));
-
-			if (!this.GeneralWaybillList.Contains(waybill))
-            {
-                Waybill instance = new Waybill();
-
-                foreach (var item in typeof(Waybill).GetProperties())
-                    item.SetValue(instance, item.GetValue(waybill));
-
-                this.GeneralWaybillList.Add(instance);
-				this.logger.Info("Накладная добавлена в главный список.");
-			}
-        }
-        
         /// <summary>
         /// Добавить необработанную накладную.
         /// </summary>
@@ -67,9 +57,9 @@
 
 			this.logger.Info("Проверка необходимости загрузки накладной {0} в список необработанных накладных", JsonConvert.SerializeObject(waybill));
 
-			if (!this.UnprocessedWaybills.Contains(waybill))
+			if (!this.AllUnprocessedWaybills.Contains(waybill))
 			{
-				this.UnprocessedWaybills.Add(waybill);
+				this.AllUnprocessedWaybills.Add(waybill);
 				this.logger.Info("Накладная добавлена в главный список");
 			}
 		}
@@ -82,8 +72,7 @@
 			if (waybill == null)
 				throw new ArgumentNullException("waybill");
 
-			this.AddWaybillToGeneralList(waybill);
-            this.AddUnprocessedWaybill(this.GeneralWaybillList.Last()); // тут баг 
+            this.AddUnprocessedWaybill(waybill);
 			this.AddWarehouse(waybill.Warehouse);
 			this.AddCounteragent(waybill.Supplier);
         }
@@ -98,7 +87,7 @@
 			if (waybill == null)
 				throw new ArgumentNullException("waybill");
 
-			bool result = this.UnprocessedWaybills.Remove(waybill);
+			bool result = this.AllUnprocessedWaybills.Remove(waybill);
 
 			if(result)
 				this.logger.Info("Накладная удалена из списка необработанных накладных");
@@ -108,12 +97,7 @@
 			return result;
         }
 
-        public List<Waybill> GetGeneralWaybillList()
-        {
-            return this.GeneralWaybillList;
-        }
-
-		public void UpdateWarehouses()
+        public void UpdateWarehouses()
 		{
 			this.logger.Info("Обновление справочника складов");
 			this.InitWarehouseReference();
@@ -156,26 +140,28 @@
             return this.MatchedWares;
         }
 
-        public List<Waybill> GetUnprocessedWaybills()
+        public List<Waybill> GetAllUnprocessedWaybills()
         {
-            return this.UnprocessedWaybills;
+            return this.AllUnprocessedWaybills;
+        }
+
+        public List<Waybill> GetUserWaybills(Bridge1C.DomainEntities.User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            return this.AllUnprocessedWaybills.Where(wb => wb.Warehouse.InnerWarehouse.User.Equals(user)).ToList();
         }
 
         public void ClearWaybillLists()
         {
             this.ClearUnprocessedWaybills();
-            this.ClearWaybillsGeneralList();
         }
 
 		public void ClearUnprocessedWaybills()
 		{
-			this.UnprocessedWaybills.Clear();
+			this.AllUnprocessedWaybills.Clear();
 		}
-
-        public void ClearWaybillsGeneralList()
-        {
-            this.GeneralWaybillList.Clear();
-        }
 
 		public List<MatchedWarehouse> GetWarehouses()
 		{
@@ -218,12 +204,7 @@
 		/// <summary>
 		/// Список необработанных накладных.
 		/// </summary>
-		private List<Waybill> UnprocessedWaybills { get; set; } = new List<Waybill>();
-
-        /// <summary>
-        /// Список накладных за все время.
-        /// </summary>
-        private List<Waybill> GeneralWaybillList { get; set; } = new List<Waybill>(); // todo: надо куда-то сохранять этот массив
+		private List<Waybill> AllUnprocessedWaybills { get; set; } = new List<Waybill>();
 
         private List<MatchedWare> MatchedWares { get; set; } = new List<MatchedWare>();
 

@@ -43,10 +43,11 @@
 			this.GetSession();
 			this.DownloadDocuments();
 			this.UpdateTablePart();
-			UserNameTxt.Text = CoreInit.RepositoryService.GetCurrentUser().Name;
-            TotalLbl.Text = "Всего накладных: " + CoreInit.ModuleRepository.GetGeneralWaybillList().Count;
-            YoursLbl.Text = "Ваших накладных: " + CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => CoreInit.RepositoryService.GetWarehousesByActiveUser().Contains(wb.Warehouse.InnerWarehouse)).Count();
-			this.logger.Trace("Конец MainWindow.Initialize");
+            this.CurrentWayBills = CoreInit.ModuleRepository.GetUserWaybills(CoreInit.RepositoryService.GetCurrentUser());
+            UserNameTxt.Text = CoreInit.RepositoryService.GetCurrentUser().Name;
+            TotalLbl.Text = "Всего накладных: " + CoreInit.ModuleRepository.GetAllUnprocessedWaybills().Count;
+            YoursLbl.Text = "Ваших накладных: " + this.CurrentWayBills.Count;
+            this.logger.Trace("Конец MainWindow.Initialize");
 		}
 
 		private void GetSession()
@@ -87,19 +88,15 @@
 				return;
 			}
 
-            var waybills = CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => warehouses.Contains(wb.Warehouse.InnerWarehouse));
-
-            foreach (var item in waybills)
+            foreach (var item in CoreInit.ModuleRepository.GetUserWaybills(CoreInit.RepositoryService.GetCurrentUser()))
             	this.UnprocessedWaybillTbl.Items.Add(item);
 
             this.AllWaybillTbl.Columns.Clear();
             foreach (var item in this.bindings)
                 this.AllWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
 
-            waybills = CoreInit.ModuleRepository.GetGeneralWaybillList();
-
             this.AllWaybillTbl.Items.Clear();
-            foreach (var item in waybills)
+            foreach (var item in CoreInit.ModuleRepository.GetAllUnprocessedWaybills())
                 this.AllWaybillTbl.Items.Add(item);
 
             this.logger.Trace("Конец MainWindow.UpdateTablePart");
@@ -188,8 +185,10 @@
 			this.logger.Trace("Конец MainWindow.ShowWhListBtn_Click");
 		}
 
+        
 		private Dictionary<string, string> bindings = new Dictionary<string, string>();
-		private Session CurrentSession { get; set; }
+        private List<Waybill> CurrentWayBills { get; set; }
+        private Session CurrentSession { get; set; }
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
 	}
 }
