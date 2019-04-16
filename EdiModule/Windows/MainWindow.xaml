@@ -25,7 +25,7 @@
         <TabControl Grid.Column="1" Grid.Row="1">
             <TabItem Header="Накладные, требующие внимания">
                 <DataGrid Name="UnprocessedWaybillTbl" Background="SeaGreen" AutoGenerateColumns="False" 
-                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
+                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
                     <DataGrid.Resources>
                         <Style TargetType="DataGridRow">
                             <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
@@ -35,7 +35,7 @@
             </TabItem>
             <TabItem Header="Все накладные">
                 <DataGrid Name="AllWaybillTbl" Background="Orchid" AutoGenerateColumns="False" 
-                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
+                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
                 </DataGrid>
             </TabItem>
         </TabControl>
@@ -50,6 +50,9 @@
             </Grid.ColumnDefinitions>
             <Button Grid.Column="3" Content="Загрузить накладные" Margin="10,10,10,10" Click="Button_Click"/>
             <Viewbox Grid.Column="0" Stretch="Uniform">
+                <TextBlock Name="YoursLbl" Text="Ваших накладных: 22" TextAlignment="Right" Margin="10"/>
+            </Viewbox>
+            <Viewbox Grid.Column="1" Stretch="Uniform">
                 <TextBlock Name="TotalLbl" Text="Всего накладных: 22" TextAlignment="Right" Margin="10"/>
             </Viewbox>
         </Grid>

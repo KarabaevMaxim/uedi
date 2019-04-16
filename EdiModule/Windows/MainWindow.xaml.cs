@@ -44,7 +44,8 @@
 			this.DownloadDocuments();
 			this.UpdateTablePart();
 			UserNameTxt.Text = CoreInit.RepositoryService.GetCurrentUser().Name;
-			TotalLbl.Text = "Всего накладных: " + CoreInit.ModuleRepository.GetUnprocessedWaybills().Count;
+            TotalLbl.Text = "Всего накладных: " + CoreInit.ModuleRepository.GetGeneralWaybillList().Count;
+            YoursLbl.Text = "Ваших накладных: " + CoreInit.ModuleRepository.GetUnprocessedWaybills().Where(wb => CoreInit.RepositoryService.GetWarehousesByActiveUser().Contains(wb.Warehouse.InnerWarehouse)).Count();
 			this.logger.Trace("Конец MainWindow.Initialize");
 		}
 
