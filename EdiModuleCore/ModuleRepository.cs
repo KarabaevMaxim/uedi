@@ -64,6 +64,19 @@
 			}
 		}
 
+        private void AddTotalUnprocessedWaybill(Waybill waybill)
+        {
+            if (waybill == null)
+                throw new ArgumentNullException("waybill");
+
+            this.TotalUnprocessedWaybills.Add(waybill);
+        }
+        
+        public List<Waybill> GetTotalWaybillList()
+        {
+            return this.TotalUnprocessedWaybills;
+        }
+
         /// <summary>
         /// Добавить новую накладную.
         /// </summary>
@@ -73,7 +86,8 @@
 				throw new ArgumentNullException("waybill");
 
             this.AddUnprocessedWaybill(waybill);
-			this.AddWarehouse(waybill.Warehouse);
+            this.AddTotalUnprocessedWaybill(waybill);
+            this.AddWarehouse(waybill.Warehouse);
 			this.AddCounteragent(waybill.Supplier);
         }
 
@@ -156,9 +170,15 @@
         public void ClearWaybillLists()
         {
             this.ClearUnprocessedWaybills();
+            this.ClearTotalWaybillList();
         }
 
-		public void ClearUnprocessedWaybills()
+        public void ClearTotalWaybillList()
+        {
+            this.TotalUnprocessedWaybills.Clear();
+        }
+
+        public void ClearUnprocessedWaybills()
 		{
 			this.AllUnprocessedWaybills.Clear();
 		}
@@ -205,6 +225,11 @@
 		/// Список необработанных накладных.
 		/// </summary>
 		private List<Waybill> AllUnprocessedWaybills { get; set; } = new List<Waybill>();
+
+        /// <summary>
+        /// Журнал всех накладных в рабочей папке(вклчюая дубли).
+        /// </summary>
+        private List<Waybill> TotalUnprocessedWaybills { get; set; } = new List<Waybill>();
 
         private List<MatchedWare> MatchedWares { get; set; } = new List<MatchedWare>();
 

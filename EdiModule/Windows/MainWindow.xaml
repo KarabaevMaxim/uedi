@@ -38,8 +38,19 @@
                       CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
                 </DataGrid>
             </TabItem>
+            <TabItem Header="Все накладные(вкл. дубли)">
+                <DataGrid Name="TotalWaybillTbl" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
+                    <DataGrid.Background>
+                        <RadialGradientBrush>
+                            <GradientStop Color="Black"/>
+                            <GradientStop Color="#FF4A7400" Offset="1"/>
+                        </RadialGradientBrush>
+                    </DataGrid.Background>
+                </DataGrid>
+            </TabItem>
         </TabControl>
-        
+
         <fa:ImageAwesome Name="WaitAnim" Grid.Column="0" Grid.Row="0" Icon="Asterisk" Spin="True" SpinDuration="3" />
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.ColumnDefinitions>

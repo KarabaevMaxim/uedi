@@ -74,33 +74,32 @@
 		public void UpdateTablePart()
         {
 			this.logger.Trace("MainWindow.UpdateTablePart");
-			this.UnprocessedWaybillTbl.Columns.Clear();
+            this.UpdateTablePart(UnprocessedWaybillTbl, CoreInit.ModuleRepository.GetUserWaybills(CoreInit.RepositoryService.GetCurrentUser()));
+            this.UpdateTablePart(AllWaybillTbl, CoreInit.ModuleRepository.GetAllUnprocessedWaybills());
+            this.UpdateTablePart(TotalWaybillTbl, CoreInit.ModuleRepository.GetTotalWaybillList());
 
-			foreach (var item in this.bindings)
-				this.UnprocessedWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
-
-			this.UnprocessedWaybillTbl.Items.Clear();
-			var warehouses = CoreInit.RepositoryService.GetWarehousesByActiveUser();
-
-			if(warehouses == null)
-			{
-				MessageBox.Show("Произошла ошибка при загрузке складов. Подробности в файле логов.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
-			}
-
-            foreach (var item in CoreInit.ModuleRepository.GetUserWaybills(CoreInit.RepositoryService.GetCurrentUser()))
-            	this.UnprocessedWaybillTbl.Items.Add(item);
-
-            this.AllWaybillTbl.Columns.Clear();
-            foreach (var item in this.bindings)
-                this.AllWaybillTbl.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
-
-            this.AllWaybillTbl.Items.Clear();
-            foreach (var item in CoreInit.ModuleRepository.GetAllUnprocessedWaybills())
-                this.AllWaybillTbl.Items.Add(item);
 
             this.logger.Trace("Конец MainWindow.UpdateTablePart");
 		}
+
+        private void UpdateTablePart(DataGrid table, IEnumerable<Waybill> source)
+        {
+            if (table == null)
+                throw new ArgumentNullException("table");
+
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            table.Columns.Clear();
+
+            foreach (var item in this.bindings)
+                table.Columns.Add(new DataGridTextColumn { Header = item.Key, Binding = new Binding(item.Value) });
+
+            table.Items.Clear();
+
+            foreach (var item in source)
+                table.Items.Add(item);
+        }
 
 		/// <summary>
 		/// Загрузить накладные.
