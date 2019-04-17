@@ -197,15 +197,28 @@
 			if (string.IsNullOrWhiteSpace(fileName))
 				throw new ArgumentNullException("fileName");
 
-			var warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = xWaybill.Header.DeliveryPlace });
+            // TODO: здесь всегда создается новая ссылка. Надо делать поиск по справочнику складов
+            string gln = xWaybill.Header.DeliveryPlace;
+            var warehouse = CoreInit.ModuleRepository.GetWarehouseByGLN(gln);
 
-			if(warehouse.InnerWarehouse == null)
+            if(warehouse == null)
+                warehouse = MatchingModule.AutomaticWHMatching(new ExWarehouse { GLN = gln });
+
+            if (warehouse.InnerWarehouse == null)
 				DocumentManager.logger.Warn("Автоматическое складов сопоставление не выполнено. Результат: {0}", JsonConvert.SerializeObject(warehouse));
 			else
 				DocumentManager.logger.Info("Автоматическое сопоставление складов выполнено. Результат: {0}", JsonConvert.SerializeObject(warehouse));
 
-			var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
-			Model.Waybill result = DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
+            // TODO: здесь всегда создается новая ссылка. Надо делать поиск по справочнику поставщиков
+            //var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
+
+            gln = xWaybill.Header.SupplierGln;
+            var supplier = CoreInit.ModuleRepository.GetCounteragentByGLN(gln);
+
+            if (supplier == null)
+                supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = gln });
+
+            Model.Waybill result = DocumentManager.RaiseWaybill(xWaybill, fileName, warehouse, supplier);
 			
 			if(result == null)
 				DocumentManager.logger.Error("Конвертация файловой накладной в доменную не проведена");
@@ -217,7 +230,7 @@
 		/// <summary>
 		/// Сохраняет в базу данных накладную.
 		/// </summary>
-		/// <returns>true, если успешно, иначе false.</returns>
+		/// <returns>true, если успешно, иначе false.</returns> 
 		private static bool SaveWaybillToBase(Waybill waybill)
         {
 			DocumentManager.logger.Info("Сохранение накладной {0} в базу данных", JsonConvert.SerializeObject(waybill));

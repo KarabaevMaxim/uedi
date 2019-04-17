@@ -23,9 +23,12 @@
 			InitializeComponent();
 			this.bindings.Add("Номер накладной", "Number");
             this.bindings.Add("Дата накладной", "Date");
+            this.bindings.Add("ГЛН поставщика", "Supplier.ExCounteragent.GLN");
             this.bindings.Add("Поставщик", "Supplier.InnerCounteragent.Name");
-			this.bindings.Add("Организация", "Organization.Name");
-			this.bindings.Add("Склад", "Warehouse.InnerWarehouse.Name");
+            this.bindings.Add("ГЛН организации", "Organization.GLN");
+            this.bindings.Add("Организация", "Organization.Name");
+            this.bindings.Add("ГЛН склада", "Warehouse.ExWarehouse.GLN");
+            this.bindings.Add("Склад", "Warehouse.InnerWarehouse.Name");
 			this.bindings.Add("Сумма с НДС", "AmountWithTax");
 			this.logger.Trace("Конец конструктора MainWindow");
 		}

@@ -202,6 +202,15 @@
 			}
 		}
 
+        public MatchedWarehouse GetWarehouseByGLN(string gln)
+        {
+            if (string.IsNullOrWhiteSpace(gln))
+                throw new ArgumentNullException("gln");
+
+            MatchedWarehouse result = this.Warehouses.FirstOrDefault(wh => wh.ExWarehouse.GLN == gln);
+            return result;
+        }
+
 		public List<MatchedCounteragent> GetCounteragents()
 		{
 			return this.Counteragents;
@@ -221,10 +230,19 @@
 			}
 		}
 
-		/// <summary>
-		/// Список необработанных накладных.
-		/// </summary>
-		private List<Waybill> AllUnprocessedWaybills { get; set; } = new List<Waybill>();
+        public MatchedCounteragent GetCounteragentByGLN(string gln)
+        {
+            if (string.IsNullOrWhiteSpace(gln))
+                throw new ArgumentNullException("gln");
+
+            MatchedCounteragent result = this.Counteragents.FirstOrDefault(wh => wh.ExCounteragent.GLN == gln);
+            return result;
+        }
+
+        /// <summary>
+        /// Список необработанных накладных.
+        /// </summary>
+        private List<Waybill> AllUnprocessedWaybills { get; set; } = new List<Waybill>();
 
         /// <summary>
         /// Журнал всех накладных в рабочей папке(вклчюая дубли).
