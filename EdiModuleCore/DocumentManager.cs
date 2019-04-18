@@ -56,55 +56,123 @@
         }
 
         /// <summary>
+        /// Десериализовать накладную из файла.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private static Waybill DeserializeWaybill(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentNullException("fileName");
+
+            string content = FileService.ReadTextFile(fileName);
+            XEntities.Waybill waybill = (XEntities.Waybill)DocumentManager.DownloadDocument(content, DocumentTypes.DESADV);
+
+            Waybill result = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
+            return result;
+        }
+
+        /// <summary>
+        /// Десериализовать все накладные из папки.
+        /// </summary>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
+        private static IEnumerable<Waybill> DeserializeWaybills(string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(folderName))
+                throw new ArgumentNullException("folderName");
+
+            string[] fileNames = FileService.GetFileList(folderName);
+            List<Waybill> result = new List<Waybill>();
+
+            foreach (var item in fileNames)
+            {
+                Waybill waybill = DocumentManager.DeserializeWaybill(item);
+                result.Add(waybill);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Десериализовать и загрузить в список обработанных накладных репозиторий модуля все накладные из указаной папки.
+        /// </summary>
+        /// <param name="folderName"></param>
+        public static void DownloadProcessedWaybills(string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(folderName))
+                throw new ArgumentNullException("folderName");
+
+            CoreInit.ModuleRepository.ClearProcessedWaybills();
+
+            IEnumerable<Waybill> waybills = DocumentManager.DeserializeWaybills(folderName);
+
+            foreach (var item in waybills)
+                CoreInit.ModuleRepository.AddProcessedWaybill(item);
+        }
+
+        public static void DownloadUnprocessedWaybills(string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(folderName))
+                throw new ArgumentNullException("folderName");
+
+            CoreInit.ModuleRepository.ClearWaybillLists();
+            IEnumerable<Waybill> waybills = DocumentManager.DeserializeWaybills(folderName);
+
+            foreach (var item in waybills)
+                CoreInit.ModuleRepository.AddWaybill(item);
+        }
+
+        /// <summary>
         /// Загрузить накладную.
         /// </summary>
         /// <param name="fileName">Имя файла.</param>s
         /// <returns>true, если успешно, иначе false.</returns>
-        public static void DownloadWaybill(string fileContent, string fileName)
-        {
-			DocumentManager.logger.Info("Загрузка накладной из файла {0}", fileName);
+        //      public static void DownloadWaybill(string fileContent, string fileName)
+        //      {
+        //	DocumentManager.logger.Info("Загрузка накладной из файла {0}", fileName);
 
-			if (string.IsNullOrWhiteSpace(fileContent) || string.IsNullOrWhiteSpace(fileName))
-				throw new ArgumentNullException("fileContent или fileName");
+        //	if (string.IsNullOrWhiteSpace(fileContent) || string.IsNullOrWhiteSpace(fileName))
+        //		throw new ArgumentNullException("fileContent или fileName");
 
-            XEntities.Waybill waybill = (XEntities.Waybill)DocumentManager.DownloadDocument(fileContent, DocumentTypes.DESADV);
+        //          XEntities.Waybill waybill = (XEntities.Waybill)DocumentManager.DownloadDocument(fileContent, DocumentTypes.DESADV);
 
-			Waybill domainWaybill = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
-			CoreInit.ModuleRepository.AddWaybill(domainWaybill);
-			DocumentManager.logger.Info("Загрузка накладной завершена");
-		}
+        //	Waybill domainWaybill = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
+        //	CoreInit.ModuleRepository.AddWaybill(domainWaybill);
+        //	DocumentManager.logger.Info("Загрузка накладной завершена");
+        //}
 
         /// <summary>
         /// Загрузить все накладные из указанной в настройках папки.
         /// </summary>
-        public static void DownloadWaybills(string workFolder)
-		{
-			DocumentManager.logger.Info("Загрузка всех накладных из папки {0}", workFolder);
+        //      public static void DownloadWaybills(string workFolder)
+        //{
+        //	DocumentManager.logger.Info("Загрузка всех накладных из папки {0}", workFolder);
 
-			if (string.IsNullOrWhiteSpace(workFolder))
-				throw new ArgumentNullException("workFolder");
+        //	if (string.IsNullOrWhiteSpace(workFolder))
+        //		throw new ArgumentNullException("workFolder");
 
-            string[] fileNames = FileService.GetFileList(workFolder);
+        //          string[] fileNames = FileService.GetFileList(workFolder);
 
-            foreach (var item in fileNames)
-                DocumentManager.DownloadWaybill(FileService.ReadTextFile(item), item);
+        //          foreach (var item in fileNames)
+        //              DocumentManager.DownloadWaybill(FileService.ReadTextFile(item), item);
 
-			DocumentManager.logger.Info("Загрузка всех накладных завершена", workFolder);
-		}
+        //	DocumentManager.logger.Info("Загрузка всех накладных завершена", workFolder);
+        //}
 
-		public static void ReloadWaybills(string workFolder)
-		{
-			DocumentManager.logger.Info("Перезагрузка всех накладных из папки {0}", workFolder);
+        //public static void ReloadWaybills(string workFolder)
+        //{
+        //	DocumentManager.logger.Info("Перезагрузка всех накладных из папки {0}", workFolder);
 
-			if (string.IsNullOrWhiteSpace(workFolder))
-				throw new ArgumentNullException("workFolder");
+        //	if (string.IsNullOrWhiteSpace(workFolder))
+        //		throw new ArgumentNullException("workFolder");
 
-			CoreInit.ModuleRepository.ClearWaybillLists();
-			DocumentManager.DownloadWaybills(workFolder);
-			DocumentManager.logger.Info("Перезагрузка завершена");
-		}
+        //	CoreInit.ModuleRepository.ClearWaybillLists();
+        //	DocumentManager.DownloadWaybills(workFolder);
+        //	DocumentManager.logger.Info("Перезагрузка завершена");
+        //}
 
-		private static Model.Waybill RaiseWaybill(XEntities.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)
+        private static Model.Waybill RaiseWaybill(XEntities.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)
 		{
 			DocumentManager.logger.Info("Заполнение реквизитов доменной накладной");
 
@@ -197,7 +265,6 @@
 			if (string.IsNullOrWhiteSpace(fileName))
 				throw new ArgumentNullException("fileName");
 
-            // TODO: здесь всегда создается новая ссылка. Надо делать поиск по справочнику складов
             string gln = xWaybill.Header.DeliveryPlace;
             var warehouse = CoreInit.ModuleRepository.GetWarehouseByGLN(gln);
 
@@ -208,9 +275,6 @@
 				DocumentManager.logger.Warn("Автоматическое складов сопоставление не выполнено. Результат: {0}", JsonConvert.SerializeObject(warehouse));
 			else
 				DocumentManager.logger.Info("Автоматическое сопоставление складов выполнено. Результат: {0}", JsonConvert.SerializeObject(warehouse));
-
-            // TODO: здесь всегда создается новая ссылка. Надо делать поиск по справочнику поставщиков
-            //var supplier = MatchingModule.AutomaticSupMatching(new ExCounteragent { GLN = xWaybill.Header.SupplierGln });
 
             gln = xWaybill.Header.SupplierGln;
             var supplier = CoreInit.ModuleRepository.GetCounteragentByGLN(gln);
@@ -337,6 +401,7 @@
 				throw new NotProcessedDocumentException("Не удалось загрузить накладную в базу.");
 			}
 
+            CoreInit.ModuleRepository.AddProcessedWaybill(waybill);
 			DocumentManager.logger.Info("Обработка накладной завершена");
 		}
 

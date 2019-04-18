@@ -46,10 +46,9 @@
 			this.GetSession();
 			this.DownloadDocuments();
 			this.UpdateTablePart();
-            this.CurrentWayBills = CoreInit.ModuleRepository.GetUserWaybills(CoreInit.RepositoryService.GetCurrentUser());
             UserNameTxt.Text = CoreInit.RepositoryService.GetCurrentUser().Name;
             TotalLbl.Text = "Всего накладных: " + CoreInit.ModuleRepository.GetAllUnprocessedWaybills().Count;
-            YoursLbl.Text = "Ваших накладных: " + this.CurrentWayBills.Count;
+            YoursLbl.Text = "Ваших накладных: " + CoreInit.ModuleRepository.GetUserWaybills(CoreInit.RepositoryService.GetCurrentUser());
             this.logger.Trace("Конец MainWindow.Initialize");
 		}
 
@@ -70,7 +69,7 @@
 			this.CurrentSession.FtpPassword,
 			this.CurrentSession.FtpRemoteFolder,
 			this.CurrentSession.WorkFolder);
-			DocumentManager.ReloadWaybills(this.CurrentSession.WorkFolder);
+			DocumentManager.DownloadUnprocessedWaybills(this.CurrentSession.WorkFolder);
 			this.logger.Trace("Конец MainWindow.DownloadDocuments");
 		}
 
@@ -187,10 +186,14 @@
 			this.logger.Trace("Конец MainWindow.ShowWhListBtn_Click");
 		}
 
-        
-		private Dictionary<string, string> bindings = new Dictionary<string, string>();
-        private List<Waybill> CurrentWayBills { get; set; }
+        private void ShowProcessedWbBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessedWaybillWindow window = new ProcessedWaybillWindow();
+            window.Show();
+        }
+
+        private Dictionary<string, string> bindings = new Dictionary<string, string>();
         private Session CurrentSession { get; set; }
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
-	}
+    }
 }

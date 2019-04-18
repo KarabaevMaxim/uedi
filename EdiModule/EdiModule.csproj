@@ -89,6 +89,9 @@
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ProcessedWaybillWindow.xaml.cs">
+      <DependentUpon>ProcessedWaybillWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\SupplierMatchingListWindow.xaml.cs">
       <DependentUpon>SupplierMatchingListWindow.xaml</DependentUpon>
     </Compile>
@@ -129,6 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Windows\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ProcessedWaybillWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

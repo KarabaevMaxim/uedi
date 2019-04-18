@@ -22,7 +22,7 @@
             <TextBlock Text="Пользователь:" FontSize="15" Margin="5" TextAlignment="Center"/>
             <TextBlock Name="UserNameTxt" Text="Пользователь" FontSize="15" Margin="5" TextAlignment="Center"/>
         </StackPanel>
-        <TabControl Grid.Column="1" Grid.Row="1">
+        <TabControl Name="MainTabControl" Grid.Column="1" Grid.Row="1">
             <TabItem Header="Накладные, требующие внимания">
                 <DataGrid Name="UnprocessedWaybillTbl" Background="SeaGreen" AutoGenerateColumns="False" 
                       CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single" LoadingRow="UnprocessedWaybillTbl_LoadingRow">
@@ -91,6 +91,11 @@
             <Button Grid.Row="2" Name="ShowWhListBtn" Margin="5" Click="ShowWhListBtn_Click">
                 <ContentControl>
                     <TextBlock Text="Список ваших складов" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </ContentControl>
+            </Button>
+            <Button Grid.Row="2" Name="ShowProcessedWbBtn" Margin="5" Click="ShowProcessedWbBtn_Click">
+                <ContentControl>
+                    <TextBlock Text="Обработанные накладные" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </ContentControl>
             </Button>
         </StackPanel>

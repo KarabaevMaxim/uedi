@@ -239,6 +239,24 @@
             return result;
         }
 
+        public List<Waybill> GetProcessedWaybills()
+        {
+            return this.ProcessedWaybills;
+        }
+
+        public void AddProcessedWaybill(Waybill waybill)
+        {
+            if (waybill == null)
+                throw new ArgumentNullException("waybill");
+
+            this.ProcessedWaybills.Add(waybill);
+        }
+
+        public void ClearProcessedWaybills()
+        {
+            this.ProcessedWaybills.Clear();
+        }
+
         /// <summary>
         /// Список необработанных накладных.
         /// </summary>
@@ -248,6 +266,8 @@
         /// Журнал всех накладных в рабочей папке(вклчюая дубли).
         /// </summary>
         private List<Waybill> TotalUnprocessedWaybills { get; set; } = new List<Waybill>();
+
+        private List<Waybill> ProcessedWaybills { get; set; } = new List<Waybill>();
 
         private List<MatchedWare> MatchedWares { get; set; } = new List<MatchedWare>();
 
