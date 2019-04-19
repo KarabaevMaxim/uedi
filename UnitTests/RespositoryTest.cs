@@ -6,7 +6,7 @@ namespace UnitTests
     using System.Collections.Generic;
     using DAL;
     using DAL.DomainEntities.DocWaybill;
-	using EdiModuleCore;
+    using DAL._1C.Roznica;
 
     [TestClass]
     public class RespositoryTest

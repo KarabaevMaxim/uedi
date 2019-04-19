@@ -1,13 +1,12 @@
 ﻿namespace UnitTests
 {
 	using System;
-	using System.Threading.Tasks;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using DAL;
     using DAL.DomainEntities.DocWaybill;
     using System.Collections.Generic;
 	using EdiModuleCore;
-	using System.Linq;
+    using DAL._1C.Roznica;
 
     [TestClass]
     public class ServiceRepositoryTest

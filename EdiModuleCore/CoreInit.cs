@@ -2,6 +2,7 @@
 {
     using DAL;
 	using DAL.Itida;
+    using DAL._1C.Roznica;
 
     public static class CoreInit
     {

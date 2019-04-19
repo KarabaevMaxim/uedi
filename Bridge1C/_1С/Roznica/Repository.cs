@@ -1,4 +1,4 @@
-﻿namespace DAL
+﻿namespace DAL._1C.Roznica
 {
     using System;
     using System.Collections.Generic;

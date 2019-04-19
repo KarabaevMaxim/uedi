@@ -100,8 +100,8 @@
     <Compile Include="Itida\ItidaRepository.cs" />
     <Compile Include="Itida\ItidaRepositoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository.cs" />
-    <Compile Include="RepositoryService.cs" />
+    <Compile Include="_1С\Roznica\Repository.cs" />
+    <Compile Include="_1С\Roznica\RepositoryService.cs" />
     <Compile Include="RequisiteBindingConfig.cs" />
     <Compile Include="DomainEntities\Spr\Ware.cs" />
   </ItemGroup>
@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DomainEntities\DocOrder\" />
+    <Folder Include="_1С\UT_11\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
