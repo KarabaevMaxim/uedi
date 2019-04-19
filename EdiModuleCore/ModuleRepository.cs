@@ -7,6 +7,7 @@
 	using Comparators;
 	using Newtonsoft.Json;
 	using NLog;
+    using Bridge1C.DomainEntities.Spr;
 
     public class ModuleRepository
     {
@@ -159,7 +160,7 @@
             return this.AllUnprocessedWaybills;
         }
 
-        public List<Waybill> GetUserWaybills(Bridge1C.DomainEntities.User user)
+        public List<Waybill> GetUserWaybills(User user)
         {
             if (user == null)
                 throw new ArgumentNullException("user");
@@ -279,7 +280,7 @@
 		/// <summary>
 		/// Справочник складов из базы.
 		/// </summary>
-		public List<Bridge1C.DomainEntities.Warehouse> WarehouseReference { get; private set; } = new List<Bridge1C.DomainEntities.Warehouse>();
+		public List<Warehouse> WarehouseReference { get; private set; } = new List<Warehouse>();
 
 		/// <summary>
 		/// Список контрагентов из необработанных накладных.
@@ -289,12 +290,12 @@
 		/// <summary>
 		/// Справочник контрагентов из базы.
 		/// </summary>
-		public List<Bridge1C.DomainEntities.Counteragent> CounteragentReference { get; private set; } = new List<Bridge1C.DomainEntities.Counteragent>();
+		public List<Counteragent> CounteragentReference { get; private set; } = new List<Counteragent>();
 
         /// <summary>
         /// Справочник товаров из базы.
         /// </summary>
-        public List<Bridge1C.DomainEntities.Ware> ProductReference { get; private set; } = new List<Bridge1C.DomainEntities.Ware>();
+        public List<Ware> ProductReference { get; private set; } = new List<Ware>();
 
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
     }

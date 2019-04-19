@@ -85,15 +85,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connector.cs" />
-    <Compile Include="DomainEntities\Counteragent.cs" />
-    <Compile Include="DomainEntities\Organization.cs" />
-    <Compile Include="DomainEntities\Shop.cs" />
-    <Compile Include="DomainEntities\Unit.cs" />
-    <Compile Include="DomainEntities\User.cs" />
-    <Compile Include="DomainEntities\WareExCode.cs" />
-    <Compile Include="DomainEntities\Warehouse.cs" />
-    <Compile Include="DomainEntities\Waybill.cs" />
-    <Compile Include="DomainEntities\WaybillRow.cs" />
+    <Compile Include="DomainEntities\IDoc.cs" />
+    <Compile Include="DomainEntities\IDocRow.cs" />
+    <Compile Include="DomainEntities\Spr\Counteragent.cs" />
+    <Compile Include="DomainEntities\Spr\Organization.cs" />
+    <Compile Include="DomainEntities\Spr\Shop.cs" />
+    <Compile Include="DomainEntities\Spr\Unit.cs" />
+    <Compile Include="DomainEntities\Spr\User.cs" />
+    <Compile Include="DomainEntities\Spr\WareExCode.cs" />
+    <Compile Include="DomainEntities\Spr\Warehouse.cs" />
+    <Compile Include="DomainEntities\DocWaybill\Waybill.cs" />
+    <Compile Include="DomainEntities\DocWaybill\WaybillRow.cs" />
     <Compile Include="IRepositoryService.cs" />
     <Compile Include="Itida\ItidaRepository.cs" />
     <Compile Include="Itida\ItidaRepositoryService.cs" />
@@ -101,7 +103,7 @@
     <Compile Include="Repository.cs" />
     <Compile Include="RepositoryService.cs" />
     <Compile Include="RequisiteBindingConfig.cs" />
-    <Compile Include="DomainEntities\Ware.cs" />
+    <Compile Include="DomainEntities\Spr\Ware.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="V83">
@@ -122,6 +124,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DomainEntities\DocOrder\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

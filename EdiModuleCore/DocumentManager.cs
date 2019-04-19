@@ -3,13 +3,11 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
-	using System.Threading.Tasks;
     using Bridge1C;
     using Model;
     using Exceptions;
 	using NLog;
 	using Newtonsoft.Json;
-    using XEntities;
 
     public enum DocumentTypes
     {
@@ -305,17 +303,17 @@
 
 			try
             {
-                Bridge1C.DomainEntities.Waybill domainWaybill = new Bridge1C.DomainEntities.Waybill();
+                Bridge1C.DomainEntities.DocWaybill.Waybill domainWaybill = new Bridge1C.DomainEntities.DocWaybill.Waybill();
                 domainWaybill.Number = waybill.Number;
                 domainWaybill.Date = waybill.Date;
                 domainWaybill.Supplier = waybill.Supplier?.InnerCounteragent;
                 domainWaybill.Warehouse = waybill.Warehouse?.InnerWarehouse;
                 domainWaybill.Organization = waybill.Organization;
-                domainWaybill.Positions = new List<Bridge1C.DomainEntities.WaybillRow>();
+                domainWaybill.Positions = new List<Bridge1C.DomainEntities.DocWaybill.WaybillRow>();
 
                 foreach (var item in waybill.Wares)
                 {
-                    domainWaybill.Positions.Add(new Bridge1C.DomainEntities.WaybillRow
+                    ((List<Bridge1C.DomainEntities.DocWaybill.WaybillRow>)domainWaybill.Positions).Add(new Bridge1C.DomainEntities.DocWaybill.WaybillRow
                     {
                         Ware = item.Ware.InnerWare,
                         Unit = item.Ware.ExWare.Unit,

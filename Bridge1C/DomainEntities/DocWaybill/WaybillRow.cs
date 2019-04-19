@@ -1,6 +1,8 @@
-﻿namespace Bridge1C.DomainEntities
+﻿namespace Bridge1C.DomainEntities.DocWaybill
 {
-    public class WaybillRow
+    using Spr;
+
+    public class WaybillRow : IDocRow
     {
         public Ware Ware { get; set; }
         public Unit Unit { get; set; }

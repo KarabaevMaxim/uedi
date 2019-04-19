@@ -4,8 +4,9 @@
 	using System.Linq;
 	using System.Collections.Generic;
 	using System.Data.SqlClient;
-	using DomainEntities;
+	using DomainEntities.DocWaybill;
 	using NLog;
+    using DomainEntities.Spr;
 
 	public class ItidaRepository
 	{
@@ -1206,11 +1207,11 @@
 						command.Parameters.Add(new SqlParameter("@orgCode", waybill.Organization.Code));
 						command.Parameters.Add(new SqlParameter("@counterCode", waybill.Supplier.Code));
 						command.Parameters.Add(new SqlParameter("@whCode", waybill.Warehouse.Code));
-						command.Parameters.Add(new SqlParameter("@amount", waybill.Positions.Sum(p => (float)p.Price * p.Count + (float)p.TaxAmount)));
-						command.Parameters.Add(new SqlParameter("@wbIc", newIc));
+                        command.Parameters.Add(new SqlParameter("@amount", ((IEnumerable<WaybillRow>)waybill.Positions).Sum(p => (float)p.Price * p.Count + (float)p.TaxAmount)));
+                        command.Parameters.Add(new SqlParameter("@wbIc", newIc));
 						command.ExecuteNonQuery();
 
-						foreach (var item in waybill.Positions)
+						foreach (WaybillRow item in waybill.Positions)
 						{
 							// найти внутренний код товара по его главному коду
 							command = new SqlCommand(@"SELECT nn FROM sprnn WHERE maincode = @mainCode", conn);

@@ -1,8 +1,8 @@
 ﻿namespace Bridge1C
 {
 	using System.Collections.Generic;
-	using System.Threading.Tasks;
-	using DomainEntities;
+    using DomainEntities.DocWaybill;
+    using DomainEntities.Spr;
 
 	/// <summary>
 	/// Интерфейс слоя доступа данных, являющийся прослойкой между сущностями баз данных и сущностями доменными.

@@ -5,6 +5,7 @@
 	using System.Threading.Tasks;
     using Bridge1C;
     using Bridge1C.DomainEntities;
+    using Bridge1C.DomainEntities.Spr;
     using Model;
     using Exceptions;
 	using NLog;

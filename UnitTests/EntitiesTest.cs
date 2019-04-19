@@ -1,9 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿
 
 namespace UnitTests
 {
-    using Bridge1C.DomainEntities;
+    using System;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Bridge1C.DomainEntities.Spr;
     using EdiModuleCore.Model;
     using System.Collections.Generic;
 

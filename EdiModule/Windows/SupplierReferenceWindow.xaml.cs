@@ -5,7 +5,7 @@
     using System.Windows.Controls;
     using System.Windows.Data;
     using System.Windows.Input;
-    using Bridge1C.DomainEntities;
+    using Bridge1C.DomainEntities.Spr;
     using EdiModuleCore;
     using EdiModuleCore.Exceptions;
     using EdiModuleCore.Model;

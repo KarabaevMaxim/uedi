@@ -1,9 +1,10 @@
-﻿namespace Bridge1C.DomainEntities
+﻿namespace Bridge1C.DomainEntities.DocWaybill
 {
     using System;
     using System.Collections.Generic;
+    using Spr;
 
-    public class Waybill
+    public class Waybill : IDoc
     {
         public string Number { get; set; }
         public DateTime Date { get; set; }
@@ -11,8 +12,7 @@
         public Warehouse Warehouse { get; set; }
         public Organization Organization { get; set; }
         public Shop Shop { get; set; }
-        public List<WaybillRow> Positions { get; set; }
-
+        public IEnumerable<IDocRow> Positions { get; set; }
 
 		public override string ToString()
 		{

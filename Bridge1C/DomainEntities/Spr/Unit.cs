@@ -1,4 +1,4 @@
-﻿namespace Bridge1C.DomainEntities
+﻿namespace Bridge1C.DomainEntities.Spr
 {
     public class Unit
     {

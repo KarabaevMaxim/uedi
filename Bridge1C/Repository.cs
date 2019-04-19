@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 	using NLog;
+    using DomainEntities.DocWaybill;
 
     public class Repository
     {
@@ -936,7 +937,7 @@
             }
         }
 
-        public bool AddNewWaybill(string number, DateTime date, dynamic counteragent, dynamic warehouse, dynamic shop, List<DomainEntities.WaybillRow> rows)
+        public bool AddNewWaybill(string number, DateTime date, dynamic counteragent, dynamic warehouse, dynamic shop, List<WaybillRow> rows)
         {
 			this.logger.Info("Добавление новой накладной Номер {0} Дата {1}", number, date.ToString("dd.MM.yyyy hh:mm:ss"));
 

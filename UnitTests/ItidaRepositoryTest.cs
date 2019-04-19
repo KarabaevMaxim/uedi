@@ -4,8 +4,9 @@
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using System.Collections.Generic;
 	using System.Linq;
-	using Bridge1C.DomainEntities;
-	using Bridge1C.Itida;
+	using Bridge1C.DomainEntities.DocWaybill;
+    using Bridge1C.DomainEntities.Spr;
+    using Bridge1C.Itida;
 
 	[TestClass]
 	public class ItidaRepositoryTest

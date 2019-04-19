@@ -3,9 +3,9 @@
 	using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-    using DomainEntities;
-	using NLog;
+    using DomainEntities.DocWaybill;
+    using DomainEntities.Spr;
+    using NLog;
 
     public class RepositoryService : IRepositoryService
     {
@@ -424,7 +424,7 @@
 				return false;
 			}
 
-			bool result = this.Repository.AddNewWaybill(waybill.Number, waybill.Date, supplier, warehouse, shop, waybill.Positions);
+			bool result = this.Repository.AddNewWaybill(waybill.Number, waybill.Date, supplier, warehouse, shop, (List<WaybillRow>)waybill.Positions);
 
 			if (result)
 				this.logger.Info("Накладная добавлена");

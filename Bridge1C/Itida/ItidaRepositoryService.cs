@@ -2,10 +2,8 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using Bridge1C.DomainEntities;
+    using DomainEntities.DocWaybill;
+    using DomainEntities.Spr;
 	using NLog;
 
 	public class ItidaRepositoryService : IRepositoryService
