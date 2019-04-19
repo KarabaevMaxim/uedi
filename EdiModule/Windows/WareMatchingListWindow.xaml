@@ -9,15 +9,14 @@
         Title="Сопоставление номенклатуры" Height="450" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid ShowGridLines="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="35"/>
-            <ColumnDefinition Width="720*"/>
-            <ColumnDefinition Width="37"/>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="325*"/>
-            <RowDefinition Height="30
-                           "/>
+            <RowDefinition/>
+            <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
         <fa:ImageAwesome Name="WaitAnim" Grid.Column="0" Grid.Row="0" Icon="Asterisk" Spin="True" SpinDuration="3" />
         <DataGrid Grid.Column="1" Grid.Row="1" Name="WaresTbl" IsReadOnly="True" AutoGenerateColumns="False" LoadingRow="WaresTbl_LoadingRow">
@@ -27,5 +26,17 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
+        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <GroupBox Grid.Column="1" Header="Создать новую номенклатуру для несопоставленной" BorderBrush="Black" Margin="5">
+                <Grid ShowGridLines="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Name="AddNewWareBtn" Margin="19 10 10 10" Content="Для выделенных строк" FontSize="10" Click="AddSelectedBtn_Click"/>
+                    <Button Grid.Column="1" Name="AddAllWaresBtn" Margin="10 10 10 10" Content="Для всех строк" Click="AddAllWaresBtn_Click" />
+                </Grid>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </Window>

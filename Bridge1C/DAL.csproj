@@ -127,6 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DomainEntities\DocOrder\" />
+    <Folder Include="_1С\Buhgalteria_3\" />
+    <Folder Include="_1С\Dalion\" />
     <Folder Include="_1С\UT_11\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
