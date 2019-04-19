@@ -1,8 +1,9 @@
-﻿namespace EdiModuleCore.XEntities
+﻿namespace EdiModuleCore.XEntities.DocWaybill
 {
     using System.Collections.Generic;
     using System.Text;
-    public struct Header
+
+    public class Header : IDocHeader
     {
         /// <summary>
         /// SUPPLIER
@@ -19,7 +20,7 @@
         /// <summary>
         /// Список позиций в документе.
         /// </summary>
-        public List<WarePosition> Positions { get; set; }
+        public IEnumerable<IDocPosition> Positions { get; set; }
 
         public override string ToString()
         {

@@ -9,6 +9,7 @@
     using Exceptions;
 	using NLog;
 	using Newtonsoft.Json;
+    using XEntities;
 
     public enum DocumentTypes
     {
@@ -26,14 +27,14 @@
         /// <param name="fileContent">Содержимое файла XML.</param>
         /// <param name="expectedDocType">Ожидаемый тип документа.</param>
         /// <returns>Объект полученной накладной.</returns>
-        public static XEntities.IXEntity DownloadDocument(string fileContent, DocumentTypes expectedDocType)
+        public static XEntities.IDoc DownloadDocument(string fileContent, DocumentTypes expectedDocType)
         {
 			DocumentManager.logger.Info("Сериализация строки {0} в документ с типом {1}", fileContent, expectedDocType);
 
 			if (string.IsNullOrWhiteSpace(fileContent))
 				throw new ArgumentNullException("fileContent");
 
-			XEntities.IXEntity result = null;
+			XEntities.IDoc result = null;
 
 			switch (expectedDocType)
 			{
@@ -66,7 +67,7 @@
                 throw new ArgumentNullException("fileName");
 
             string content = FileService.ReadTextFile(fileName);
-            XEntities.Waybill waybill = (XEntities.Waybill)DocumentManager.DownloadDocument(content, DocumentTypes.DESADV);
+            XEntities.DocWaybill.Waybill waybill = (XEntities.DocWaybill.Waybill)DocumentManager.DownloadDocument(content, DocumentTypes.DESADV);
 
             Waybill result = DocumentManager.ConvertWaybillToDomain(waybill, fileName);
             return result;
@@ -172,7 +173,7 @@
         //	DocumentManager.logger.Info("Перезагрузка завершена");
         //}
 
-        private static Model.Waybill RaiseWaybill(XEntities.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)
+        private static Model.Waybill RaiseWaybill(XEntities.DocWaybill.Waybill xWaybill, string fileName, MatchedWarehouse matchedWarehouse, MatchedCounteragent matchedCounteragent)
 		{
 			DocumentManager.logger.Info("Заполнение реквизитов доменной накладной");
 
@@ -199,7 +200,7 @@
 			};
 			result.Organization = CoreInit.RepositoryService.GetOrganization(Requisites.GLN, xWaybill.Header.BuyerGln);
 
-			foreach (var item in xWaybill.Header.Positions)
+			foreach (XEntities.DocWaybill.WarePosition item in xWaybill.Header.Positions)
 			{
 				DocumentManager.logger.Info("Добавление строки {0} в накладную", JsonConvert.SerializeObject(item));
 				Model.WaybillRow row = new Model.WaybillRow();
@@ -255,7 +256,7 @@
 			return result;
 		}
 
-		private static Model.Waybill ConvertWaybillToDomain(XEntities.Waybill xWaybill, string fileName)
+		private static Model.Waybill ConvertWaybillToDomain(XEntities.DocWaybill.Waybill xWaybill, string fileName)
 		{
 			DocumentManager.logger.Info("Конвертация файловой накладной {0} в доменную", JsonConvert.SerializeObject(xWaybill));
 

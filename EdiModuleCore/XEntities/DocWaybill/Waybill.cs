@@ -1,8 +1,8 @@
-﻿namespace EdiModuleCore.XEntities
+﻿namespace EdiModuleCore.XEntities.DocWaybill
 {
     using System;
 
-    public class Waybill : IXEntity
+    public class Waybill : IDoc
     {
         /// <summary>
         /// NUMBER
@@ -15,7 +15,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public Header Header { get; set; }
+        public IDocHeader Header { get; set; }
 
         public override string ToString()
         {

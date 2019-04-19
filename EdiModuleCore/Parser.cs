@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
-namespace EdiModuleCore
+﻿namespace EdiModuleCore
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Xml.Linq;
     using System.Xml;
     using XEntities;
+    using XEntities.DocWaybill;
 
     /// <summary>
     /// XML теги документов.
@@ -117,23 +115,22 @@ namespace EdiModuleCore
             }
         }
 
-        public static List<WarePosition> GetWarePositions(IEnumerable<XElement> xElements)
+        public static IEnumerable<IDocPosition> GetWarePositions(IEnumerable<XElement> xElements)
         {
-            List<WarePosition> warePositions = new List<WarePosition>();
+            List<WarePosition> result = new List<WarePosition>();
             IEnumerable<XElement> elements = xElements.Where(e => e.Name == XmlTag.POSITION.ToString());
-            foreach (var item in elements)
-            {
-                warePositions.Add(Parser.GetWarePosition(item));
-            }
 
-            return warePositions;
+            foreach (var item in elements)
+                result.Add(Parser.GetWarePosition(item));
+
+            return result;
         }
 
         public static WarePosition GetWarePosition(XElement root)
         {
             try
             {
-                WarePosition warePosition = new WarePosition
+                WarePosition result = new WarePosition
                 {
                     Number = root.Element(XmlTag.POSITIONNUMBER.ToString()).Value,
                     Amount = float.Parse(root.Element(XmlTag.AMOUNT.ToString()).Value.Replace('.', ',')),
@@ -147,7 +144,7 @@ namespace EdiModuleCore
                     WareName = root.Element(XmlTag.DESCRIPTION.ToString()).Value
                 };
 
-                return warePosition;
+                return result;
             }
             catch(NullReferenceException ex)
             {

@@ -2,15 +2,10 @@
 {
 	using System;
 
-	public interface IXEntity
+	public interface IDoc
 	{
-		/// <summary>
-		/// NUMBER
-		/// </summary>
 		string Number { get; set; }
-		/// <summary>
-		/// DATE
-		/// </summary>
 		DateTime Date { get; set; }
+        IDocHeader Header { get; set; }
 	}
 }

@@ -1,6 +1,6 @@
-﻿namespace EdiModuleCore.XEntities
+﻿namespace EdiModuleCore.XEntities.DocWaybill
 {
-    public struct WarePosition
+    public class WarePosition : IDocPosition
     {
         /// <summary>
         /// POSITIONNUMBER
