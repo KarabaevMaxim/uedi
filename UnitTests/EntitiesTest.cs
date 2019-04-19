@@ -4,7 +4,7 @@ namespace UnitTests
 {
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Bridge1C.DomainEntities.Spr;
+    using DAL.DomainEntities.Spr;
     using EdiModuleCore.Model;
     using System.Collections.Generic;
 

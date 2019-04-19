@@ -1,7 +1,7 @@
 ﻿namespace EdiModuleCore
 {
 	using System;
-	using Bridge1C.DomainEntities;
+	using DAL.DomainEntities;
 
 	public class Session 
 	{

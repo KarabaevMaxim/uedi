@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Bridge1C.DomainEntities.Spr;
+    using DAL.DomainEntities.Spr;
 
     /// <summary>
     /// Класс накладной слоя бизнес-логики.

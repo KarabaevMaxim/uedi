@@ -1,4 +1,4 @@
-﻿namespace Bridge1C
+﻿namespace DAL
 {
 	using V83;
 	using NLog;
@@ -43,6 +43,4 @@
         public dynamic Connection { get; private set; }
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
     }
-
-
 }

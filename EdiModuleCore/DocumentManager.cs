@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
-    using Bridge1C;
+    using DAL;
     using Model;
     using Exceptions;
 	using NLog;
@@ -303,17 +303,17 @@
 
 			try
             {
-                Bridge1C.DomainEntities.DocWaybill.Waybill domainWaybill = new Bridge1C.DomainEntities.DocWaybill.Waybill();
+                DAL.DomainEntities.DocWaybill.Waybill domainWaybill = new DAL.DomainEntities.DocWaybill.Waybill();
                 domainWaybill.Number = waybill.Number;
                 domainWaybill.Date = waybill.Date;
                 domainWaybill.Supplier = waybill.Supplier?.InnerCounteragent;
                 domainWaybill.Warehouse = waybill.Warehouse?.InnerWarehouse;
                 domainWaybill.Organization = waybill.Organization;
-                domainWaybill.Positions = new List<Bridge1C.DomainEntities.DocWaybill.WaybillRow>();
+                domainWaybill.Positions = new List<DAL.DomainEntities.DocWaybill.WaybillRow>();
 
                 foreach (var item in waybill.Wares)
                 {
-                    ((List<Bridge1C.DomainEntities.DocWaybill.WaybillRow>)domainWaybill.Positions).Add(new Bridge1C.DomainEntities.DocWaybill.WaybillRow
+                    ((List<DAL.DomainEntities.DocWaybill.WaybillRow>)domainWaybill.Positions).Add(new DAL.DomainEntities.DocWaybill.WaybillRow
                     {
                         Ware = item.Ware.InnerWare,
                         Unit = item.Ware.ExWare.Unit,

@@ -7,7 +7,7 @@
 	using Comparators;
 	using Newtonsoft.Json;
 	using NLog;
-    using Bridge1C.DomainEntities.Spr;
+    using DAL.DomainEntities.Spr;
 
     public class ModuleRepository
     {

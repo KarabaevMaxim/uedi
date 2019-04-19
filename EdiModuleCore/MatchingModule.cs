@@ -3,9 +3,9 @@
 	using System;
     using System.Collections.Generic;
 	using System.Threading.Tasks;
-    using Bridge1C;
-    using Bridge1C.DomainEntities;
-    using Bridge1C.DomainEntities.Spr;
+    using DAL;
+    using DAL.DomainEntities;
+    using DAL.DomainEntities.Spr;
     using Model;
     using Exceptions;
 	using NLog;

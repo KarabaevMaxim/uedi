@@ -1,4 +1,4 @@
-﻿namespace Bridge1C.DomainEntities
+﻿namespace DAL.DomainEntities
 {
     using System;
     using System.Collections.Generic;

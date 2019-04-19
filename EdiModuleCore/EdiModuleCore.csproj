@@ -88,9 +88,9 @@
     <Compile Include="XEntities\DocWaybill\Waybill.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bridge1C\Bridge1C.csproj">
+    <ProjectReference Include="..\Bridge1C\DAL.csproj">
       <Project>{9c1958c6-fec7-4967-bf40-87e8262ca6bd}</Project>
-      <Name>Bridge1C</Name>
+      <Name>DAL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

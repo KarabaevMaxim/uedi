@@ -7,8 +7,8 @@
     <ProjectGuid>{9C1958C6-FEC7-4967-BF40-87E8262CA6BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bridge1C</RootNamespace>
-    <AssemblyName>Bridge1C</AssemblyName>
+    <RootNamespace>DAL</RootNamespace>
+    <AssemblyName>DAL</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

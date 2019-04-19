@@ -1,4 +1,4 @@
-﻿namespace Bridge1C.DomainEntities.Spr
+﻿namespace DAL.DomainEntities.Spr
 {
     public class Warehouse
     {

@@ -169,9 +169,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bridge1C\Bridge1C.csproj">
+    <ProjectReference Include="..\Bridge1C\DAL.csproj">
       <Project>{9c1958c6-fec7-4967-bf40-87e8262ca6bd}</Project>
-      <Name>Bridge1C</Name>
+      <Name>DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdiModuleCore\EdiModuleCore.csproj">
       <Project>{d63b43f1-58d0-4c92-a16c-fc22d7c69e5f}</Project>

@@ -4,9 +4,9 @@
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using System.Collections.Generic;
 	using System.Linq;
-	using Bridge1C.DomainEntities.DocWaybill;
-    using Bridge1C.DomainEntities.Spr;
-    using Bridge1C.Itida;
+	using DAL.DomainEntities.DocWaybill;
+    using DAL.DomainEntities.Spr;
+    using DAL.Itida;
 
 	[TestClass]
 	public class ItidaRepositoryTest
@@ -29,14 +29,14 @@
 		[TestMethod]
 		public void GetUnitTest()
 		{
-			var unit = this.repository.GetUnit(Bridge1C.Requisites.Code, "шт");
+			var unit = this.repository.GetUnit(DAL.Requisites.Code, "шт");
 			Assert.IsFalse(unit == null);
 		}
 
 		[TestMethod]
 		public void GetCounteragentTest()
 		{
-			var counteragent = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000106");
+			var counteragent = this.repository.GetCounteragent(DAL.Requisites.Code, "0000106");
 			Assert.IsFalse(counteragent == null);
 		}
 
@@ -50,14 +50,14 @@
 		[TestMethod]
 		public void GetOrganizationTest()
 		{
-			var organization = this.repository.GetOrganization(Bridge1C.Requisites.Code, "0000001");
+			var organization = this.repository.GetOrganization(DAL.Requisites.Code, "0000001");
 			Assert.IsNotNull(organization);
 		}
 
 		[TestMethod]
 		public void GetWarehouseTest()
 		{
-			var warehouse = this.repository.GetWarehouse(Bridge1C.Requisites.Code, "001");
+			var warehouse = this.repository.GetWarehouse(DAL.Requisites.Code, "001");
 			Assert.IsNotNull(warehouse);
 		}
 
@@ -92,21 +92,21 @@
 		[TestMethod]
 		public void GetWareByCodeTest()
 		{
-			var ware = this.repository.GetWare(Bridge1C.Requisites.Code, "1509");
+			var ware = this.repository.GetWare(DAL.Requisites.Code, "1509");
 			Assert.IsNotNull(ware);
 		}
 
 		[TestMethod]
 		public void GetWareByExCodeTest()
 		{
-			var ware = this.repository.GetWare(Bridge1C.Requisites.ExCode_Ware, "424214241242", "4607068529991");
+			var ware = this.repository.GetWare(DAL.Requisites.ExCode_Ware, "424214241242", "4607068529991");
 			Assert.IsNotNull(ware);
 		}
 
 		[TestMethod]
 		public void GetWareByExCodeWithNonexistentCounteragentGLNTest()
 		{
-			var ware = this.repository.GetWare(Bridge1C.Requisites.ExCode_Ware, "424214241242", "243423dsdbvdb");
+			var ware = this.repository.GetWare(DAL.Requisites.ExCode_Ware, "424214241242", "243423dsdbvdb");
 			Assert.IsNull(ware);
 		}
 
@@ -120,10 +120,10 @@
 		[TestMethod]
 		public void AddNewWareTest()
 		{
-			var unit = this.repository.GetUnit(Bridge1C.Requisites.Code, "шт");	
-			var counteragent1 = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000001");
-			var counteragent2 = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000002");
-			var counteragent3 = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000003");
+			var unit = this.repository.GetUnit(DAL.Requisites.Code, "шт");	
+			var counteragent1 = this.repository.GetCounteragent(DAL.Requisites.Code, "0000001");
+			var counteragent2 = this.repository.GetCounteragent(DAL.Requisites.Code, "0000002");
+			var counteragent3 = this.repository.GetCounteragent(DAL.Requisites.Code, "0000003");
 
 			if (unit == null)
 				Assert.Fail("ЕИ не найдена в базе");
@@ -181,13 +181,13 @@
 		[TestMethod]
 		public void AddNewWaybill()
 		{
-			Organization organization = this.repository.GetOrganization(Bridge1C.Requisites.Code, "0000001");
-			Counteragent counteragent = this.repository.GetCounteragent(Bridge1C.Requisites.Code, "0000254");
-			Warehouse warehouse = this.repository.GetWarehouse(Bridge1C.Requisites.Code, "001");
-			Ware ware = this.repository.GetWare(Bridge1C.Requisites.Code, "4414");
-			Ware ware1 = this.repository.GetWare(Bridge1C.Requisites.Code, "24");
-			Ware ware2 = this.repository.GetWare(Bridge1C.Requisites.Code, "1908");
-			Unit unit = this.repository.GetUnit(Bridge1C.Requisites.Code, "шт");
+			Organization organization = this.repository.GetOrganization(DAL.Requisites.Code, "0000001");
+			Counteragent counteragent = this.repository.GetCounteragent(DAL.Requisites.Code, "0000254");
+			Warehouse warehouse = this.repository.GetWarehouse(DAL.Requisites.Code, "001");
+			Ware ware = this.repository.GetWare(DAL.Requisites.Code, "4414");
+			Ware ware1 = this.repository.GetWare(DAL.Requisites.Code, "24");
+			Ware ware2 = this.repository.GetWare(DAL.Requisites.Code, "1908");
+			Unit unit = this.repository.GetUnit(DAL.Requisites.Code, "шт");
 
 
 			if (organization == null || counteragent == null || warehouse == null)

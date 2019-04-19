@@ -1,6 +1,6 @@
 ﻿namespace EdiModuleCore.Model
 {
-    using Bridge1C.DomainEntities.Spr;
+    using DAL.DomainEntities.Spr;
 
     /// <summary>
     /// Класс номенклатуры поставщика слоя бизнес-логики.

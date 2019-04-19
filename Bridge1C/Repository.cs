@@ -1,4 +1,4 @@
-﻿namespace Bridge1C
+﻿namespace DAL
 {
     using System;
     using System.Collections.Generic;

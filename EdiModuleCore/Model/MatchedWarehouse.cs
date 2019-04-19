@@ -1,7 +1,7 @@
 ﻿namespace EdiModuleCore.Model
 {
 	using System;
-	using Bridge1C.DomainEntities.Spr;
+	using DAL.DomainEntities.Spr;
 
 	/// <summary>
 	/// Сопоставленная сущность склада.

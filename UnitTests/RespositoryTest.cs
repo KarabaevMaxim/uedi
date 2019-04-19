@@ -4,8 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests
 {
     using System.Collections.Generic;
-    using Bridge1C;
-    using Bridge1C.DomainEntities.DocWaybill;
+    using DAL;
+    using DAL.DomainEntities.DocWaybill;
 	using EdiModuleCore;
 
     [TestClass]

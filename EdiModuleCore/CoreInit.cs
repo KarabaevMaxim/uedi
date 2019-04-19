@@ -1,7 +1,7 @@
 ﻿namespace EdiModuleCore
 {
-    using Bridge1C;
-	using Bridge1C.Itida;
+    using DAL;
+	using DAL.Itida;
 
     public static class CoreInit
     {

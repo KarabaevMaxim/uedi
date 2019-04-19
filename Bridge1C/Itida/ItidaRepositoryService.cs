@@ -1,4 +1,4 @@
-﻿namespace Bridge1C.Itida
+﻿namespace DAL.Itida
 {
 	using System;
 	using System.Collections.Generic;

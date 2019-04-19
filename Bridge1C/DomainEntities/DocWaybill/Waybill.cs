@@ -1,4 +1,4 @@
-﻿namespace Bridge1C.DomainEntities.DocWaybill
+﻿namespace DAL.DomainEntities.DocWaybill
 {
     using System;
     using System.Collections.Generic;

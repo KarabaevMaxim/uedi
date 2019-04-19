@@ -3,8 +3,8 @@
 	using System;
 	using System.Threading.Tasks;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
-	using Bridge1C;
-    using Bridge1C.DomainEntities.DocWaybill;
+	using DAL;
+    using DAL.DomainEntities.DocWaybill;
     using System.Collections.Generic;
 	using EdiModuleCore;
 	using System.Linq;
