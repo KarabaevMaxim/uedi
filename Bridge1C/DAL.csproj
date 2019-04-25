@@ -99,6 +99,7 @@
     <Compile Include="DomainEntities\DocWaybill\Waybill.cs" />
     <Compile Include="DomainEntities\DocWaybill\WaybillRow.cs" />
     <Compile Include="IRepositoryService.cs" />
+    <Compile Include="Itida\DBValueConverter.cs" />
     <Compile Include="Itida\ItidaRepository.cs" />
     <Compile Include="Itida\ItidaRepositoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

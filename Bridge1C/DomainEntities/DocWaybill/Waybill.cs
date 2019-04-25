@@ -18,5 +18,5 @@
 		{
 			return string.Format("№ {0} от {1}", this.Number, this.Date);
 		}
-	}
+    }
 }

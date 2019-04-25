@@ -19,7 +19,17 @@
 			this.repository = new ItidaRepository(@"Data Source = (local); Initial Catalog = Поликон; User ID = idleadmin; Password = itida");
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void GetValueOrNull()
+        {
+            string str1 = "This is test string";
+            string str2 = "     ";
+            string str3 = str1 + str2;
+            var test = DBValueConverter<string>.GetValueOrNull(str3);
+            Assert.IsTrue(str1 == test);
+        }
+
+        [TestMethod]
 		public void GetAllWaresTest()
 		{
 			var wares = this.repository.GetAllWares();

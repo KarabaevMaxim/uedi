@@ -4,9 +4,12 @@
 
     public static class DBValueConverter<T>
     {
-        private static T GetOrNullValue(object value)
+        public static T GetValueOrNull(object value)
         {
-            T result = value == DBNull.Value ? default(T) : (T)value;
+            if (value is string strVal)
+                value = strVal.Trim();
+
+            T result = value == DBNull.Value ? default : (T)value;
             return result;
         }
     }

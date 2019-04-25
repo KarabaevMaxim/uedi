@@ -49,13 +49,13 @@
 
 						while (reader.Read())
 						{
-							wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
-							Ware ware = new Ware
+                            wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
+                            Ware ware = new Ware
 							{
 								Code = wareCode,
-								Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-								FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
-								Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+								FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+								Unit = this.GetUnit(Requisites.Code, DBValueConverter<string>.GetValueOrNull(reader.GetValue(3))), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
 								ExCodes = this.GetExCodes(wareCode),
 								BarCodes = this.GetWareBarcodes(wareCode)
 							};
@@ -109,13 +109,13 @@
 							if (reader.HasRows)
 							{
 								reader.Read();
-								string wareCode = ((string)reader.GetValue(0)).Trim();
+								string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 								result = new Ware
 								{
 									Code = wareCode,
-									Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-									FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
-									Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+									Unit = this.GetUnit(Requisites.Code, DBValueConverter<string>.GetValueOrNull(reader.GetValue(3))), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
 									ExCodes = this.GetExCodes(wareCode),
 									BarCodes = this.GetWareBarcodes(wareCode)
 								};
@@ -139,13 +139,13 @@
 							if (reader.HasRows)
 							{
 								reader.Read();
-								string wareCode = ((string)reader.GetValue(0)).Trim();
+								string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 								result = new Ware
 								{
 									Code = wareCode,
-									Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-									FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
-									Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+									Unit = this.GetUnit(Requisites.Code, DBValueConverter<string>.GetValueOrNull(reader.GetValue(3))), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
 									ExCodes = this.GetExCodes(wareCode),
 									BarCodes = this.GetWareBarcodes(wareCode)
 								};
@@ -200,13 +200,13 @@
 					if (reader.HasRows)
 					{
 						reader.Read();
-						string wareCode = ((string)reader.GetValue(0)).Trim();
+						string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 						result = new Ware
 						{
 							Code = wareCode,
-							Name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-							FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
-							Unit = this.GetUnit(Requisites.Code, reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim()), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
+							Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+							FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+							Unit = this.GetUnit(Requisites.Code, DBValueConverter<string>.GetValueOrNull(reader.GetValue(3))), // todo: можно в запросе использовать Join Для объединения с таблицей единиц измерения
 							ExCodes = this.GetExCodes(wareCode),
 							BarCodes = this.GetWareBarcodes(wareCode)
 						};
@@ -263,8 +263,8 @@
 								result = new Unit
 								{
 									Code = value.Trim(),
-									International = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
-									FullName = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+									International = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
 									Name = value.Trim()
 								};
 							}
@@ -280,12 +280,12 @@
 							if (reader.HasRows)
 							{
 								reader.Read();
-								string code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+								string code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 								result = new Unit
 								{
 									Code = code,
 									International = value,
-									FullName = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
 									Name = code
 								};
 							}
@@ -344,9 +344,9 @@
 								result = new Counteragent
 								{
 									Code = value,
-									FullName = ((string)reader.GetValue(0)).Trim(),
-									Name = ((string)reader.GetValue(1)).Trim(),
-									GLN = ((string)reader.GetValue(2)).Trim(),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+									GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
 								};
 							}
 							break;
@@ -363,9 +363,9 @@
 								reader.Read();
 								result = new Counteragent
 								{
-									Code = ((string)reader.GetValue(0)).Trim(),
-									FullName = ((string)reader.GetValue(1)).Trim(),
-									Name = ((string)reader.GetValue(2)).Trim(),
+									Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
 									GLN = value
 								};
 							}
@@ -414,10 +414,10 @@
 						{
 							result.Add(new Counteragent
 							{
-								Code = ((string)reader.GetValue(0)).Trim(),
-								FullName = ((string)reader.GetValue(1)).Trim(),
-								Name = ((string)reader.GetValue(2)).Trim(),
-								GLN = ((string)reader.GetValue(3)).Trim(),
+								Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+								FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+								GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(3))
 							});
 						}
 					}
@@ -469,9 +469,9 @@
 								result = new Organization
 								{
 									Code = value,
-									Name = ((string)reader.GetValue(0)).Trim(),
-									GLN = ((string)reader.GetValue(1)).Trim()
-								};
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+									GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1))
+                                };
 							}
 							break;
 						case Requisites.Name:
@@ -487,8 +487,8 @@
 								reader.Read();
 								result = new Organization
 								{
-									Code = ((string)reader.GetValue(0)).Trim(),
-									Name = ((string)reader.GetValue(1)).Trim(),
+									Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
 									GLN = value
 								};
 							}
@@ -545,7 +545,7 @@
 							if (reader.HasRows)
 							{
 								reader.Read();
-								string name = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+								string name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 								result = new Warehouse
 								{
 									Code = value,
@@ -567,8 +567,8 @@
 							if (reader.HasRows)
 							{
 								reader.Read();
-								string code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
-								string name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim();
+								string code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
+								string name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1));
 								result = new Warehouse
 								{
 									Code = code,
@@ -619,8 +619,8 @@
 
 						while (reader.Read())
 						{
-							string code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
-							string name = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim();
+							string code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
+							string name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1));
 							Warehouse warehouse = new Warehouse
 							{
 								Code = code,
@@ -667,8 +667,8 @@
 					{
 						while (reader.Read())
 						{
-							string code = (string)reader.GetValue(0);
-							string name = (string)reader.GetValue(1);
+							string code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
+							string name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1));
 							Warehouse warehouse = new Warehouse
 							{
 								Code = code,
@@ -723,25 +723,25 @@
 						{
 							Waybill wb = new Waybill
 							{
-								Number = ((string)reader.GetValue(0)).Trim(),
-								Date = ((DateTime)reader.GetValue(1)),
+								Number = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+								Date = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(1)),
 								Supplier = new Counteragent
 								{
-									Code = ((string)reader.GetValue(2)).Trim(),
-									FullName = ((string)reader.GetValue(3)).Trim(),
-									Name = ((string)reader.GetValue(4)).Trim(),
-									GLN = ((string)reader.GetValue(5)).Trim(),
+									Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(3)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4)),
+									GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5)),
 								},
 								Organization = new Organization
 								{
-									Code = ((string)reader.GetValue(6)).Trim(),
-									Name = ((string)reader.GetValue(7)).Trim(),
-									GLN = ((string)reader.GetValue(8)).Trim()
-								},
+									Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(7)),
+									GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(8))
+                                },
 								Warehouse = new Warehouse
 								{
-									Code = ((string)reader.GetValue(9)).Trim(),
-									Name = ((string)reader.GetValue(10)).Trim(),
+									Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(10)),
 									Shop = null
 								},
 								Positions = new List<WaybillRow>(),
@@ -797,26 +797,26 @@
 							Waybill wb = new Waybill
 							{
 								Number = number,
-								Date = ((DateTime)reader.GetValue(0)),
+								Date = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(0)),
 								Shop = null
 							};
 							wb.Supplier = reader.GetValue(1) == DBNull.Value ? null : new Counteragent
 							{
-								Code = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-								FullName = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
-								Name = reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim(),
-								GLN = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim()
-							};
+								Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+								FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(3)),
+								GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4))
+                            };
 							wb.Organization = reader.GetValue(5) == DBNull.Value ? null : new Organization
 							{
-								Code = reader.GetValue(5) == DBNull.Value ? string.Empty : ((string)reader.GetValue(5)).Trim(),
-								Name = reader.GetValue(6) == DBNull.Value ? string.Empty : ((string)reader.GetValue(6)).Trim(),
-								GLN = reader.GetValue(7) == DBNull.Value ? string.Empty : ((string)reader.GetValue(7)).Trim()
-							};
+								Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5)),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6)),
+								GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(7))
+                            };
 							wb.Warehouse = reader.GetValue(8) == DBNull.Value ? null : new Warehouse
 							{
-								Code = reader.GetValue(8) == DBNull.Value ? string.Empty : ((string)reader.GetValue(8)).Trim(),
-								Name = reader.GetValue(9) == DBNull.Value ? string.Empty : ((string)reader.GetValue(9)).Trim(),
+								Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(8)),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9)),
 								Shop = null
 							};
 							wb.Positions = new List<WaybillRow>();
@@ -858,9 +858,9 @@
 						{
 							result = new User
 							{
-								Code = (string)reader.GetValue(0),
-								Name = (string)reader.GetValue(1)
-							};
+								Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1))
+                            };
 						}
 					}
 
@@ -917,8 +917,8 @@
 					if (reader.HasRows)
 					{
 						reader.Read();
-						string wareIc = reader.GetValue(0) == DBNull.Value ? string.Empty : (string)reader.GetValue(0);
-						ware.Code = reader.GetValue(1) == DBNull.Value ? string.Empty : (string)reader.GetValue(1);
+						string wareIc = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
+						ware.Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1));
 						this.AddNewBarcodes(wareIc, ware.BarCodes);
 						this.AddNewExCodes(wareIc, ware.ExCodes);
 					}
@@ -1009,7 +1009,7 @@
 					if (reader.HasRows)
 					{
 						reader.Read();
-						string wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+						string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 						reader.Close();
 
 						if (string.IsNullOrWhiteSpace(wareCode))
@@ -1060,7 +1060,7 @@
 					if (reader.HasRows)
 					{
 						reader.Read();
-						string wareCode = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim();
+						string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 						reader.Close();
 
 						if (string.IsNullOrWhiteSpace(wareCode))
@@ -1252,7 +1252,7 @@
 							if (reader.HasRows)
 							{
 								reader.Read();
-								wareCode = (string)reader.GetValue(0);
+								wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0));
 							}
 
 							reader.Close();
@@ -1327,32 +1327,32 @@
 
                     if (reader.HasRows)
                     {
-                        string skladlist = (string)reader.GetValue(9);
+                        string skladlist = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9));
                         string[] skladcodelist = skladlist.Split(',');
 
                         while (reader.Read())
                         {
                             Order order = new Order
                             {
-                                Number = (string)reader.GetValue(0),
-                                Date = (DateTime)reader.GetValue(1),                            
+                                Number = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+                                Date = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(1)),                            
                                 Organization = new Organization
                                 {
-                                    Code = (string)reader.GetValue(6),
-                                    Name = (string)reader.GetValue(7),
-                                    GLN = (string)reader.GetValue(8),
+                                    Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6)),
+                                    Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(7)),
+                                    GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(8)),
                                 },
                                 Supplier = new Counteragent
                                 {
-                                    Code = (string)reader.GetValue(2),
-                                    Name = (string)reader.GetValue(4),
-                                    FullName = (string)reader.GetValue(3),
-                                    GLN = (string)reader.GetValue(5)
+                                    Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+                                    Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4)),
+                                    FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(3)),
+                                    GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5))
                                 },
                                 WarehouseList = new List<Warehouse>(),
-                                DeliveryDate = (DateTime)reader.GetValue(11),
+                                DeliveryDate = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(11)),
                                 Positions = new List<IDocRow>(),
-                                IdentityColumn = (int)reader.GetValue(10)
+                                IdentityColumn = DBValueConverter<int>.GetValueOrNull(reader.GetValue(10))
                             };
 
                             foreach (var item in skladcodelist)
@@ -1399,16 +1399,15 @@
                     {
                         while (reader.Read())
                         {
-                            string wareCode = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim();
+                            string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4));
 
                             OrderRow row = new OrderRow
                             {
                                 Ware = new Ware
                                 {
                                     Code = wareCode,
-                                    Name = (string)reader.GetValue(5),
-                                    FullName = (string)reader.GetValue(6),
-                                    
+                                    Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5)),
+                                    FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6))
                                 }    
                             };
                         }
@@ -1496,7 +1495,7 @@
 					{
 						while (reader.Read())
 						{
-							result.Add(reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim());
+							result.Add(DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)));
 						}
 					}
 
@@ -1553,24 +1552,24 @@
 						while (reader.Read())
 						{
 							WaybillRow row = new WaybillRow();
-							row.Count = reader.GetValue(0) == DBNull.Value ? 0 : (float)(double)reader.GetValue(0);
-							row.Price = reader.GetValue(1) == DBNull.Value ? 0 : (decimal)(double)reader.GetValue(1);
-							row.TaxRate = reader.GetValue(2) == DBNull.Value ? 0 : (int)Math.Round((double)reader.GetValue(2));
-							row.TaxAmount = reader.GetValue(3) == DBNull.Value ? 0 : (decimal)(double)reader.GetValue(3);
+							row.Count = (float)DBValueConverter<double>.GetValueOrNull(reader.GetValue(0));
+							row.Price = DBValueConverter<decimal>.GetValueOrNull(reader.GetValue(1));
+							row.TaxRate = (int)Math.Round(DBValueConverter<double>.GetValueOrNull(reader.GetValue(2)));
+							row.TaxAmount = (decimal)DBValueConverter<double>.GetValueOrNull(reader.GetValue(3));
 							row.Unit = reader.GetValue(4) == DBNull.Value ? null : new Unit
 							{
-								Code = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim(),
-								Name = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim(),
-								FullName = reader.GetValue(5) == DBNull.Value ? string.Empty : ((string)reader.GetValue(5)).Trim(),
-								International = reader.GetValue(6) == DBNull.Value ? string.Empty : ((string)reader.GetValue(6)).Trim()
-							};
-							string wareCode = reader.GetValue(7) == DBNull.Value ? string.Empty : ((string)reader.GetValue(7)).Trim();
+								Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4)),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4)),
+								FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5)),
+								International = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6))
+                            };
+							string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(7));
 							row.Ware = string.IsNullOrWhiteSpace(wareCode) ? null : new Ware
 							{
 								Code = wareCode,
-								Name = reader.GetValue(8) == DBNull.Value ? string.Empty : ((string)reader.GetValue(8)).Trim(),
-								FullName = reader.GetValue(9) == DBNull.Value ? string.Empty : ((string)reader.GetValue(9)).Trim(),
-								Unit = this.GetUnit(Requisites.Code, reader.GetValue(9) == DBNull.Value ? string.Empty : ((string)reader.GetValue(10)).Trim()),
+								Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(8)),
+								FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9)),
+								Unit = this.GetUnit(Requisites.Code, DBValueConverter<string>.GetValueOrNull(reader.GetValue(10))),
 								ExCodes = this.GetExCodes(wareCode),
 								BarCodes = this.GetWareBarcodes(wareCode)
 							};
@@ -1630,13 +1629,13 @@
 							{
 								Counteragent = new Counteragent
 								{
-									Code = reader.GetValue(0) == DBNull.Value ? string.Empty : ((string)reader.GetValue(0)).Trim(),
-									FullName = reader.GetValue(1) == DBNull.Value ? string.Empty : ((string)reader.GetValue(1)).Trim(),
-									Name = reader.GetValue(2) == DBNull.Value ? string.Empty : ((string)reader.GetValue(2)).Trim(),
-									GLN = reader.GetValue(3) == DBNull.Value ? string.Empty : ((string)reader.GetValue(3)).Trim(),
+									Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+									FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1)),
+									Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+									GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(3)),
 								},
-								Value = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim()
-							};
+								Value = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4))
+                            };
 
 							result.Add(exCode);
 						}
@@ -1680,9 +1679,9 @@
 						reader.Read();
 						result = new User
 						{
-							Code = (string)reader.GetValue(0),
-							Name = (string)reader.GetValue(1)
-						};
+							Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+							Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(1))
+                        };
 					}
 
 					if (result == null)
@@ -1699,8 +1698,6 @@
 				return null;
 			}
 		}
-
-     
 
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly string connectionString;
