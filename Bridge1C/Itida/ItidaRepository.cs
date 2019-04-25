@@ -4,12 +4,18 @@
 	using System.Linq;
 	using System.Collections.Generic;
 	using System.Data.SqlClient;
-	using DomainEntities.DocWaybill;
 	using NLog;
+    using DomainEntities;
+    using DomainEntities.DocWaybill;
+    using DomainEntities.DocOrder;
     using DomainEntities.Spr;
 
 	public class ItidaRepository
 	{
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="connectionString"></param>
 		public ItidaRepository(string connectionString)
 		{
 			this.logger.Info("Инициализация объекта репозитория Айтида");
@@ -385,6 +391,10 @@
 			
 		}
 
+        /// <summary>
+        /// Получить список контрагентов
+        /// </summary>
+        /// <returns></returns>
 		public List<Counteragent> GetAllCounteragents()
 		{
 			this.logger.Info("Запрос всех контрагентов");
@@ -825,6 +835,10 @@
 			}
 		}
 
+        /// <summary>
+        /// Получить активного пользователя
+        /// </summary>
+        /// <returns></returns>
 		public User GetCurrentUser()
 		{
 			this.logger.Info("Получение активного пользователя");
@@ -929,6 +943,11 @@
 			
 		}
 
+        /// <summary>
+        /// Добавить внешние коды
+        /// </summary>
+        /// <param name="wareIc"></param>
+        /// <param name="exCodes"></param>
 		public void AddNewExCodes(string wareIc, List<WareExCode> exCodes)
 		{
 			this.logger.Info("Добавление внешних кодов Количество {0} номенклатуры {1}", exCodes.Count, wareIc);
@@ -1016,6 +1035,12 @@
 			}
 		}
 
+        /// <summary>
+        /// Удалить внешний код номенклатуры
+        /// </summary>
+        /// <param name="wareMainCode"></param>
+        /// <param name="exCode"></param>
+        /// <returns></returns>
 		public bool RemoveExCode(string wareMainCode, WareExCode exCode)
 		{
 			this.logger.Info("Удаление внешнего кода {0} номенклатуры Код", exCode.Value, wareMainCode);
@@ -1166,6 +1191,11 @@
 			}
 		}
 
+        /// <summary>
+        /// Добавить новюу налкадную.
+        /// </summary>
+        /// <param name="waybill"></param>
+        /// <returns></returns>
 		public bool AddNewWaybill(Waybill waybill)
 		{
 			this.logger.Info("Добавление новой накладной Номер {0} Дата {1}", waybill.Number, waybill.Date.ToString("dd.MM.yyyy hh:mm:ss"));
@@ -1277,56 +1307,173 @@
 			
 		}
 
-		#region Закрытые члены класса (потенциально закрытые)
+        public IEnumerable<Order> GetAllOrders()
+        {
+            this.logger.Info("Получение всех заказов");
 
-		/// <summary>
-		/// Сохраняет в базу данных штрихкода номенклатуры с кодом wareIc (sprnnbc.nn или sprres.code)
-		/// </summary>
-		/// <param name="wareIc">Код товара (sprnnbc.nn или sprres.code).</param>
-		/// <param name="barcodes">Список штрихкодов.</param>
-		private void AddNewBarcodes(string wareIc, List<string> barcodes)
-		{
-			this.logger.Info("Добавление штрихкодов Количество {0} номенклатуре Код {1}", barcodes.Count, wareIc);
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    List<Order> result = new List<Order>();
 
-			if (string.IsNullOrWhiteSpace(wareIc) || barcodes == null || barcodes.Count == 0)
-				throw new ArgumentOutOfRangeException();
+                    SqlCommand command = new SqlCommand(@"SELECT ord.ndok, ord.date, cntr.code, cntr.name, cntr.shortname, cntr.ex_code,
+														org.code, org.shortname, org.ex_code, ord.skladlist, ord.identity_column, ord.date_delivery
+													FROM spr033 as ord
+													LEFT JOIN sprclient as cntr ON ord.client = cntr.code 
+													LEFT JOIN sprfirm as org ON ord.firm = org.code", conn);
+                    SqlDataReader reader = command.ExecuteReader();
 
-			try
-			{
-				using (SqlConnection conn = new SqlConnection(connectionString))
-				{
-					conn.Open();
-					SqlCommand command = new SqlCommand("", conn);
-					SqlParameter parameterCode = new SqlParameter("@code", wareIc);
-					SqlParameter parameterBarcode = new SqlParameter("@barcode", null);
-					command.Parameters.Add(parameterCode);
-					command.Parameters.Add(parameterBarcode);
+                    if (reader.HasRows)
+                    {
+                        string skladlist = (string)reader.GetValue(9);
+                        string[] skladcodelist = skladlist.Split(',');
 
-					foreach (var item in barcodes)
-					{
-						if (string.IsNullOrWhiteSpace(item))
-							continue;
+                        while (reader.Read())
+                        {
+                            Order order = new Order
+                            {
+                                Number = (string)reader.GetValue(0),
+                                Date = (DateTime)reader.GetValue(1),                            
+                                Organization = new Organization
+                                {
+                                    Code = (string)reader.GetValue(6),
+                                    Name = (string)reader.GetValue(7),
+                                    GLN = (string)reader.GetValue(8),
+                                },
+                                Supplier = new Counteragent
+                                {
+                                    Code = (string)reader.GetValue(2),
+                                    Name = (string)reader.GetValue(4),
+                                    FullName = (string)reader.GetValue(3),
+                                    GLN = (string)reader.GetValue(5)
+                                },
+                                WarehouseList = new List<Warehouse>(),
+                                DeliveryDate = (DateTime)reader.GetValue(11),
+                                Positions = new List<IDocRow>(),
+                                IdentityColumn = (int)reader.GetValue(10)
+                            };
 
-						command.CommandText = "INSERT INTO sprnnbc (nn, bc) VAlUES (@code, @barcode)";
-						parameterBarcode.Value = item;
-						command.ExecuteNonQuery();
-					}
+                            foreach (var item in skladcodelist)
+                            {
+                                Warehouse wh = this.GetWarehouse(Requisites.Code, item);
 
-					this.logger.Info("Штрихкоды добавлены");
-				}
-			}
-			catch(Exception ex)
-			{
-				this.logger.Error(ex, "Не удалось добавить штрихкоды");
-			}
-			
-		}
+                                if(wh != null)
+                                    ((List<Warehouse>)order.WarehouseList).Add(wh);
+                            }
+                           
+                            result.Add(order);
+                        }
+                    }
 
-		/// <summary>
-		/// Возвращает список ШК для товара с указанным кодом wareCode (sprres.maincode или sprnn.maincode).
-		/// </summary>
-		/// <param name="wareCode">Код товара (sprres.maincode или sprnn.maincode).</param>
-		public List<string> GetWareBarcodes(string wareCode)
+                    this.logger.Info("Накладные получены Количество {0}", result.Count);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, "Не удалось получить накладные");
+                return null;
+            }
+        }
+
+        private IEnumerable<IDocRow> GetOrderRows(int ic)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    List<OrderRow> result = new List<OrderRow>();
+                    SqlCommand command = new SqlCommand(@"SELECT spec.kolp, spec.cena, spec.summa, spec.ed, 
+                                                                nn.maincode, nn.shortname, nn.name, nn.ed
+                                                            FROM spec033 AS spec
+                                                            LEFT JOIN sprnn AS nn ON spec.nn = nn.nn
+                                                            LEFT JOIN spredn AS edn ON spec.ed = edn.code
+                                                            WHERE ic = @ic", conn);
+                    command.Parameters.Add(new SqlParameter("@ic", ic));
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string wareCode = reader.GetValue(4) == DBNull.Value ? string.Empty : ((string)reader.GetValue(4)).Trim();
+
+                            OrderRow row = new OrderRow
+                            {
+                                Ware = new Ware
+                                {
+                                    Code = wareCode,
+                                    Name = (string)reader.GetValue(5),
+                                    FullName = (string)reader.GetValue(6),
+                                    
+                                }    
+                            };
+                        }
+                    }
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, "Не удалось получить накладные");
+                return null;
+            }
+        }
+
+        #region Закрытые члены класса (потенциально закрытые)
+
+        /// <summary>
+        /// Сохраняет в базу данных штрихкода номенклатуры с кодом wareIc (sprnnbc.nn или sprres.code)
+        /// </summary>
+        /// <param name="wareIc">Код товара (sprnnbc.nn или sprres.code).</param>
+        /// <param name="barcodes">Список штрихкодов.</param>
+        private void AddNewBarcodes(string wareIc, List<string> barcodes)
+        {
+            this.logger.Info("Добавление штрихкодов Количество {0} номенклатуре Код {1}", barcodes.Count, wareIc);
+
+            if (string.IsNullOrWhiteSpace(wareIc) || barcodes == null || barcodes.Count == 0)
+                throw new ArgumentOutOfRangeException();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand command = new SqlCommand("", conn);
+                    SqlParameter parameterCode = new SqlParameter("@code", wareIc);
+                    SqlParameter parameterBarcode = new SqlParameter("@barcode", null);
+                    command.Parameters.Add(parameterCode);
+                    command.Parameters.Add(parameterBarcode);
+
+                    foreach (var item in barcodes)
+                    {
+                        if (string.IsNullOrWhiteSpace(item))
+                            continue;
+
+                        command.CommandText = "INSERT INTO sprnnbc (nn, bc) VAlUES (@code, @barcode)";
+                        parameterBarcode.Value = item;
+                        command.ExecuteNonQuery();
+                    }
+
+                    this.logger.Info("Штрихкоды добавлены");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, "Не удалось добавить штрихкоды");
+            }
+
+        }
+
+        /// <summary>
+        /// Возвращает список ШК для товара с указанным кодом wareCode (sprres.maincode или sprnn.maincode).
+        /// </summary>
+        /// <param name="wareCode">Код товара (sprres.maincode или sprnn.maincode).</param>
+        public List<string> GetWareBarcodes(string wareCode)
 		{
 			this.logger.Info("Получение штрихкодов номенклатуры Код {0}", wareCode);
 
@@ -1552,6 +1699,8 @@
 				return null;
 			}
 		}
+
+     
 
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly string connectionString;

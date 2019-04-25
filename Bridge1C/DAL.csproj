@@ -85,6 +85,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connector.cs" />
+    <Compile Include="DomainEntities\DocOrder\Order.cs" />
+    <Compile Include="DomainEntities\DocOrder\OrderRow.cs" />
     <Compile Include="DomainEntities\IDoc.cs" />
     <Compile Include="DomainEntities\IDocRow.cs" />
     <Compile Include="DomainEntities\Spr\Counteragent.cs" />
@@ -126,7 +128,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DomainEntities\DocOrder\" />
     <Folder Include="_1С\Buhgalteria_3\" />
     <Folder Include="_1С\Dalion\" />
     <Folder Include="_1С\UT_11\" />
