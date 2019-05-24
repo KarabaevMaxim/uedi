@@ -5,6 +5,7 @@
     using DomainEntities.DocWaybill;
     using DomainEntities.Spr;
 	using NLog;
+    using DomainEntities.DocOrder;
 
 	public class ItidaRepositoryService : IRepositoryService
 	{
@@ -339,7 +340,6 @@
 			return true;
 		}
 
-
 		public bool RemoveExCode(WareExCode exCode)
 		{
 			this.logger.Info("Удаление внешнего кода {0} поставщика {1}", exCode?.Value, exCode.Counteragent?.Name);
@@ -366,6 +366,20 @@
 				return result;
 			}
 		}
+
+        public Order GetOrder(string number)
+        {
+            if (string.IsNullOrWhiteSpace(number))
+                throw new ArgumentNullException("number");
+
+            Order result = this.Repository.GetOrder(number);
+            return result;
+        }
+
+        public IEnumerable<Order> GetAllOrders()
+        {
+            return this.Repository.GetAllOrders();
+        }
 
 		private ItidaRepository Repository { get; set; }
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();

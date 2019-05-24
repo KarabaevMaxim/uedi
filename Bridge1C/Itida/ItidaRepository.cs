@@ -1307,6 +1307,10 @@
 			
 		}
 
+        /// <summary>
+        /// Получить все заказы (spr033).
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Order> GetAllOrders()
         {
             this.logger.Info("Получение всех заказов");
@@ -1327,11 +1331,11 @@
 
                     if (reader.HasRows)
                     {
-                        string skladlist = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9));
-                        string[] skladcodelist = skladlist.Split(',');
-
                         while (reader.Read())
                         {
+                            string skladlist = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9));
+                            string[] skladcodelist = skladlist.Split(',');
+
                             Order order = new Order
                             {
                                 Number = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
@@ -1351,8 +1355,7 @@
                                 },
                                 WarehouseList = new List<Warehouse>(),
                                 DeliveryDate = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(11)),
-                                Positions = new List<IDocRow>(),
-                                IdentityColumn = DBValueConverter<int>.GetValueOrNull(reader.GetValue(10))
+                                Positions = this.GetOrderRows(DBValueConverter<int>.GetValueOrNull(reader.GetValue(10)))
                             };
 
                             foreach (var item in skladcodelist)
@@ -1367,58 +1370,85 @@
                         }
                     }
 
-                    this.logger.Info("Накладные получены Количество {0}", result.Count);
+                    this.logger.Info("Заказы получены Количество {0}", result.Count);
                     return result;
                 }
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, "Не удалось получить накладные");
+                this.logger.Error(ex, "Не удалось получить заказы");
                 return null;
             }
         }
 
-        private IEnumerable<IDocRow> GetOrderRows(int ic)
+        /// <summary>
+        /// Получить заказ по его номеру (spr033.ndok) Если заказов с таким номером несколько, будет выбран первый.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public Order GetOrder(string number)
         {
+            if (string.IsNullOrWhiteSpace(number))
+                throw new ArgumentNullException("number");
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    List<OrderRow> result = new List<OrderRow>();
-                    SqlCommand command = new SqlCommand(@"SELECT spec.kolp, spec.cena, spec.summa, spec.ed, 
-                                                                nn.maincode, nn.shortname, nn.name, nn.ed
-                                                            FROM spec033 AS spec
-                                                            LEFT JOIN sprnn AS nn ON spec.nn = nn.nn
-                                                            LEFT JOIN spredn AS edn ON spec.ed = edn.code
-                                                            WHERE ic = @ic", conn);
-                    command.Parameters.Add(new SqlParameter("@ic", ic));
+                    SqlCommand command = new SqlCommand(@"SELECT ord.ndok, ord.date, cntr.code, cntr.name, cntr.shortname, cntr.ex_code,
+														org.code, org.shortname, org.ex_code, ord.skladlist, ord.identity_column, ord.date_delivery
+													FROM spr033 as ord
+													LEFT JOIN sprclient as cntr ON ord.client = cntr.code 
+													LEFT JOIN sprfirm as org ON ord.firm = org.code", conn);
                     SqlDataReader reader = command.ExecuteReader();
 
-                    if (reader.HasRows)
+                    if (reader.HasRows && reader.Read())
                     {
-                        while (reader.Read())
+                        string skladlist = DBValueConverter<string>.GetValueOrNull(reader.GetValue(9));
+                        string[] skladcodelist = skladlist.Split(',');
+
+                        Order result = new Order
                         {
-                            string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4));
-
-                            OrderRow row = new OrderRow
+                            Number = DBValueConverter<string>.GetValueOrNull(reader.GetValue(0)),
+                            Date = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(1)),
+                            Organization = new Organization
                             {
-                                Ware = new Ware
-                                {
-                                    Code = wareCode,
-                                    Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5)),
-                                    FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6))
-                                }    
-                            };
-                        }
-                    }
+                                Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6)),
+                                Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(7)),
+                                GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(8)),
+                            },
+                            Supplier = new Counteragent
+                            {
+                                Code = DBValueConverter<string>.GetValueOrNull(reader.GetValue(2)),
+                                Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4)),
+                                FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(3)),
+                                GLN = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5))
+                            },
+                            WarehouseList = new List<Warehouse>(),
+                            DeliveryDate = DBValueConverter<DateTime>.GetValueOrNull(reader.GetValue(11)),
+                            Positions = this.GetOrderRows(DBValueConverter<int>.GetValueOrNull(reader.GetValue(10)))
+                        };
 
-                    return result;
+                        foreach (var item in skladcodelist)
+                        {
+                            Warehouse wh = this.GetWarehouse(Requisites.Code, item);
+
+                            if (wh != null)
+                                ((List<Warehouse>)result.WarehouseList).Add(wh);
+                        }
+
+                        return result;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, "Не удалось получить накладные");
+                this.logger.Error(ex, "Не удалось получить заказ с номером {0}", number);
                 return null;
             }
         }
@@ -1699,7 +1729,59 @@
 			}
 		}
 
-		private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        /// <summary>
+        /// Получить многострочную часть заказа по его идентификатору (spr033.identity_column). 
+        /// </summary>
+        /// <param name="ic"></param>
+        /// <returns></returns>
+        private IEnumerable<IDocRow> GetOrderRows(int ic)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    List<OrderRow> result = new List<OrderRow>();
+                    SqlCommand command = new SqlCommand(@"SELECT spec.kolp, spec.cena, spec.summa, spec.ed, 
+                                                                nn.maincode, nn.shortname, nn.name, nn.ed
+                                                            FROM spec033 AS spec
+                                                            LEFT JOIN sprnn AS nn ON spec.nn = nn.nn
+                                                            WHERE ic = @ic", conn);
+                    command.Parameters.Add(new SqlParameter("@ic", ic));
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string wareCode = DBValueConverter<string>.GetValueOrNull(reader.GetValue(4));
+
+                            OrderRow row = new OrderRow
+                            {
+                                Ware = new Ware
+                                {
+                                    Code = wareCode,
+                                    Name = DBValueConverter<string>.GetValueOrNull(reader.GetValue(5)),
+                                    FullName = DBValueConverter<string>.GetValueOrNull(reader.GetValue(6)),
+                                    Unit = this.GetUnit(Requisites.Code, DBValueConverter<string>.GetValueOrNull(reader.GetValue(3))),
+                                    ExCodes = this.GetExCodes(wareCode),
+                                    BarCodes = this.GetWareBarcodes(wareCode)
+                                }
+                            };
+                        }
+                    }
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, "Не удалось получить накладные");
+                return null;
+            }
+        }
+
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly string connectionString;
 
 		#endregion

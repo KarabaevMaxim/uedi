@@ -4,6 +4,7 @@
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using System.Collections.Generic;
 	using System.Linq;
+    using DAL.DomainEntities.DocOrder;
 	using DAL.DomainEntities.DocWaybill;
     using DAL.DomainEntities.Spr;
     using DAL.Itida;
@@ -18,6 +19,62 @@
 		{
 			this.repository = new ItidaRepository(@"Data Source = (local); Initial Catalog = Поликон; User ID = idleadmin; Password = itida");
 		}
+
+        [TestMethod]
+        public void GetOrderTest()
+        {
+            Order order = new Order
+            {
+                Date = new DateTime(2000, 1, 1),
+                DeliveryDate = new DateTime(2000, 1, 1),
+                Number = "А-100",
+                Organization = new Organization
+                {
+                    Code = "00001",
+                    GLN = "00001",
+                    Name = "АТС"
+                },
+                Supplier = new Counteragent
+                {
+                    Code = "0000001",
+                    Name = "ООО \"КОШ\"",
+                    FullName = "Общество с ограниченной ответственностью \"КОШ\"",
+                    GLN = "12345"
+                },
+                Positions = new List<OrderRow>
+                {
+                    new OrderRow
+                    {
+                        Amount = 100,
+                        Count = 1,
+                        Price = 100,
+                        Unit = new Unit{ Code = "шт", Name = "шт", FullName = "штука", International = "PCE" },
+                        Ware = new Ware
+                        {
+                            Code = "28",
+                            Name = "Тест",
+                            FullName = "Тест",
+                            Unit = new Unit { Code = "шт", Name = "шт", FullName = "штука", International = "PCE" },
+                            ExCodes = new List<WareExCode>(),
+                            BarCodes = new List<string>()
+                        }
+                    }
+                },
+                WarehouseList = new List<Warehouse>
+                {
+                    new Warehouse
+                    {
+                        Code = "002", Name = "Магазин 1", Shop = new Shop{ Code = "002", Name = "Магазин 1" }, User = new User
+                        {
+                            Code = "polikon", Name = "Гульнара"
+                        }
+                    }
+                }
+            };
+
+            var order2 = this.repository.GetOrder("А-100");
+            Assert.IsTrue(order.Equals(order2));
+        }
 
         [TestMethod]
         public void GetValueOrNull()
