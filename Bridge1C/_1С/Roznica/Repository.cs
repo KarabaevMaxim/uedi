@@ -977,7 +977,33 @@
             }
         }
 
+        public List<dynamic> GetAllOrders()
+        {
+            try
+            {
+                List<dynamic> result = new List<dynamic>();
+                dynamic запрос = this.Connector.Connection.NewObject("Запрос");
+                запрос.Текст = @"ВЫБРАТЬ
+									Заказ.Ссылка КАК Ссылка	
+								ИЗ
+									Документ.ЗаказПоставщику КАК Заказ
+								ГДЕ
+									Заказ.ПометкаУдаления = Ложь";
+                dynamic выборка = запрос.Выполнить().Выбрать();
+
+                while(выборка.Следующий())
+                    result.Add(выборка.Ссылка);
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                this.logger.Error(ex, "Не удалось получить заказы");
+                return null;
+            }
+        }
+
         private Connector Connector { get; set; }
-		private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
     }
 }

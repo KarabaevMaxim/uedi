@@ -79,5 +79,12 @@
 
 		}
 
+
+        [TestMethod]
+        public void GetAllOrdersTest()
+        {
+            var order = CoreInit.RepositoryService.GetAllOrders();
+            Assert.IsNotNull(order);
+        }
 	}
 }

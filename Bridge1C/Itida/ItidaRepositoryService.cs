@@ -367,15 +367,6 @@
 			}
 		}
 
-        public Order GetOrder(string number)
-        {
-            if (string.IsNullOrWhiteSpace(number))
-                throw new ArgumentNullException("number");
-
-            Order result = this.Repository.GetOrder(number);
-            return result;
-        }
-
         public IEnumerable<Order> GetAllOrders()
         {
             return this.Repository.GetAllOrders();

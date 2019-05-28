@@ -3,6 +3,7 @@
 	using System.Collections.Generic;
     using DomainEntities.DocWaybill;
     using DomainEntities.Spr;
+    using DomainEntities.DocOrder;
 
 	/// <summary>
 	/// Интерфейс слоя доступа данных, являющийся прослойкой между сущностями баз данных и сущностями доменными.
@@ -107,5 +108,7 @@
 		bool AddNewExCodeToWare(Ware ware, WareExCode exCode);
 
 		bool RemoveExCode(WareExCode exCode);
+
+        IEnumerable<Order> GetAllOrders();
 	}
 }

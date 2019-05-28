@@ -1,8 +1,9 @@
 ﻿namespace DAL._1C.Roznica
 {
-	using System;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DAL.DomainEntities.DocOrder;
     using DomainEntities.DocWaybill;
     using DomainEntities.Spr;
     using NLog;
@@ -476,17 +477,68 @@
 
 				return result;
 			}
-
-
-			throw new System.NotImplementedException();
 		}
 
-		/// <summary>
-		/// Маппит объект номенклатуры базы данных в доменную номенклатуру и возвращает ее объект.
-		/// </summary>
-		/// <param name="ware">Объект номенклатуры базы данных.</param>
-		/// <returns>Инициализированный объект домееной номенклатуры.</returns>
-		private Ware GetDomainWareFromDbWare(dynamic ware)
+        public IEnumerable<Order> GetAllOrders()
+        {
+            List<Order> result = new List<Order>();
+
+            foreach (var item in this.Repository.GetAllOrders())
+                result.Add(this.GetDomainOrderFromDbOrder(item));
+
+            return result;
+        }
+
+        private Order GetDomainOrderFromDbOrder(dynamic order)
+        {
+            Order result = new Order
+            {
+                Date = order.Дата,
+                DeliveryDate = order.ДатаПоступления,
+                Number = order.Номер,
+                Organization = this.GetOrganization(Requisites.Code, order.Организация.Код),
+                Positions = this.GetOrderRows(order.Товары),
+                Supplier = this.GetCounteragent(Requisites.Code, order.Контрагент.Код),
+                WarehouseList = new List<Warehouse> { this.GetWarehouse(Requisites.Code, order.Склад.Код) }
+            };
+
+            return result;
+        }
+
+        private OrderRow GetOrderRow(dynamic row)
+        {
+            if (row == null)
+                throw new ArgumentNullException("row");
+
+            Ware ware = this.GetDomainWareFromDbWare(row.Номенклатура);
+            OrderRow result = new OrderRow
+            {
+                Ware = ware,
+                Amount = row.Сумма,
+                Count = row.КоличествоУпаковок,
+                Price = row.Цена,
+                Unit = ware.Unit
+            };
+
+            return result;
+        }
+
+        private IEnumerable<OrderRow> GetOrderRows(dynamic rows)
+        {
+            List<OrderRow> result = new List<OrderRow>();
+
+            foreach (var item in rows)
+                result.Add(this.GetOrderRow(item));
+
+            return result;
+        }
+
+        /// <summary>
+        /// Маппит объект номенклатуры базы данных в доменную номенклатуру и возвращает ее объект.
+        /// </summary>
+        /// <param name="ware">Объект номенклатуры базы данных.</param>
+        /// <returns>Инициализированный объект домееной номенклатуры.</returns>
+        private Ware GetDomainWareFromDbWare(dynamic ware)
         {
             if (ware == null)
                 return null;
@@ -561,5 +613,5 @@
 
         private Repository Repository { get; set; }
 		private readonly Logger logger = LogManager.GetCurrentClassLogger();
-	}
+    }
 }
