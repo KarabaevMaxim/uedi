@@ -72,7 +72,7 @@
                 }
             };
 
-            var order2 = this.repository.GetOrder("А-100");
+            object order2 = null; //this.repository.GetOrder("А-100");
             Assert.IsTrue(order.Equals(order2));
         }
 

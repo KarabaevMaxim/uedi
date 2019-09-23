@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Доработки\УниверсальныеЕдиМодуль\UniversalEdiModule\obj\Debug\
+C:\Доработки\УниверсальныеЕдиМодуль\UniversalEdiModule\obj\Release\
 UniversalEdiModule
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Доработки\УниверсальныеЕдиМодуль\UniversalEdiModule\App.xaml
 21134008262
 
 241826749783
-13738642453
+14-1536143347
 Windows\MainWindow.xaml;Windows\WareMatchingWindow.xaml;
 
 True
